@@ -66,12 +66,14 @@
          </action>
       </objectContribution>
    </extension>
-	   <extension
+   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             name="Version Tree"
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
             class="net.sf.versiontree.ui.preferences.VersionTreePreferencePage"
             id="net.sf.versiontree.ui.preferences.VersionTreePreferencePage">
       </page>
    </extension>
+
 </plugin>
