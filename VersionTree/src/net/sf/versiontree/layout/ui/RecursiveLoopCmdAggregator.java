@@ -28,7 +28,7 @@ public class RecursiveLoopCmdAggregator {
 	private ICommand preRecursion;
 	private ICommand postLoop;
 	private ICommand preLoop;
-	RecursiveLoopCmdAggregator(
+	public RecursiveLoopCmdAggregator(
 			ICommand preLoop, ICommand postLoop, ICommand preRecursion, ICommand postRecursion) {
 				this.preLoop = preLoop;
 				this.postLoop = postLoop;
