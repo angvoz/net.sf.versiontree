@@ -16,6 +16,7 @@ import net.sf.versiontree.data.RevisionData;
 import net.sf.versiontree.ui.Branch;
 import net.sf.versiontree.ui.RevisionToBranchConnector;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -28,7 +29,13 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -55,6 +62,9 @@ public class VersionTreeView extends ViewPart {
 
 	public static final String VIEW_ID =
 		"net.sf.versiontree.views.VersionTreeView";
+		
+	private CVSTeamProvider provider;
+	private IFile file;
 
 	/*private TableViewer viewer;
 	private Action action1;
@@ -164,7 +174,7 @@ public class VersionTreeView extends ViewPart {
 		 * Only files are supported for now.
 		 */
 	public void showVersionTree(IResource resource) {
-		/*if (resource instanceof IFile) {
+		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;
 			this.file = file;
 			RepositoryProvider teamProvider =
@@ -178,9 +188,9 @@ public class VersionTreeView extends ViewPart {
 					ICVSRemoteFile remoteFile =
 						(ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(
 							file);
-					historyTableProvider.setFile(remoteFile);
-					tableViewer.setInput(remoteFile);
-					setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+					/*historyTableProvider.setFile(remoteFile);
+					tableViewer.setInput(remoteFile);*/
+					setTitle("CVS Version Tree - " + file.getName());
 				} catch (TeamException e) {
 					CVSUIPlugin.openError(
 						getViewSite().getShell(),
@@ -192,7 +202,7 @@ public class VersionTreeView extends ViewPart {
 			return;
 		}
 		this.file = null;
-		tableViewer.setInput(null);*/
+		//tableViewer.setInput(null);
 		setTitle("Gammel es geht mit IResource!");
 	}
 

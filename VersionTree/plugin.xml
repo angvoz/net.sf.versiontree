@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-   id="VersionTree"
+   id="net.sf.versiontree"
    name="VersionTree Plug-in"
    version="0.0.1"
    provider-name="versiontree.sf.net"
@@ -26,7 +26,7 @@
             id="org.eclipse.team.ccvs.ui">
       </category>
       <view
-            name="CVS Version Tree View"
+            name="CVS Version Tree"
             icon="icons/tree.gif"
             category="org.eclipse.team.ccvs.ui"
             class="net.sf.versiontree.views.VersionTreeView"
