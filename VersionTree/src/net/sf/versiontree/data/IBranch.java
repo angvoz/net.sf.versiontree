@@ -21,8 +21,7 @@ import java.util.List;
 /**
  * @author Jan
  *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * TODO Tell jan to change his eclipse template :) a.
  */
 public interface IBranch {
 	
@@ -49,5 +48,11 @@ public interface IBranch {
 	 * @param string
 	 */
 	public abstract void setName(String string);
+	
+	/**
+	 * @author Andre
+	 * @return Number of Revisions in Branch
+	 */
+	public abstract int getHeight();
 
 }

@@ -123,4 +123,12 @@ public class BranchData implements IBranch {
 		branchPrefix = string;
 	}
 
+	/* (non-Javadoc)
+	 * @see net.sf.versiontree.data.IBranch#getHeight()
+	 */
+	public int getHeight() {
+		
+		return revisions.size();
+	}
+
 }
