@@ -193,14 +193,14 @@ public class DetailTableProvider {
 		col.setResizable(true);
 		col.setText("Key");
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(35, 20, true));
+		layout.addColumnData(new ColumnWeightData(45, 35, true));
 
 		// value
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText("Value");
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(100, 60, true));
+		layout.addColumnData(new ColumnWeightData(120, 80, true));
 	}
 
 	/**

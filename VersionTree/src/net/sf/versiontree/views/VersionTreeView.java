@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
 package net.sf.versiontree.views;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import net.sf.versiontree.data.IRevision;
 import net.sf.versiontree.data.RevisionTreeFactory;
 import net.sf.versiontree.ui.DetailTableProvider;
+import net.sf.versiontree.ui.LogEntrySelectionListener;
 import net.sf.versiontree.ui.TreeView;
 
 import org.eclipse.core.resources.IFile;
@@ -68,24 +59,11 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 /**
- * This sample class demonstrates how to plug-in a new
- * workbench view. The view shows data obtained from the
- * model. The sample creates a dummy model on the fly,
- * but a real implementation would connect to the model
- * available either in this or another plug-in (e.g. the workspace).
- * The view is connected to the model using a content provider.
- * <p>
- * The view uses a label provider to define how model
- * objects should be presented in the view. Each
- * view can present the same model objects using
- * different labels and icons, if needed. Alternatively,
- * a single label provider can be shared between views
- * in order to ensure that objects of the same type are
- * presented in the same way everywhere.
- * <p>
+ * 
  */
-
-public class VersionTreeView extends ViewPart {
+public class VersionTreeView
+	extends ViewPart
+	implements LogEntrySelectionListener {
 
 	public static final String VIEW_ID =
 		"net.sf.versiontree.views.VersionTreeView";
@@ -115,18 +93,10 @@ public class VersionTreeView extends ViewPart {
 	private CVSTeamProvider provider;
 	private IFile file;
 
-	//private Action doubleClickAction;
 
-	/*
-	 * The content provider class is responsible for
-	 * providing objects to the view. It can wrap
-	 * existing objects in adapters or simply return
-	 * objects as-is. These objects may be sensitive
-	 * to the current input of the view, or ignore
-	 * it and always show the same content 
-	 * (like Task List, for example).
+	/**
+	 * Content provider for the table in the detail view 
 	 */
-
 	class ViewContentProvider implements IStructuredContentProvider {
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
@@ -153,7 +123,7 @@ public class VersionTreeView extends ViewPart {
 		sashForm = new SashForm(parent, SWT.HORIZONTAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		treeView =
-			new TreeView(sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+			new TreeView(sashForm, this, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 
 		innerSashForm = new SashForm(sashForm, SWT.VERTICAL);
 		innerSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -161,7 +131,7 @@ public class VersionTreeView extends ViewPart {
 		tagViewer = createTagViewer(innerSashForm);
 		commentViewer = createTextViewer(innerSashForm);
 
-		sashForm.setWeights(new int[] { 70, 30 });
+		sashForm.setWeights(new int[] { 65, 35 });
 		innerSashForm.setWeights(new int[] { 40, 30, 30 });
 
 		makeActions();
@@ -176,54 +146,59 @@ public class VersionTreeView extends ViewPart {
 	 * Only files are supported for now.
 	 */
 	public void showVersionTree(IResource resource) {
-		if (resource != null && resource instanceof IFile) {
-			IFile file = (IFile) resource;
-			this.file = file;
-			RepositoryProvider teamProvider =
-				RepositoryProvider.getProvider(
-					file.getProject(),
-					CVSProviderPlugin.getTypeId());
-			if (teamProvider != null) {
-				this.provider = (CVSTeamProvider) teamProvider;
-				try {
-					// for a file this will return the base
-					ICVSRemoteFile remoteFile =
-						(ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(
-							file);
-					final ILogEntry[] logs = getLogEntries(remoteFile);
-
-					// set new content
-					treeView.setInput(
-						RevisionTreeFactory.createRevisionTree(
-							logs,
-							remoteFile.getRevision()));
-					updateTableData(currentEntry);
-					tableViewer.setInput(tableData);
-					tagViewer.setInput(currentEntry.getTags());
-					if (currentEntry != null)
-						commentViewer.setDocument(
-							new Document(currentEntry.getComment()));
-					else
-						commentViewer.setDocument(new Document(""));
-					if (remoteFile != null)
-						setTitle("CVS Version Tree - " + remoteFile.getName());
-				} catch (TeamException e) {
-					CVSUIPlugin.openError(
-						getViewSite().getShell(),
-						null,
-						null,
-						e);
+		try {
+			if (resource != null && resource instanceof IFile) {
+				IFile file = (IFile) resource;
+				this.file = file;
+				RepositoryProvider teamProvider =
+					RepositoryProvider.getProvider(
+						file.getProject(),
+						CVSProviderPlugin.getTypeId());
+				if (teamProvider != null) {
+					this.provider = (CVSTeamProvider) teamProvider;
+					try {
+						// for a file this will return the base
+						ICVSRemoteFile remoteFile =
+							(ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(
+								file);
+						final ILogEntry[] logs = getLogEntries(remoteFile);
+			
+						// set new content
+						treeView.setInput(
+							RevisionTreeFactory.createRevisionTree(
+								logs,
+								remoteFile.getRevision()));
+						updateTableData(currentEntry);
+						tableViewer.setInput(tableData);
+						tagViewer.setInput(currentEntry.getTags());
+						if (currentEntry != null)
+							commentViewer.setDocument(
+								new Document(currentEntry.getComment()));
+						else
+							commentViewer.setDocument(new Document(""));
+						if (remoteFile != null)
+							setTitle("CVS Version Tree - " + remoteFile.getName());
+					} catch (TeamException e) {
+						CVSUIPlugin.openError(
+							getViewSite().getShell(),
+							null,
+							null,
+							e);
+					}
 				}
+				return;
 			}
-			return;
+			this.file = null;
+			this.currentEntry = null;
+			updateTableData(currentEntry);
+			treeView.setInput(null);
+			tagViewer.setInput(null);
+			commentViewer.setDocument(new Document(""));
+			setTitle("CVS Version Tree");
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		this.file = null;
-		this.currentEntry = null;
-		updateTableData(currentEntry);
-		treeView.setInput(null);
-		tagViewer.setInput(null);
-		commentViewer.setDocument(new Document(""));
-		setTitle("CVS Version Tree");
 	}
 
 	/**
@@ -291,7 +266,7 @@ public class VersionTreeView extends ViewPart {
 		});
 		Menu menu = menuMgr.createContextMenu(treeView);
 		treeView.setMenu(menu);
-		getSite().registerContextMenu(menuMgr, treeView);
+		//getSite().registerContextMenu(menuMgr, treeView);
 	}
 
 	private void contributeToActionBars() {
@@ -373,10 +348,12 @@ public class VersionTreeView extends ViewPart {
 			public void mouseDoubleClick(MouseEvent e) {
 				//TODO: Forward double clicks on revisions to update detail display
 				System.out.println("Dbl-Clk on Mouse");
-				System.out.println("source: "+e.getSource());
+				System.out.println("source: " + e.getSource());
 			}
-			public void mouseDown(MouseEvent e) {}
-			public void mouseUp(MouseEvent e) {}
+			public void mouseDown(MouseEvent e) {
+			}
+			public void mouseUp(MouseEvent e) {
+			}
 		});
 	}
 	private void showMessage(String message) {
@@ -520,4 +497,21 @@ public class VersionTreeView extends ViewPart {
 	private void refresh() {
 		showVersionTree(file);
 	}
+
+	/**
+	 * Display details of selected log
+	 * @see net.sf.versiontree.ui.LogEntrySelectionListener#logEntrySelected(org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry)
+	 */
+	public void logEntrySelected(ILogEntry log) {
+		currentEntry = log;
+		updateTableData(currentEntry);
+		tableViewer.setInput(tableData);
+		tagViewer.setInput(currentEntry.getTags());
+		if (currentEntry != null)
+			commentViewer.setDocument(new Document(currentEntry.getComment()));
+		else
+			commentViewer.setDocument(new Document(""));
+
+	}
+
 }

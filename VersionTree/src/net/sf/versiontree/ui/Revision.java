@@ -9,6 +9,7 @@ package net.sf.versiontree.ui;
 import net.sf.versiontree.Globals;
 import net.sf.versiontree.data.IRevision;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -39,6 +40,7 @@ public class Revision extends Canvas {
 
 	private Color background;
 	private Color selectedColor;
+	private Color focusColor;
 
 	private Image versionImage;
 
@@ -51,6 +53,8 @@ public class Revision extends Canvas {
 		preferredWidth = 80;
 		background = new Color(null, 255, 255, 255);
 		selectedColor = new Color(null, 230, 230, 255);
+		focusColor = getDisplay().getSystemColor (SWT.COLOR_RED);
+		
 		setBackground(background);
 
 		// add paint listener
@@ -64,6 +68,7 @@ public class Revision extends Canvas {
 			public void widgetDisposed(DisposeEvent e) {
 				background.dispose();
 				selectedColor.dispose();
+				focusColor.dispose();
 				versionImage.dispose();
 			}
 		});

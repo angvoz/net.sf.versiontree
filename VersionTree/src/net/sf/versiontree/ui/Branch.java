@@ -14,6 +14,7 @@ import net.sf.versiontree.data.IBranch;
 import net.sf.versiontree.data.IRevision;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -78,7 +79,9 @@ public class Branch extends Composite {
 	 * @param orientation
 	 * @return
 	 */
-	public Point getRevisionConnectorPoint(IRevision theRevision, int orientation) {
+	public Point getRevisionConnectorPoint(
+		IRevision theRevision,
+		int orientation) {
 		Point branchLocation = this.getLocation();
 		Point connectionPoint;
 		Revision revision = null;
@@ -87,21 +90,27 @@ public class Branch extends Composite {
 		while (iter.hasNext()) {
 			try {
 				Revision element = (Revision) iter.next();
-				if (theRevision.getRevision().equals(element.getRevisionNumber())) {
+				if (theRevision
+					.getRevision()
+					.equals(element.getRevisionNumber())) {
 					revision = element;
 					break;
 				}
-			} catch (ClassCastException e) {}			
+			} catch (ClassCastException e) {
+			}
 		}
-		if (revision == null) throw new IllegalArgumentException("No Revision Widget for given revision data found.");
+		if (revision == null)
+			throw new IllegalArgumentException("No Revision Widget for given revision data found.");
 		// get connection point of revision
 		Point revisionLocation = revision.getLocation();
 		Point revisionPoint = revision.getConnectorPoint(orientation);
-		connectionPoint = new Point(branchLocation.x + revisionLocation.x + revisionPoint.x, 
-										branchLocation.y + revisionLocation.y + revisionPoint.y);
+		connectionPoint =
+			new Point(
+				branchLocation.x + revisionLocation.x + revisionPoint.x,
+				branchLocation.y + revisionLocation.y + revisionPoint.y);
 		return connectionPoint;
 	}
-	
+
 	/**
 	 * Returns the connection point for the branch marker. This is the end point for
 	 * a connector from a revision to a branch.
@@ -114,9 +123,33 @@ public class Branch extends Composite {
 		BranchMarker marker = (BranchMarker) widgets.get(0);
 		Point markerLocation = marker.getLocation();
 		Point markerPoint = marker.getConnectorPoint(orientation);
-		connectionPoint = new Point(branchLocation.x + markerLocation.x + markerPoint.x, 
-										branchLocation.y + markerLocation.y + markerPoint.y);
+		connectionPoint =
+			new Point(
+				branchLocation.x + markerLocation.x + markerPoint.x,
+				branchLocation.y + markerLocation.y + markerPoint.y);
 		return connectionPoint;
+	}
+
+	public void addMouseListenerToRevisions(MouseListener listener) {
+		Iterator iter = widgets.iterator();
+		while (iter.hasNext()) {
+			Object obj = iter.next();
+			if (obj instanceof Revision) {
+				Revision revision = (Revision) obj;
+				revision.addMouseListener(listener);
+			}
+		}
+	}
+
+	public void removeMouseListenerFromRevisions(MouseListener listener) {
+		Iterator iter = widgets.iterator();
+		while (iter.hasNext()) {
+			Object obj = iter.next();
+			if (obj instanceof Revision) {
+				Revision revision = (Revision) obj;
+				revision.removeMouseListener(listener);
+			}
+		}
 	}
 
 }

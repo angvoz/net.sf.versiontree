@@ -15,11 +15,10 @@ import net.sf.versiontree.Globals;
 import net.sf.versiontree.data.IBranch;
 import net.sf.versiontree.data.IRevision;
 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -31,14 +30,20 @@ import org.eclipse.swt.widgets.Control;
  * This class is a composite that displays the branches and revisions as
  * a version tree.
  */
-public class TreeView extends ScrolledComposite implements ISelectionProvider {
+public class TreeView extends ScrolledComposite implements MouseListener {
 
 	private Composite content = null;
 
+	private LogEntrySelectionListener logSelectionListener;
+
 	private int xOffset = 0;
 
-	public TreeView(Composite parent, int style) {
+	public TreeView(
+		Composite parent,
+		LogEntrySelectionListener listener,
+		int style) {
 		super(parent, style);
+		logSelectionListener = listener;
 		initViewer();
 	}
 
@@ -70,6 +75,7 @@ public class TreeView extends ScrolledComposite implements ISelectionProvider {
 		IBranch headBranch =
 			(IBranch) branchesToBeDrawn.remove(IBranch.HEAD_PREFIX);
 		Branch branchWidget = new Branch(headBranch, content, 0);
+		branchWidget.addMouseListenerToRevisions(this);
 		branchWidget.setLocation(xOffset, 5);
 		branchWidget.setSize(
 			branchWidget.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -112,6 +118,7 @@ public class TreeView extends ScrolledComposite implements ISelectionProvider {
 				IBranch branch = (IBranch) bIter.next();
 				Branch branchWidget =
 					new Branch(branch, content, Globals.NORTH_SOUTH);
+				branchWidget.addMouseListenerToRevisions(this);
 				Point sp =
 					parent.getRevisionConnectorPoint(
 						branch.getSource(),
@@ -152,36 +159,18 @@ public class TreeView extends ScrolledComposite implements ISelectionProvider {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		// TODO Auto-generated method stub
+	/* ***************** Mouse Listener Implementation ********************** */
 
+	public void mouseDoubleClick(MouseEvent e) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-	 */
-	public ISelection getSelection() {
-		// TODO Auto-generated method stub
-		return null;
+	public void mouseDown(MouseEvent e) {
+		if (e.getSource() instanceof Revision) {
+			Revision rev = (Revision) e.getSource();
+			logSelectionListener.logEntrySelected(rev.getRevisionData());
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
-	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-		// TODO Auto-generated method stub
-
+	public void mouseUp(MouseEvent e) {
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-	 */
-	public void setSelection(ISelection selection) {
-		// TODO Auto-generated method stub
-
-	}
-
 }
