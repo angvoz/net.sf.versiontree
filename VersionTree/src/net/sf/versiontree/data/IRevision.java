@@ -54,10 +54,11 @@ public interface IRevision extends Comparable {
 	public abstract List getTags();
 	
 	/**  Returns true if this revision has any version tags attached.	 */
-	public boolean hasVersionTags();
+	public abstract boolean hasVersionTags();
 	/**  Returns true if this revision has any branch tags attached.	 */
-	public boolean hasBranchTags();
-	
+	public abstract boolean hasBranchTags();
+	/** Returns the number of branches */
+	public abstract int numBranchTags();
 	
 	/**
 	 * @return
