@@ -320,9 +320,6 @@ public class VersionTreeView
 	public void showVersionTree(IResource resource) {
 		if (resource != null && resource instanceof IFile) {
 			IFile newFile = (IFile) resource;
-			if(this.file != null && newFile.equals(this.file)) {
-				return;
-			}
 			this.file = newFile;
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject(), CVSProviderPlugin.getTypeId());
 			if (teamProvider != null) {
