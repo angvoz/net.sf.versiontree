@@ -111,6 +111,7 @@ public class RevisionTreeFactory {
 
 			String revision = branch.getBranchSourceRevision();
 			RevisionData revisionData = (RevisionData) revisions.get(revision);
+			System.out.println("checking revision "+revision);
 
 			CVSTag[] tags = revisionData.getLogEntry().getTags();
 			if (tags.length > 0) {
@@ -123,14 +124,16 @@ public class RevisionTreeFactory {
 				}
 				// set branch names
 				Iterator tagIter = branchTags.iterator();
+				System.out.println("setting "+branchTags.toString());
 				int branchSuffix = 0;
 				while (tagIter.hasNext()) {
 					branchSuffix += 2;
+					String branchName = (String) tagIter.next();
 					BranchData namedBranch =
 						(BranchData) branches.get(
 							revision + "." + branchSuffix);
-					if (namedBranch.getName() == null)
-						namedBranch.setName((String) tagIter.next());
+					if (namedBranch != null && namedBranch.getName() == null)
+						namedBranch.setName(branchName);
 				}
 			}
 		}
