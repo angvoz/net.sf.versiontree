@@ -49,22 +49,27 @@ public class RevisionData implements IRevision {
 	 * Uses CVSLog to return whether any branches from this revision exist,
 	 * introduced here to avoid adding another level of indirection */
 	public boolean hasBranchTags() {
-		return hasTag(CVSTag.BRANCH);
+		return numTags(CVSTag.BRANCH)>0;
 	}
 	/** @see net.sf.versiontree.data.IRevision#hasVersionTags() */
 	public boolean hasVersionTags() {
-		return hasTag(CVSTag.VERSION);
+		return numTags(CVSTag.VERSION)>0;
+	}
+	public int numBranchTags() {
+		return numTags(CVSTag.BRANCH);
 	}
 	/** @author Andre
-	 * Generalization of all has-X calls, like hasVersions() (==CVSTag.VERSION) */
-	public boolean hasTag(int tagname) {
+	 * Generalization of all has/num-X calls + counts tags of a specific type */
+	private int numTags(int tagname) {
 		CVSTag[] tags = logEntry.getTags();
+		int count = 0;
 		for (int i = 0; i < tags.length; i++) {
 			CVSTag tag = tags[i];
-			if (tag.getType() == tagname) return true;
+			if (tag.getType() == tagname) count++;
 		}
-		return false;
+		return count;
 	}
+	
 
 	/**
 	 * @see net.sf.versiontree.data.IRevision#getBranch()
