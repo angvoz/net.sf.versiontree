@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Control;
 public class TreeView
 	extends ScrolledComposite
 	implements MouseListener, IDrawMethod {
-		
+
 	/**
 	 * The display configuration for this view 
 	 */
@@ -111,6 +111,7 @@ public class TreeView
 	 */
 	public void clear() {
 		selectionManager.clearSelection();
+		currentRevivion = null;
 		removeAllWidgets();
 	}
 
@@ -250,7 +251,8 @@ public class TreeView
 		size.y += BORDER;
 		content.setSize(size);
 		// scroll to current revision
-		scrollToRevision(currentRevivion);
+		if (currentRevivion != null)
+			scrollToRevision(currentRevivion);
 	}
 
 	/**
