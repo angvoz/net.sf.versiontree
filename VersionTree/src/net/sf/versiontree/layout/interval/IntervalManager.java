@@ -54,10 +54,11 @@ public class IntervalManager {
 	 */
 	public void set(int columnnr, Point p, Object o){
 		IntegerInterval iv;
-		
-		if (columns.get(columnnr) == null ) columns.add(columnnr, iv = new IntegerInterval());
-		else iv = (IntegerInterval)columns.get(columnnr);
-		
+		try {
+			iv = (IntegerInterval)columns.get(columnnr); 
+		} catch (ArrayIndexOutOfBoundsException ae){
+			columns.add(columnnr, iv = new IntegerInterval());
+		}
 		iv.setInterval(p, o);	
 	}
 	
