@@ -3,7 +3,7 @@
 <plugin
    id="net.sf.versiontree"
    name="CVS VersionTree Plug-in"
-   version="1.1.0"
+   version="1.2.0"
    provider-name="versiontree.sf.net"
    class="net.sf.versiontree.VersionTreePlugin">
 
@@ -34,11 +34,12 @@
             id="org.eclipse.team.ccvs.ui">
       </category>
       <view
-            class="net.sf.versiontree.views.VersionTreeView"
+            allowMultiple="false"
             icon="icons/tree.gif"
+            class="net.sf.versiontree.views.VersionTreeView"
             category="org.eclipse.team.ccvs.ui"
+            fastViewWidthRatio="0.3"
             name="CVS Version Tree"
-            fastViewWidthRatio="0.2"
             id="net.sf.versiontree.views.VersionTreeView">
       </view>
    </extension>
@@ -52,6 +53,13 @@
                relationship="stack"
                id="net.sf.versiontree.views.TreeView">
          </view>
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.eclipse.team.cvs.ui.cvsPerspective">
+         <view
+               ratio="1.0"
+               relationship="stack"
+               relative="org.eclipse.team.ccvs.ui.HistoryView"
+               id="net.sf.versiontree.views.TreeView"/>
       </perspectiveExtension>
    </extension>
    <extension
