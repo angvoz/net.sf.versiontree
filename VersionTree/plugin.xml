@@ -8,7 +8,7 @@
    class="net.sf.versiontree.VersionTreePlugin">
 
    <runtime>
-      <library name="versiontree.jar">
+      <library name="VersionTree.jar">
          <export name="*"/>
       </library>
    </runtime>
