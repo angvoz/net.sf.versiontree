@@ -16,9 +16,12 @@
  */
 package net.sf.versiontree.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
 /**
@@ -67,8 +70,6 @@ public class RevisionTreeFactory {
 			if (branch == null) {
 				branch = new BranchData();
 				branch.setBranchPrefix(branchPrefix);
-				//TODO: set branch name from sticky tag
-				branch.setName(branchPrefix);
 				branches.put(branchPrefix, branch);
 			}
 			// add revision to this branch
@@ -79,6 +80,9 @@ public class RevisionTreeFactory {
 				currentRevision.setState(IRevision.STATE_SELECTED);
 
 		}
+
+		// match branch names to branches
+		processTags(branches, revisions);
 
 		// now return the branches in an array
 		IBranch[] branchArray = new IBranch[branches.size()];
@@ -92,6 +96,44 @@ public class RevisionTreeFactory {
 			branchArray[i] = (IBranch) branch;
 		}
 		return branchArray;
+	}
+
+	/**
+	 * @param branches
+	 */
+	private static void processTags(HashMap branches, HashMap revisions) {
+		Iterator itr = branches.values().iterator();
+		while (itr.hasNext()) {
+			BranchData branch = (BranchData) itr.next();
+			// skip branch if the name is already set
+			if (branch.getName() != null)
+				continue;
+
+			String revision = branch.getBranchSourceRevision();
+			RevisionData revisionData = (RevisionData) revisions.get(revision);
+
+			CVSTag[] tags = revisionData.getLogEntry().getTags();
+			if (tags.length > 0) {
+				// get branch names
+				List branchTags = new ArrayList(tags.length);
+				for (int j = 0; j < tags.length; j++) {
+					if (tags[j].getType() == CVSTag.BRANCH) {
+						branchTags.add(0, tags[j].getName());
+					}
+				}
+				// set branch names
+				Iterator tagIter = branchTags.iterator();
+				int branchSuffix = 0;
+				while (tagIter.hasNext()) {
+					branchSuffix += 2;
+					BranchData namedBranch =
+						(BranchData) branches.get(
+							revision + "." + branchSuffix);
+					if (namedBranch.getName() == null)
+						namedBranch.setName((String) tagIter.next());
+				}
+			}
+		}
 	}
 
 }

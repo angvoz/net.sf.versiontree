@@ -32,7 +32,7 @@ public class BranchData implements IBranch {
 	/**
 	 * The name of this branch.
 	 */
-	private String name = "";
+	private String name = null;
 
 	/**
 	 * The revision number prefix of this branch (e.g. "1.2.1")
@@ -103,9 +103,9 @@ public class BranchData implements IBranch {
 	}
 
 	public String getBranchSourceRevision() {
-		if (branchPrefix == null) return null;
 		// return empty String if this is the HEAD branch
-		if (getName().equals(IBranch.HEAD_NAME)) return "";
+		if (getName() != null && getName().equals(IBranch.HEAD_NAME)) return "";
+		if (branchPrefix == null) return null;
 		return branchPrefix.substring(0,branchPrefix.lastIndexOf("."));
 	}
 	
