@@ -17,6 +17,8 @@
 package net.sf.versiontree.views;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
 import net.sf.versiontree.data.IRevision;
@@ -233,6 +235,7 @@ public class VersionTreeView
 	 * @param currentEntry
 	 */
 	private void updateTableData(ILogEntry currentEntry) {
+		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 		if (currentEntry == null) {
 			tableData[0][1] = "";
 			tableData[1][1] = "";
@@ -240,7 +243,7 @@ public class VersionTreeView
 
 		} else {
 			tableData[0][1] = currentEntry.getRevision();
-			tableData[1][1] = currentEntry.getDate().toString();
+			tableData[1][1] = dateFormat.format(currentEntry.getDate());
 			tableData[2][1] = currentEntry.getAuthor();
 		}
 	}
