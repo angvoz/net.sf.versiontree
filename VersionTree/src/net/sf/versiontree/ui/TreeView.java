@@ -6,6 +6,9 @@ package net.sf.versiontree.ui;
 
 import net.sf.versiontree.data.IBranch;
 
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Composite;
@@ -17,11 +20,11 @@ import org.eclipse.swt.widgets.Control;
  * This class is a composite that displays the branches and revisions as
  * a version tree.
  */
-public class TreeViewer extends ScrolledComposite {
+public class TreeView extends ScrolledComposite implements ISelectionProvider {
 
 	private Composite content = null;
 
-	public TreeViewer(Composite parent, int style) {
+	public TreeView(Composite parent, int style) {
 		super(parent, style);
 		initViewer();
 	}
@@ -69,6 +72,38 @@ public class TreeViewer extends ScrolledComposite {
 			control.dispose();
 		}
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
+	 */
+	public ISelection getSelection() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
+	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
+	 */
+	public void setSelection(ISelection selection) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

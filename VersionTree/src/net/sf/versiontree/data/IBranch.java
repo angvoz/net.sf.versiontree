@@ -17,6 +17,7 @@ import java.util.List;
 public interface IBranch {
 	/**
 	 * Returns an iterator over the revisions contained in this branch.
+	 * All revisions are of type ILogEntry
 	 * @return
 	 */
 	public abstract List getRevisions();

@@ -18,7 +18,7 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
  * just forward to the log entry. 
  */
 public class RevisionData implements IRevision {
-	
+
 	private int state = 0;
 
 	private IRevision predecessor = null;
@@ -46,7 +46,7 @@ public class RevisionData implements IRevision {
 	public String getDate() {
 		return logEntry.getDate().toString();
 	}
-	
+
 	public String getAuthor() {
 		return logEntry.getAuthor();
 	}
@@ -91,9 +91,7 @@ public class RevisionData implements IRevision {
 		ArrayList tagList = new ArrayList(logEntry.getTags().length);
 		CVSTag[] tags = logEntry.getTags();
 		for (int i = 0; i < tags.length; i++) {
-			if (tags[i].getType() == CVSTag.VERSION) {
-				tagList.add(tags[i].getName());
-			}
+			tagList.add(tags[i].getName());
 		}
 		return tagList;
 	}
@@ -165,6 +163,13 @@ public class RevisionData implements IRevision {
 	 */
 	public void setState(int state) {
 		this.state = state;
+	}
+
+	/**
+	 * @see net.sf.versiontree.data.IRevision#getLogEntry()
+	 */
+	public ILogEntry getLogEntry() {
+		return logEntry;
 	}
 
 }

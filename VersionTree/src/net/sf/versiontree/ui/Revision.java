@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
 /**
  * @author Jan
@@ -28,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 public class Revision extends Canvas {
 
 	private IRevision revisionData;
+	private ILogEntry logEntry;
 
 	int preferredWidth;
 	int preferredHeight;
@@ -66,17 +68,17 @@ public class Revision extends Canvas {
 		GC gc = e.gc;
 		if ((revisionData.getState() & IRevision.STATE_SELECTED) > 0)
 			setBackground(selectedColor);
-		
+
 		int yOffset = 3;
-		Point extent = gc.stringExtent(revisionData.getRevision());
+		Point extent = gc.stringExtent(logEntry.getRevision());
 		gc.drawString(
-			revisionData.getRevision(),
+			logEntry.getRevision(),
 			(preferredWidth + 2) / 2 - (extent.x / 2),
 			yOffset);
 		yOffset += 2 + extent.y;
-		extent = gc.stringExtent(revisionData.getAuthor());
+		extent = gc.stringExtent(logEntry.getAuthor());
 		gc.drawString(
-			revisionData.getAuthor(),
+			logEntry.getAuthor(),
 			(preferredWidth + 2) / 2 - (extent.x / 2),
 			yOffset);
 
@@ -84,15 +86,7 @@ public class Revision extends Canvas {
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
-		/*int width = 0, height = 0;
-		if (revisionNumber != null) {
-			GC gc = new GC(this);
-			Point extent = gc.stringExtent(revisionNumber);
-			gc.dispose();
-			width += extent.x;
-			height = Math.max(height, extent.y);
-		}
-		return new Point(width + 2, height + 2);*/
+		// TODO: compute the preferred size
 		return new Point(preferredWidth + 2, preferredHeight + 2);
 	}
 
@@ -100,7 +94,7 @@ public class Revision extends Canvas {
 	 * @return
 	 */
 	public String getRevisionNumber() {
-		return revisionData.getRevision();
+		return logEntry.getRevision();
 	}
 
 	/**
@@ -136,8 +130,8 @@ public class Revision extends Canvas {
 	/**
 	 * @return
 	 */
-	public IRevision getRevisionData() {
-		return revisionData;
+	public ILogEntry getRevisionData() {
+		return logEntry;
 	}
 
 	/**
@@ -145,8 +139,7 @@ public class Revision extends Canvas {
 	 */
 	public void setRevisionData(IRevision data) {
 		revisionData = data;
-		this.setToolTipText(
-			"Date: " + data.getDate() + "\nComment: " + data.getComment());
+		logEntry = revisionData.getLogEntry();
 		redraw();
 	}
 

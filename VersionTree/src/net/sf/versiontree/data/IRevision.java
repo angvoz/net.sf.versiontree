@@ -8,6 +8,8 @@ package net.sf.versiontree.data;
 
 import java.util.List;
 
+import org.eclipse.team.internal.ccvs.core.ILogEntry;
+
 /**
  * @author Jan
  *
@@ -61,4 +63,8 @@ public interface IRevision extends Comparable {
 	public abstract int getState();
 	
 	public abstract void setState(int state);
+	/**
+	 * @return
+	 */
+	public abstract ILogEntry getLogEntry();
 }

@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
 /**
  * @author Jan
@@ -78,7 +79,7 @@ public class Branch extends Composite {
 	 * @param orientation
 	 * @return
 	 */
-	public Point getRevisionConnectorPoint(IRevision revisionData, int orientation) {
+	public Point getRevisionConnectorPoint(ILogEntry logEntry, int orientation) {
 		Point branchLocation = this.getLocation();
 		Point connectionPoint;
 		Revision revision = null;
@@ -87,7 +88,7 @@ public class Branch extends Composite {
 		while (iter.hasNext()) {
 			try {
 				Revision element = (Revision) iter.next();
-				if (revisionData == element.getRevisionData()) {
+				if (logEntry == element.getRevisionData()) {
 					revision = element;
 					break;
 				}
