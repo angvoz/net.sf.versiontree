@@ -17,8 +17,11 @@
 package net.sf.versiontree.ui;
 
 import net.sf.versiontree.Globals;
+import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.IRevision;
+import net.sf.versiontree.ui.preferences.VersionTreePreferencePage;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -49,8 +52,8 @@ public class Revision extends Canvas {
 
 	private int state;
 
-	int preferredWidth;
-	int preferredHeight;
+	private int preferredWidth;
+	private int preferredHeight;
 
 	private Color background;
 	private Color selectedColor;
@@ -63,8 +66,9 @@ public class Revision extends Canvas {
 
 		initializeImages();
 
-		preferredHeight = 35;
-		preferredWidth = 80;
+		IPreferenceStore prefStore = VersionTreePlugin.getDefault().getPreferenceStore();
+		preferredHeight = prefStore.getInt(VersionTreePreferencePage.P_REVISION_HEIGHT);
+		preferredWidth = prefStore.getInt(VersionTreePreferencePage.P_REVISION_WIDTH);
 		background = new Color(null, 255, 255, 255);
 		selectedColor = new Color(null, 230, 230, 255);
 		focusColor = getDisplay().getSystemColor(SWT.COLOR_RED);
@@ -158,22 +162,6 @@ public class Revision extends Canvas {
 	 */
 	public int getPreferredWidth() {
 		return preferredWidth;
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setPreferredHeight(int i) {
-		preferredHeight = i;
-		redraw();
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setPreferredWidth(int i) {
-		preferredWidth = i;
-		redraw();
 	}
 
 	/**
