@@ -30,6 +30,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 
 /**
  * @author Jan
@@ -94,13 +95,19 @@ public class TreeView
 		initViewer();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
+	 */
+	public void setMenu(Menu menu) {
+		content.setMenu(menu);
+		super.setMenu(menu);
+	}
 	/**
 	 * Initializes the TreeView widget.
 	 */
 	public void initViewer() {
 		content = new Composite(this, SWT.NONE);
 		content.setLayout(null);
-		content.setMenu(this.getMenu());
 		this.setContent(content);
 		this.getVerticalBar().setIncrement(width);
 		this.getHorizontalBar().setIncrement(height);
@@ -163,6 +170,7 @@ public class TreeView
 		Connector connect = new Connector(content, 0, mode);
 		connect.setLocation(position);
 		connect.setSize(size);
+		connect.setMenu(this.getMenu());
 	}
 
 	/**
