@@ -56,7 +56,7 @@
                value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
          </filter>
          <action
-               label="Show Version Tree"
+               label="Show in Version Tree"
                tooltip="Displays the version tree for the selected resource."
                class="net.sf.versiontree.popup.actions.ShowResourceInVersionTreeAction"
                menubarPath="team.main/group2"
