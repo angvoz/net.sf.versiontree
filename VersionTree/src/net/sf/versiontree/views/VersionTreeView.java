@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
@@ -144,6 +145,8 @@ public class VersionTreeView
 	 * The tree holding the revision structure. 
 	 */
 	private BranchTree branchTree;
+
+	private LogEntryFetcherJob getLogEntries = new LogEntryFetcherJob("Fetch revision history from CVS...");
 
 	/**
 	 * Content provider for the table in the detail view 
@@ -297,7 +300,9 @@ public class VersionTreeView
 	}
 
 	private void getLogEntries(final ICVSRemoteFile remoteFile) {
-		LogEntryFetcherJob getLogEntries = new LogEntryFetcherJob("Aggi");
+		if (getLogEntries.getState() != Job.NONE) {
+			getLogEntries.cancel();
+		}
 		getLogEntries.setRemoteFile(remoteFile);
 		getLogEntries.addJobChangeListener(this);
 		getLogEntries.schedule();
@@ -789,10 +794,10 @@ public class VersionTreeView
 
 	public void done(IJobChangeEvent event) {
 		String currentRevision = ""; //$NON-NLS-1$
-		LogEntryFetcherJob job = (LogEntryFetcherJob) event.getJob();
+		LogEntryFetcherJob logEntriesJob = (LogEntryFetcherJob) event.getJob();
 		try {
-			currentRevision = job.getRemoteFile().getRevision();
-			ILogEntry[] logEntries = job.getLogEntries();
+			currentRevision = logEntriesJob.getRemoteFile().getRevision();
+			ILogEntry[] logEntries = logEntriesJob.getLogEntries();
 			// set current revision
 			for (int i = 0; i < logEntries.length; i++) {
 				ILogEntry entry = logEntries[i];
@@ -801,7 +806,7 @@ public class VersionTreeView
 			}
 
 			// Create and show tree
-			branchTree = new BranchTree(logEntries, job.getRemoteFile()
+			branchTree = new BranchTree(logEntries, logEntriesJob.getRemoteFile()
 					.getRevision());
 			renderVersionTree(branchTree);
 
