@@ -192,15 +192,17 @@ public class VersionTreeView
 									.getRemoteResourceFor(
 								file);
 						final ILogEntry[] logs = getLogEntries(remoteFile);
-						
-						
-						IBranch[] ibr = RevisionTreeFactory.createRevisionTree(
-							logs, remoteFile.getRevision());
-						
+
+						IBranch[] revisionTree =
+							RevisionTreeFactory.createRevisionTree(
+								logs,
+								remoteFile.getRevision());
+
 						/* TODO connect */
-						//GraphLayout gr = new GraphLayout(ibr, treeView.content, treeView);
-						treeView.setInput(ibr);
-						
+						//GraphLayout gr = new GraphLayout(revisionTree, treeView.content, treeView);
+						treeView.setInput(revisionTree);
+
+						// update the table view
 						updateTableData(currentEntry);
 						tableViewer.setInput(tableData);
 						tagViewer.setInput(currentEntry.getTags());
@@ -385,7 +387,7 @@ public class VersionTreeView
 
 	private void hookDoubleClickAction() {
 	}
-	
+
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
 			treeView.getShell(),
@@ -560,12 +562,12 @@ public class VersionTreeView
 		Iterator iter = selection.iterator();
 		ICVSRemoteFile first = ((ILogEntry) iter.next()).getRemoteFile();
 		ICVSRemoteFile second = ((ILogEntry) iter.next()).getRemoteFile();
-		
+
 		ResourceEditionNode left = new ResourceEditionNode(first);
 		ResourceEditionNode right = new ResourceEditionNode(second);
-		
+
 		CompareEditorInput input = new CVSCompareEditorInput(left, right);
-		
+
 		CompareUI.openCompareEditor(input);
 	}
 

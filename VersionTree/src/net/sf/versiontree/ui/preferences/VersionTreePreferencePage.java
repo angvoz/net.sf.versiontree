@@ -33,34 +33,33 @@ public class VersionTreePreferencePage
 	public VersionTreePreferencePage() {
 		super(GRID);
 		setPreferenceStore(VersionTreePlugin.getDefault().getPreferenceStore());
-		setDescription("Version Tree Plugin");
+		setDescription("Version Tree Plugin"); //$NON-NLS-1$
 		initializeDefaults();
 	}
-/**	
- * Sets the default values of the preferences.
- */
+	/**	
+	 * Sets the default values of the preferences.
+	 */
 	private void initializeDefaults() {
 		IPreferenceStore store = getPreferenceStore();
-				
-	}
-	
-/**
- * Creates the field editors. Field editors are abstractions of
- * the common GUI blocks needed to manipulate various types
- * of preferences. Each field editor knows how to save and
- * restore itself.
- */
 
-	public void createFieldEditors() {
-		addField(new IntegerFieldEditor(VersionTreePlugin.P_MINIMUM_BRANCH_WIDTH,"Minimum Branch Width",getFieldEditorParent()));
-		addField(new IntegerFieldEditor(VersionTreePlugin.P_MINIMUM_BRANCH_HEIGHT,"Minimum Branch Height",getFieldEditorParent()));
-		addField(new IntegerFieldEditor(VersionTreePlugin.P_MINIMUM_REVISION_WIDTH,"Minimum Revision Width",getFieldEditorParent()));
-		addField(new IntegerFieldEditor(VersionTreePlugin.P_MINIMUM_REVISION_HEIGHT,"Minimum Revision Height",getFieldEditorParent()));
-		addField(new IntegerFieldEditor(VersionTreePlugin.P_REVISION_CONNECTIONLENGTH,"Revision Connection Length",getFieldEditorParent()));
-		addField(new ColorFieldEditor(VersionTreePlugin.P_REVISION_BACKGROUNDCOLOR, "Revision Color", getFieldEditorParent()));
-		addField(new ColorFieldEditor(VersionTreePlugin.P_BRANCH_BACKGROUNDCOLOR, "Branch Color", getFieldEditorParent()));
 	}
-	
+
+	/**
+	 * Creates the field editors. Field editors are abstractions of
+	 * the common GUI blocks needed to manipulate various types
+	 * of preferences. Each field editor knows how to save and
+	 * restore itself.
+	 */
+	public void createFieldEditors() {
+		addField(new IntegerFieldEditor(VersionTreePlugin.P_MINIMUM_BRANCH_WIDTH, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Minimum_Branch_Width"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new IntegerFieldEditor(VersionTreePlugin.P_MINIMUM_BRANCH_HEIGHT, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Minimum_Branch_Height"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new IntegerFieldEditor(VersionTreePlugin.P_MINIMUM_REVISION_WIDTH, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Minimum_Revision_Width"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new IntegerFieldEditor(VersionTreePlugin.P_MINIMUM_REVISION_HEIGHT, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Minimum_Revision_Height"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new IntegerFieldEditor(VersionTreePlugin.P_REVISION_CONNECTIONLENGTH, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Revision_Connection_Length"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new ColorFieldEditor(VersionTreePlugin.P_REVISION_BACKGROUNDCOLOR, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Revision_Color"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new ColorFieldEditor(VersionTreePlugin.P_BRANCH_BACKGROUNDCOLOR, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Branch_Color"), getFieldEditorParent())); //$NON-NLS-1$
+	}
+
 	public void init(IWorkbench workbench) {
 	}
 }

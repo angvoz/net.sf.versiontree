@@ -21,7 +21,6 @@ import java.util.List;
 /**
  * @author Jan
  *
- * TODO Tell jan to change his eclipse template :) a.
  */
 public interface IBranch {
 	

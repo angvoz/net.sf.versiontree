@@ -198,10 +198,10 @@ public class DetailTableProvider {
 		TableLayout layout,
 		TableViewer viewer) {
 		SelectionListener headerListener = getColumnListener(viewer);
-		// key
+		// propertie
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText("Key");
+		col.setText("Property");
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(45, 35, true));
 

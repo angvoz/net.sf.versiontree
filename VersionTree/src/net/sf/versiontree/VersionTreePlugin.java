@@ -45,6 +45,7 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 				ResourceBundle.getBundle(
 					"net.sf.versiontree.VersionTreePluginResources");
 		} catch (MissingResourceException x) {
+			System.out.println("Resource bundle net.sf.versiontree.VersionTreePluginResources not found.");
 			resourceBundle = null;
 		}
 	}

@@ -27,11 +27,18 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
 /**
  * @author Jan
  *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * Factory Class that creates an internal revision tree representation of
+ * an ILogEntry array. 
  */
 public class RevisionTreeFactory {
 
+	/**
+	 * Creates an array of IBranch from an array of ILogEntry. An IBranch contains
+	 * the revisions. All objects are linked to each other.
+	 * @param logs
+	 * @param selectedRevision
+	 * @return
+	 */
 	public static IBranch[] createRevisionTree(
 		ILogEntry[] logs,
 		String selectedRevision) {
@@ -81,8 +88,7 @@ public class RevisionTreeFactory {
 
 		}
 
-		// match branch names to branches
-		processTags(branches, revisions);
+		matchBranchNamesWithBranches(branches, revisions);
 
 		// now return the branches in an array
 		IBranch[] branchArray = new IBranch[branches.size()];
@@ -99,9 +105,11 @@ public class RevisionTreeFactory {
 	}
 
 	/**
+	 * This function sets the branch name to the correct BranchData object.
 	 * @param branches
+	 * @param revisions
 	 */
-	private static void processTags(HashMap branches, HashMap revisions) {
+	private static void matchBranchNamesWithBranches(HashMap branches, HashMap revisions) {
 		Iterator itr = branches.values().iterator();
 		while (itr.hasNext()) {
 			BranchData branch = (BranchData) itr.next();
