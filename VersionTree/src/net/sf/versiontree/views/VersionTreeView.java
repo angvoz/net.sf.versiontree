@@ -16,6 +16,7 @@ import net.sf.versiontree.data.RevisionData;
 import net.sf.versiontree.ui.Branch;
 import net.sf.versiontree.ui.RevisionToBranchConnector;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -27,6 +28,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -50,9 +52,11 @@ import org.eclipse.ui.part.ViewPart;
  */
 
 public class VersionTreeView extends ViewPart {
-	private
 
-	/*ivate TableViewer viewer;
+	public static final String VIEW_ID =
+		"net.sf.versiontree.views.VersionTreeView";
+
+	/*private TableViewer viewer;
 	private Action action1;
 	private Action action2;
 	private Action doubleClickAction;*/
@@ -154,6 +158,64 @@ public class VersionTreeView extends ViewPart {
 		conn3.setBounds(bounds);
 	}
 
+	/**
+		 * Shows the version tree for the given IResource in the view.
+		 * 
+		 * Only files are supported for now.
+		 */
+	public void showVersionTree(IResource resource) {
+		/*if (resource instanceof IFile) {
+			IFile file = (IFile) resource;
+			this.file = file;
+			RepositoryProvider teamProvider =
+				RepositoryProvider.getProvider(
+					file.getProject(),
+					CVSProviderPlugin.getTypeId());
+			if (teamProvider != null) {
+				this.provider = (CVSTeamProvider) teamProvider;
+				try {
+					// for a file this will return the base
+					ICVSRemoteFile remoteFile =
+						(ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(
+							file);
+					historyTableProvider.setFile(remoteFile);
+					tableViewer.setInput(remoteFile);
+					setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+				} catch (TeamException e) {
+					CVSUIPlugin.openError(
+						getViewSite().getShell(),
+						null,
+						null,
+						e);
+				}
+			}
+			return;
+		}
+		this.file = null;
+		tableViewer.setInput(null);*/
+		setTitle("Gammel es geht mit IResource!");
+	}
+
+	/**
+	 * Shows the version tree for the given ICVSRemoteFile in the view.
+	 */
+	public void showVersionTree(ICVSRemoteFile remoteFile) {
+		/*try {
+			if (remoteFile == null) {
+				tableViewer.setInput(null);
+				setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+				return;
+			}
+			this.file = null;
+			historyTableProvider.setFile(remoteFile);
+			tableViewer.setInput(remoteFile);
+			setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+		} catch (CVSException e) {
+			CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
+		}*/
+		setTitle("Gammel es geht mit ICVSRemoteFile!");
+	}
+
 	private void hookContextMenu() {
 		/*MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
@@ -202,7 +264,7 @@ public class VersionTreeView extends ViewPart {
 		action1.setImageDescriptor(
 			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
 				ISharedImages.IMG_OBJS_INFO_TSK));
-
+		
 		action2 = new Action() {
 			public void run() {
 				showMessage("Action 2 executed");

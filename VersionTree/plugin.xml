@@ -14,6 +14,8 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.team.cvs.core"/>
       <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.team.cvs.ui"/>
+      <import plugin="org.eclipse.team.ui"/>
    </requires>
 
 
@@ -48,7 +50,7 @@
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             adaptable="true"
-            id="net.sf.versiontree.ui.showVersionTree">
+            id="net.sf.versiontree.popup.actions.ShowResourceInVersionTreeAction">
          <filter
                name="projectPersistentProperty"
                value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
@@ -59,7 +61,7 @@
                class="net.sf.versiontree.popup.actions.ShowResourceInVersionTreeAction"
                menubarPath="team.main/group2"
                enablesFor="1"
-               id="net.sf.versiontree.popup.actions.showVersionTree">
+               id="net.sf.versiontree.popup.actions.ShowResourceInVersionTreeAction">
          </action>
       </objectContribution>
    </extension>

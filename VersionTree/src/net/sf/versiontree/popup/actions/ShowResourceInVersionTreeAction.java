@@ -10,20 +10,53 @@
  *******************************************************************************/
 package net.sf.versiontree.popup.actions;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.ui.IWorkbenchPart;
 
-public class ShowResourceInVersionTreeAction implements IObjectActionDelegate {
+public class ShowResourceInVersionTreeAction extends CVSAction {
 
 	/**
-	 * Constructor for Action1.
+	 * Returns the selected remote files
 	 */
-	public ShowResourceInVersionTreeAction() {
-		super();
+	protected ICVSRemoteFile[] getSelectedRemoteFiles() {
+		ArrayList resources = null;
+		if (!selection.isEmpty()) {
+			resources = new ArrayList();
+			Iterator elements = ((IStructuredSelection) selection).iterator();
+			while (elements.hasNext()) {
+				Object next = elements.next();
+				if (next instanceof ICVSRemoteFile) {
+					resources.add(next);
+					continue;
+				}
+				if (next instanceof IAdaptable) {
+					IAdaptable a = (IAdaptable) next;
+					Object adapter = a.getAdapter(ICVSRemoteFile.class);
+					if (adapter instanceof ICVSRemoteFile) {
+						resources.add(adapter);
+						continue;
+					}
+				}
+			}
+		}
+		if (resources != null && !resources.isEmpty()) {
+			ICVSRemoteFile[] result = new ICVSRemoteFile[resources.size()];
+			resources.toArray(result);
+			return result;
+		}
+		return new ICVSRemoteFile[0];
 	}
 
 	/**
@@ -32,10 +65,24 @@ public class ShowResourceInVersionTreeAction implements IObjectActionDelegate {
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
-	/**
-	 * @see IActionDelegate#run(IAction)
+	/*
+	 * @see CVSAction#executeIAction)
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action)
+		throws InterruptedException, InvocationTargetException {
+		// copy paste from ShowInHistoryAction
+		/*run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor)
+				throws InvocationTargetException {
+				ICVSRemoteFile[] files = getSelectedRemoteFiles();
+				VersionTreeView view =
+					(VersionTreeView) showView(VersionTreeView.VIEW_ID);
+				if (view != null) {
+					view.showVersionTree(files[0]);
+				}
+			}
+		}, false
+		, PROGRESS_BUSYCURSOR);*/
 		Shell shell = new Shell();
 		MessageDialog.openInformation(
 			shell,
@@ -47,6 +94,14 @@ public class ShowResourceInVersionTreeAction implements IObjectActionDelegate {
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+	}
+
+	/*
+	 * @see TeamAction#isEnabled()
+	 */
+	protected boolean isEnabled() throws TeamException {
+		ICVSRemoteFile[] resources = getSelectedRemoteFiles();
+		return resources.length == 1;
 	}
 
 }
