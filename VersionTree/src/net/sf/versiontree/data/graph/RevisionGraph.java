@@ -39,7 +39,8 @@ public class RevisionGraph {
 	
 	public RevisionGraph (IBranch[] branches, RecursiveLoopCmdAggregator cmdAggregat) {
 		this.cmdAggregat = cmdAggregat;
-		
+		/* TODO catch error within the progress dialog *if* this is not invalid state
+		 * in cvs after all */
 		if (branches.length == 0) throw new NullPointerException("No data present");
 		
 		
@@ -48,13 +49,19 @@ public class RevisionGraph {
 		sourceTargetLinks = new HashMap();
 		for (int i = 0; i < branches.length ; i++) {	
 			IBranch b = branches[i];
-			if (! sourceTargetLinks.containsKey( b.getSource() ) ) {
-				/* first branch for this revision */
-				LinkedList list = new LinkedList();
-				sourceTargetLinks.put(b.getSource(), list );
+			/* does it have a source revision number (if not it is the HEAD branch)
+			 *  and if yes is there a list for this key for this revision */
+			if (b.getSource() == null) rgHead = b;
+			else {
+				if (! sourceTargetLinks.containsKey( b.getSource().getRevision() ) ) {
+					/* first branch for this revision, the list with this key will	
+				 	* contain all branches for a specific revision */
+					LinkedList list = new LinkedList();
+					sourceTargetLinks.put( b.getSource().getRevision(), list );
+				}
+				/* add the branch to the list of branches for the source revision */
+				((LinkedList)sourceTargetLinks.get( b.getSource().getRevision() )).add( b );
 			}
-			/* add branch */
-			((LinkedList)sourceTargetLinks.get( b.getSource() )).add( b );
 		}
 		/* if we have no HEAD branch we don't know where to start */
 		if (rgHead == null) throw new NullPointerException("No HEAD branch present"); 
@@ -71,24 +78,27 @@ public class RevisionGraph {
 	private void walk(IBranch currentBranch ){
 		
 		cmdAggregat.executePreLoop(currentBranch);
-		
-		Iterator rIter = currentBranch.getRevisions().iterator();
-		while (rIter.hasNext()) {
-			IRevision rev = (IRevision) rIter.next();
-			
-			cmdAggregat.executePreRecursion(rev);
-			if ( rev.hasBranchTags() )
-				{
-					LinkedList list = (LinkedList) sourceTargetLinks.get( rev.getRevision() );
-					if (list == null || list.size() == 0 ) break;
-					Iterator lIter = list.iterator();
-					
-					while (lIter.hasNext()) {
-						IBranch branch = (IBranch) lIter.next();
-						walk(branch);
+		// flase iff no Revisions but branched, true else
+		if (currentBranch.getRevisions() != null) {	
+			// for all revisions do...
+			Iterator rIter = currentBranch.getRevisions().iterator();
+			while (rIter.hasNext()) {
+				IRevision rev = (IRevision) rIter.next();		
+				cmdAggregat.executePreRecursion(rev);
+				// for all branches of a revision do...
+				if ( rev.hasBranchTags() )
+					{
+						LinkedList list = (LinkedList) sourceTargetLinks.get( rev.getRevision() );
+						if (list == null || list.size() == 0 ) break;
+						Iterator lIter = list.iterator();
+						
+						while (lIter.hasNext()) {
+							IBranch branch = (IBranch) lIter.next();
+							walk(branch);
+						}
 					}
-				}
-			cmdAggregat.executePostRecursion(rev);
+				cmdAggregat.executePostRecursion(rev);
+			}
 		}
 		cmdAggregat.executePostLoop(currentBranch);
 	}

@@ -51,7 +51,7 @@ public class LayoutAlgoBranchCmd implements ICommand {
 		/* TODO 0 wrong here, is it? */
 		
 		/* collision check */
-		position.x = strategy.algorithm(position, 0, ivManager).x;
+		position.x += strategy.algorithm(position, 0, ivManager).x;
 		/* allocate new interval */
 		ivManager.set(position.x,
 			new Point(position.y, position.y +branch.getHeight() ),

@@ -47,8 +47,9 @@ public class LayoutAlgoRevisionCmd implements ICommand {
 		
 		position.y++;
 		
+		// TODO debuggen
 		/* collision check using all branches */
-		position.y = strategy.algorithm(position, rev.numBranchTags(), ivManager).y;
+		position.y += strategy.algorithm(position, rev.numBranchTags(), ivManager).y;
 		/* allocate new interval */
 		ivManager.set(position.x,
 			new Point(position.y, position.y ), // revisions always have size 1
