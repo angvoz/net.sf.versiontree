@@ -27,9 +27,8 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * @author Jan
- *
- * Custom made widget that represents a branch in the revision
- * graph.
+ * 
+ * Custom made widget that represents a branch in the revision graph.
  */
 public class Branch extends Canvas {
 
@@ -45,8 +44,11 @@ public class Branch extends Canvas {
 
 	/**
 	 * Creates a widget representing a branch.
-	 * @param arg0 the parent Component
-	 * @param arg1 style
+	 * 
+	 * @param arg0
+	 *            the parent Component
+	 * @param arg1
+	 *            style
 	 */
 	public Branch(Composite parent, int style) {
 		super(parent, style);
@@ -86,7 +88,9 @@ public class Branch extends Canvas {
 
 	/**
 	 * Paints the control.
-	 * @param e Paint Event
+	 * 
+	 * @param e
+	 *            Paint Event
 	 */
 	protected void paintControl(PaintEvent e) {
 		GC gc = e.gc;
@@ -116,8 +120,9 @@ public class Branch extends Canvas {
 	}
 
 	/**
-	 * Sets the given branch data. Also sets the tooltip and
-	 * triggers a redraw().
+	 * Sets the given branch data. Also sets the tooltip and triggers a
+	 * redraw().
+	 * 
 	 * @param branchData
 	 */
 	public void setBranchData(IBranch branchData) {
@@ -128,6 +133,7 @@ public class Branch extends Canvas {
 
 	/**
 	 * Returns the branch data.
+	 * 
 	 * @return branch data.
 	 */
 	public IBranch getBranchData() {
