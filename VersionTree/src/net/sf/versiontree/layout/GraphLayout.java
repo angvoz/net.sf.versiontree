@@ -17,41 +17,33 @@
 package net.sf.versiontree.layout;
 
 import net.sf.versiontree.data.IBranch;
-import net.sf.versiontree.layout.optimizerStrategies.IPlacementStrategy;
-import net.sf.versiontree.layout.optimizerStrategies.NoLayout;
-
-import org.eclipse.swt.graphics.Point;
+import net.sf.versiontree.data.graph.RevisionGraph;
 
 
 /**
  * @author Andre
- * TODO line drawing using first+last method
- * TODO node factories for different views
  * Layouts and draws branch-revision-graphs recursively using
  */
 public class GraphLayout {
-	private IntervalManager ivManager;
-	private Point position;
-	private IPlacementStrategy strategy;
-	
 
-	public GraphLayout() {
+	private RecursiveLoopCmdAggregator aggregator;
+	private RevisionGraph graph;
+	
+	public GraphLayout(IBranch[] ibr) {
+		/* The data context for algorithm operations */
+		LayoutIntvalAlgoContext ctx = new LayoutIntvalAlgoContext();
+		/* assemble operations to be executed during traversal */
+		aggregator = new RecursiveLoopCmdAggregator(
+			new LayoutAlgoBranchCmd(ctx),
+			new LayoutAlgoBranchCmd(ctx),
+			null, null );
+		/* create and traverse graph using specified operations */
+		graph = new RevisionGraph( ibr, aggregator);
+		graph.walk();
 		
-		ivManager = new IntervalManager();
-		position = new Point(-1,0);
-		strategy = new NoLayout();
+	
 	}
-	/**
-	 */
-	public void  graphWalk(IBranch b){
-		position.x++;
-		/* TODO 0 is obviously wrong here, is it? */
-		position.x = strategy.algorithm(position, 0, ivManager).x;
-		ivManager.set(position.x, new Point(position.y, position.y+b.getHeight() ), null);
-		/** TODO Canvas-Kasse erstellen und die dann alle reinzeichnen */
-		/** TODO externes walk benutzen */
-		
-	}
+	
 
 	}
 
