@@ -86,8 +86,7 @@ public class Branch extends Composite {
 	 * @return
 	 */
 	public Point getRevisionConnectorPoint(
-		IRevision theRevision,
-		int orientation) {
+		IRevision theRevision) {
 		Point branchLocation = this.getLocation();
 		Point connectionPoint;
 		Revision revision = null;
@@ -109,7 +108,7 @@ public class Branch extends Composite {
 			throw new IllegalArgumentException("No Revision Widget for given revision data found.");
 		// get connection point of revision
 		Point revisionLocation = revision.getLocation();
-		Point revisionPoint = revision.getConnectorPoint(orientation);
+		Point revisionPoint = revision.getConnectorPoint();
 		connectionPoint =
 			new Point(
 				branchLocation.x + revisionLocation.x + revisionPoint.x,

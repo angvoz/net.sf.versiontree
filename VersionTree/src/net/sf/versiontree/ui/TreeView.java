@@ -123,12 +123,11 @@ public class TreeView extends ScrolledComposite implements MouseListener {
 			bIter = subBranches.iterator();
 			while (bIter.hasNext()) {
 				IBranch branch = (IBranch) bIter.next();
-				Branch branchWidget = new Branch(branch, content, SWT.DEFAULT);
+				Branch branchWidget = new Branch(branch, content, 0);
 				branchWidget.addMouseListenerToRevisions(this);
 				Point sp =
 					parent.getRevisionConnectorPoint(
-						branch.getSource(),
-						SWT.DEFAULT);
+						branch.getSource());
 				branchWidget.setLocation(xOffset, sp.y + 10);
 				branchWidget.setSize(
 					branchWidget.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -142,7 +141,7 @@ public class TreeView extends ScrolledComposite implements MouseListener {
 
 	private void createBranchConnector(Branch branchWidget, Point sp) {
 		RevisionToBranchConnector connector =
-			new RevisionToBranchConnector(content, SWT.DEFAULT);
+			new RevisionToBranchConnector(content, 0);
 		Point ep = branchWidget.getBranchMarkerConnectorPoint(SWT.DEFAULT);
 		Rectangle bounds = new Rectangle(sp.x, sp.y, ep.x - sp.x, ep.y - sp.y);
 		connector.setBounds(bounds);

@@ -194,10 +194,9 @@ public class Revision extends Canvas {
 	/**
 	 * Returns the connection point for connectors relative to the
 	 * size of this component (e.g. the top left corner is [0,0]).
-	 * @param orientation
 	 * @return
 	 */
-	public Point getConnectorPoint(int orientation) {
+	public Point getConnectorPoint() {
 		Point size = this.getSize();
 		Point connectionPoint;
 		connectionPoint = new Point(size.x, size.y / 2);
