@@ -107,21 +107,25 @@ public class Revision extends Canvas {
 			gc.drawImage(versionImage, 3, 3);
 		}
 
+		String revision = logEntry.getRevision();
+		if ((revisionData.getState() & IRevision.STATE_SELECTED) > 0)
+			revision = "*" + revision;
 		int yOffset = 3;
-		Point extent = gc.stringExtent(logEntry.getRevision());
+		Point extent = gc.stringExtent(revision);
 		// draw revision string
 		gc.drawString(
-			logEntry.getRevision(),
+			revision,
 			(preferredWidth + 2) / 2 - (extent.x / 2),
 			yOffset);
 		yOffset += 2 + extent.y;
+
 		// draw author string
 		extent = gc.stringExtent(logEntry.getAuthor());
 		gc.drawString(
 			logEntry.getAuthor(),
 			(preferredWidth + 2) / 2 - (extent.x / 2),
 			yOffset);
-		
+
 		// draw rectangle (or focus border if selected)
 		if (isSelected()) {
 			gc.drawFocus(0, 0, preferredWidth + 2, preferredHeight + 2);
