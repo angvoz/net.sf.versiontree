@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="VersionTree"
+   name="VersionTree Plug-in"
+   version="0.0.1"
+   provider-name="versiontree.sf.net"
+   class="net.sf.versiontree.VersionTreePlugin">
+
+   <runtime>
+      <library name="VersionTree.jar"/>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.team.cvs.core"/>
+      <import plugin="org.eclipse.team.core"/>
+   </requires>
+
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="CVS"
+            id="org.eclipse.team.ccvs.ui">
+      </category>
+      <view
+            name="CVS Version Tree View"
+            icon="icons/tree.gif"
+            category="org.eclipse.team.ccvs.ui"
+            class="net.sf.versiontree.views.VersionTreeView"
+            id="net.sf.versiontree.views.VersionTreeView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.TaskList"
+               relationship="right"
+               id="net.sf.versiontree.views.VersionTreeView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>
