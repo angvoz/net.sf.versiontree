@@ -52,8 +52,8 @@ public class SimpleConnector extends Canvas {
 		super(parent, style);
 		
 		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
-		preferredHeight = store.getInt(VersionTreePlugin.P_BRANCH_HEIGHT);
-		preferredWidth = store.getInt(VersionTreePlugin.P_BRANCH_WIDTH);
+		preferredHeight = store.getInt(VersionTreePlugin.P_MINIMUM_BRANCH_HEIGHT);
+		preferredWidth = store.getInt(VersionTreePlugin.P_MINIMUM_BRANCH_WIDTH);
 		preferredConnectionLength = 10;
 		// add paint listener
 		addPaintListener(new PaintListener() {

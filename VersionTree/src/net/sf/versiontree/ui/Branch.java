@@ -32,10 +32,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @author Jan
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
+*/
 public class Branch extends Composite {
 
 	private List widgets;
@@ -60,7 +57,6 @@ public class Branch extends Composite {
 			revision.setRevisionData(revisionData);
 			widgets.add(revision);
 		}
-
 		// configure layout manager for this composite widget
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.wrap = false;

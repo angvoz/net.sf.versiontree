@@ -17,10 +17,9 @@
 package net.sf.versiontree.ui;
 
 import net.sf.versiontree.Globals;
+import net.sf.versiontree.VersionTreePlugin;
 
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Composite;
-
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -28,6 +27,9 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * @author Jan
@@ -37,10 +39,12 @@ import org.eclipse.swt.graphics.Point;
  */
 public class BranchMarker extends Canvas {
 
+	private static final int inset = 3;
+
 	String branchName;
 
-	int preferredWidth;
-	int preferredHeight;
+	int minimumWidth;
+	int minimumHeight;
 
 	Color background;
 
@@ -50,9 +54,25 @@ public class BranchMarker extends Canvas {
 	 */
 	public BranchMarker(Composite parent, int style) {
 		super(parent, style);
-		preferredHeight = 25;
-		preferredWidth = 80;
-		background = new Color(null, 240, 240, 200);
+
+		IPreferenceStore store =
+			VersionTreePlugin.getDefault().getPreferenceStore();
+		minimumHeight = store.getInt(VersionTreePlugin.P_MINIMUM_BRANCH_HEIGHT);
+		minimumWidth = store.getInt(VersionTreePlugin.P_MINIMUM_BRANCH_WIDTH);
+
+		// Parse background color
+		String color =
+			store.getString(VersionTreePlugin.P_BRANCH_BACKGROUNDCOLOR);
+		int temp1 = color.indexOf(',');
+		int temp2 = color.indexOf(',', temp1 + 1);
+		background =
+			new Color(
+				null,
+				Integer.valueOf(color.substring(0, temp1)).intValue(),
+				Integer.valueOf(color.substring(temp1 + 1, temp2)).intValue(),
+				Integer
+					.valueOf(color.substring(temp2 + 1, color.length()))
+					.intValue());
 
 		// add paint listener
 		addPaintListener(new PaintListener() {
@@ -69,67 +89,38 @@ public class BranchMarker extends Canvas {
 	}
 
 	/**
-		 * @param e Paint Event
-		 */
+	 * @param e Paint Event
+	 */
 	protected void paintControl(PaintEvent e) {
 		GC gc = e.gc;
-		Point extent = gc.stringExtent(branchName);
+		Rectangle size = getBounds();
 
+		Point extent = gc.stringExtent(branchName);
 		gc.setBackground(background);
-		gc.fillRoundRectangle(
-					0,
-					0,
-					preferredWidth + 1,
-					preferredHeight + 1,
-					20,
-					20);
-		
+		gc.fillRoundRectangle(0, 0, size.width, size.height, 20, 20);
+
 		gc.drawString(
 			branchName,
-			(preferredWidth + 2) / 2 - (extent.x / 2),
-			(preferredHeight + 2) / 2 - (extent.y / 2) - 1);
+			(size.width / 2) - (extent.x / 2),
+			(size.height / 2) - (extent.y / 2) - 1);
 
-		gc.drawRoundRectangle(
-			0,
-			0,
-			preferredWidth + 1,
-			preferredHeight + 1,
-			20,
-			20);
+		gc.drawRoundRectangle(0, 0, size.width, size.height, 20, 20);
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
-		return new Point(preferredWidth + 2, preferredHeight + 1);
-	}
+		GC gc = new GC(this);
+		Point ext = gc.stringExtent(getBranchName());
+		gc.dispose();
+		Point size = new Point(2 * inset, 2 * inset);
+		size.x += ext.x;
+		size.y += ext.y;
 
-	/**
-	 * @return
-	 */
-	public int getPreferredHeight() {
-		return preferredHeight;
-	}
+		if (size.x < minimumWidth)
+			size.x = minimumWidth;
+		if (size.y < minimumHeight)
+			size.y = minimumHeight;
 
-	/**
-	 * @return
-	 */
-	public int getPreferredWidth() {
-		return preferredWidth;
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setPreferredHeight(int i) {
-		preferredHeight = i;
-		redraw();
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setPreferredWidth(int i) {
-		preferredWidth = i;
-		redraw();
+		return size;
 	}
 
 	/**
@@ -146,7 +137,7 @@ public class BranchMarker extends Canvas {
 		branchName = string;
 		redraw();
 	}
-	
+
 	/**
 	 * Returns the connection point for connectors relative to the
 	 * size of this component (e.g. the top left corner is [0,0]).
@@ -158,8 +149,7 @@ public class BranchMarker extends Canvas {
 		Point connectionPoint;
 		if (orientation == Globals.NORTH_SOUTH) {
 			connectionPoint = new Point(size.x / 2, 0);
-		}
-		else {
+		} else {
 			connectionPoint = new Point(0, size.y / 2);
 		}
 		return connectionPoint;

@@ -21,7 +21,6 @@ import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.IRevision;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -30,6 +29,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -38,25 +38,24 @@ import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 
 /**
  * @author Jan
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class Revision extends Canvas {
 
 	public static final int STATE_SELECTED = 1;
+
+	private int stringXPosition = 0;
+	private static final int offsetBetweenStrings = 2;
+	private static final int inset = 3;
 
 	private IRevision revisionData;
 	private ILogEntry logEntry;
 
 	private int state;
 
-	private int preferredWidth;
-	private int preferredHeight;
+	private int minimumWidth;
+	private int minimumHeight;
 
 	private Color background;
-	private Color selectedColor;
-	private Color focusColor;
 
 	private Image versionImage;
 
@@ -65,19 +64,24 @@ public class Revision extends Canvas {
 
 		initializeImages();
 
-		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
-		preferredHeight = store.getInt(VersionTreePlugin.P_REVISION_HEIGHT);
-		preferredWidth = store.getInt(VersionTreePlugin.P_REVISION_WIDTH);
-		
+		IPreferenceStore store =
+			VersionTreePlugin.getDefault().getPreferenceStore();
+		minimumHeight = store.getInt(VersionTreePlugin.P_MINIMUM_REVISION_HEIGHT);
+		minimumWidth = store.getInt(VersionTreePlugin.P_MINIMUM_REVISION_WIDTH);
+
 		// Parse background color
-		String color = store.getString(VersionTreePlugin.P_REVISION_BACKGROUNDCOLOR);
+		String color =
+			store.getString(VersionTreePlugin.P_REVISION_BACKGROUNDCOLOR);
 		int temp1 = color.indexOf(',');
-		int temp2 = color.indexOf(',',temp1+1);
-		background = new Color(null,Integer.valueOf(color.substring(0,temp1)).intValue(), 
-			Integer.valueOf(color.substring(temp1 + 1, temp2)).intValue(), 
-			Integer.valueOf(color.substring(temp2 + 1, color.length())).intValue());
-		selectedColor = new Color(null, 230, 230, 255);
-		focusColor = getDisplay().getSystemColor(SWT.COLOR_RED);
+		int temp2 = color.indexOf(',', temp1 + 1);
+		background =
+			new Color(
+				null,
+				Integer.valueOf(color.substring(0, temp1)).intValue(),
+				Integer.valueOf(color.substring(temp1 + 1, temp2)).intValue(),
+				Integer
+					.valueOf(color.substring(temp2 + 1, color.length()))
+					.intValue());
 
 		setBackground(background);
 
@@ -91,8 +95,6 @@ public class Revision extends Canvas {
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				background.dispose();
-				selectedColor.dispose();
-				focusColor.dispose();
 				versionImage.dispose();
 			}
 		});
@@ -104,6 +106,7 @@ public class Revision extends Canvas {
 			plugin
 				.getImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION)
 				.createImage();
+		stringXPosition = versionImage.getBounds().width + 2 * inset;
 	}
 
 	/**
@@ -111,42 +114,58 @@ public class Revision extends Canvas {
 	 */
 	protected void paintControl(PaintEvent e) {
 		GC gc = e.gc;
+		Rectangle size = getBounds();
 
 		// draw version tag icon if revison is tagged
 		if (revisionData.hasVersionTags()) {
-			gc.drawImage(versionImage, 3, 3);
+			gc.drawImage(versionImage, inset, inset);
 		}
 
 		String revision = logEntry.getRevision();
 		if ((revisionData.getState() & IRevision.STATE_SELECTED) > 0)
 			revision = "*" + revision;
-		int yOffset = 3;
+		int yOffset = inset;
 		Point extent = gc.stringExtent(revision);
 		// draw revision string
-		gc.drawString(
-			revision,
-			(preferredWidth + 2) / 2 - (extent.x / 2),
-			yOffset);
-		yOffset += 2 + extent.y;
-
+		gc.drawString(revision, stringXPosition, yOffset);
+		yOffset += offsetBetweenStrings + extent.y;
 		// draw author string
 		extent = gc.stringExtent(logEntry.getAuthor());
-		gc.drawString(
-			logEntry.getAuthor(),
-			(preferredWidth + 2) / 2 - (extent.x / 2),
-			yOffset);
+		gc.drawString(logEntry.getAuthor(), stringXPosition, yOffset);
 
 		// draw rectangle (or focus border if selected)
 		if (isSelected()) {
-			gc.drawFocus(0, 0, preferredWidth + 2, preferredHeight + 2);
+			gc.drawFocus(0, 0, size.width, size.height);
 		} else {
-			gc.drawRectangle(0, 0, preferredWidth + 1, preferredHeight + 1);
+			gc.drawRectangle(0, 0, size.width - 1, size.height - 1);
 		}
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
-		// TODO: compute the preferred size
-		return new Point(preferredWidth + 2, preferredHeight + 2);
+		//TODO: check for constraints (wHint, hHint)
+		GC gc = new GC(this);
+		String revision = revisionData.getRevision();
+		if ((revisionData.getState() & IRevision.STATE_SELECTED) > 0)
+			revision = "*" + revision;
+		Point extRevision = gc.stringExtent(revision);
+		Point extAuthor = gc.stringExtent(revisionData.getRevision());
+		gc.dispose();
+
+		Point size = new Point(2 * inset, 2 * inset);
+		// width of image + inset
+		size.x += versionImage.getBounds().width + inset;
+		// width of revision or author
+		size.x += (extAuthor.x >= extRevision.x) ? extAuthor.x : extRevision.x;
+
+		// height of the two strings + offsetBetweenStrings
+		size.y += extAuthor.y + extRevision.y + offsetBetweenStrings;
+
+		if (size.x < minimumWidth)
+			size.x = minimumWidth;
+		if (size.y < minimumHeight)
+			size.y = minimumHeight;
+			
+		return size;
 	}
 
 	/**
@@ -154,20 +173,6 @@ public class Revision extends Canvas {
 	 */
 	public String getRevisionNumber() {
 		return logEntry.getRevision();
-	}
-
-	/**
-	 * @return
-	 */
-	public int getPreferredHeight() {
-		return preferredHeight;
-	}
-
-	/**
-	 * @return
-	 */
-	public int getPreferredWidth() {
-		return preferredWidth;
 	}
 
 	/**

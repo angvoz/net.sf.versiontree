@@ -52,13 +52,13 @@ public class VersionTreePreferencePage
  */
 
 	public void createFieldEditors() {
-		addField(new IntegerFieldEditor(VersionTreePlugin.P_BRANCH_WIDTH,"Branch Width",getFieldEditorParent()));
-		addField(new IntegerFieldEditor(VersionTreePlugin.P_BRANCH_HEIGHT,"Branch Height",getFieldEditorParent()));
-		addField(new IntegerFieldEditor(VersionTreePlugin.P_REVISION_WIDTH,"Revision Width",getFieldEditorParent()));
-		addField(new IntegerFieldEditor(VersionTreePlugin.P_REVISION_HEIGHT,"Revision Height",getFieldEditorParent()));
+		addField(new IntegerFieldEditor(VersionTreePlugin.P_MINIMUM_BRANCH_WIDTH,"Minimum Branch Width",getFieldEditorParent()));
+		addField(new IntegerFieldEditor(VersionTreePlugin.P_MINIMUM_BRANCH_HEIGHT,"Minimum Branch Height",getFieldEditorParent()));
+		addField(new IntegerFieldEditor(VersionTreePlugin.P_MINIMUM_REVISION_WIDTH,"Minimum Revision Width",getFieldEditorParent()));
+		addField(new IntegerFieldEditor(VersionTreePlugin.P_MINIMUM_REVISION_HEIGHT,"Minimum Revision Height",getFieldEditorParent()));
 		addField(new IntegerFieldEditor(VersionTreePlugin.P_REVISION_CONNECTIONLENGTH,"Revision Connection Length",getFieldEditorParent()));
 		addField(new ColorFieldEditor(VersionTreePlugin.P_REVISION_BACKGROUNDCOLOR, "Revision Color", getFieldEditorParent()));
-		
+		addField(new ColorFieldEditor(VersionTreePlugin.P_BRANCH_BACKGROUNDCOLOR, "Branch Color", getFieldEditorParent()));
 	}
 	
 	public void init(IWorkbench workbench) {

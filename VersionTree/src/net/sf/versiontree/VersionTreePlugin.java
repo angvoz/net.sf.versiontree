@@ -16,12 +16,14 @@
  */
 package net.sf.versiontree;
 
-import org.eclipse.ui.plugin.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.preference.IPreferenceStore;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import java.util.*;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -31,7 +33,7 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	private static VersionTreePlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -39,7 +41,9 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 		super(descriptor);
 		plugin = this;
 		try {
-			resourceBundle= ResourceBundle.getBundle("net.sf.versiontree.VersionTreePluginResources");
+			resourceBundle =
+				ResourceBundle.getBundle(
+					"net.sf.versiontree.VersionTreePluginResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -64,7 +68,8 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	 * or 'key' if not found.
 	 */
 	public static String getResourceString(String key) {
-		ResourceBundle bundle= VersionTreePlugin.getDefault().getResourceBundle();
+		ResourceBundle bundle =
+			VersionTreePlugin.getDefault().getResourceBundle();
 		try {
 			return bundle.getString(key);
 		} catch (MissingResourceException e) {
@@ -78,22 +83,25 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
 	}
-	
+
 	public IPreferenceStore getPreferenceStore() {
 		IPreferenceStore store = super.getPreferenceStore();
-		store.setDefault(P_BRANCH_HEIGHT, 40);
-		store.setDefault(P_BRANCH_WIDTH, 80);
-		store.setDefault(P_REVISION_HEIGHT, 35);
-		store.setDefault(P_REVISION_WIDTH, 80);
+		store.setDefault(P_MINIMUM_BRANCH_HEIGHT, 25);
+		store.setDefault(P_MINIMUM_BRANCH_WIDTH, 80);
+		store.setDefault(P_MINIMUM_REVISION_HEIGHT, 35);
+		store.setDefault(P_MINIMUM_REVISION_WIDTH, 80);
 		store.setDefault(P_REVISION_CONNECTIONLENGTH, 10);
-		store.setDefault(P_REVISION_BACKGROUNDCOLOR, "255,255,255" );
+		store.setDefault(P_REVISION_BACKGROUNDCOLOR, "255,255,255");
+		store.setDefault(P_BRANCH_BACKGROUNDCOLOR, "230,230,230");
 		return store;
 	}
-	
-	public static final String P_BRANCH_HEIGHT				= "BranchHeight";
-	public static final String P_BRANCH_WIDTH				= "BranchWidth";
-	public static final String P_REVISION_HEIGHT			= "RevisionHeight";
-	public static final String P_REVISION_WIDTH				= "RevisionWidth";
-	public static final String P_REVISION_CONNECTIONLENGTH 	= "RevisionConnectionLength";
-	public static final String P_REVISION_BACKGROUNDCOLOR	= "RevisionBGColor";
+
+	public static final String P_MINIMUM_BRANCH_HEIGHT = "MinBranchHeight";
+	public static final String P_MINIMUM_BRANCH_WIDTH = "MinBranchWidth";
+	public static final String P_MINIMUM_REVISION_HEIGHT = "MinRevisionHeight";
+	public static final String P_MINIMUM_REVISION_WIDTH = "MinRevisionWidth";
+	public static final String P_REVISION_CONNECTIONLENGTH =
+		"RevisionConnectionLength";
+	public static final String P_REVISION_BACKGROUNDCOLOR = "RevisionBGColor";
+	public static final String P_BRANCH_BACKGROUNDCOLOR = "BranchBGColor";
 }
