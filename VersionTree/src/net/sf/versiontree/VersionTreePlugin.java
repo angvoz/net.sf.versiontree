@@ -28,7 +28,6 @@ import org.osgi.framework.BundleContext;
  * widen branches of a x layer until name fits, save added x value
  * TODO Eastern regions: normalization concept for true BIDI 
  * TODO TreeViewConfig: class should notify listeners if configuration changes.
- * TODO Fetch CVS Log Entries in background
  * 
  * The main plugin class to be used in a perspective.
  */
