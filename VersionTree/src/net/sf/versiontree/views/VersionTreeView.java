@@ -79,7 +79,6 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -98,7 +97,11 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
@@ -173,6 +176,46 @@ public class VersionTreeView
 		}
 	}
 
+	private IPartListener partListener = new IPartListener() {
+		public void partActivated(IWorkbenchPart part) {
+			if (part instanceof IEditorPart)
+				editorActivated((IEditorPart) part);
+		}
+		public void partBroughtToTop(IWorkbenchPart part) {
+			if(part == VersionTreeView.this)
+				editorActivated(getViewSite().getPage().getActiveEditor());
+		}
+		public void partOpened(IWorkbenchPart part) {
+			if(part == VersionTreeView.this)
+				editorActivated(getViewSite().getPage().getActiveEditor());
+		}
+		public void partClosed(IWorkbenchPart part) {
+		}
+		public void partDeactivated(IWorkbenchPart part) {
+		}
+	};
+	
+	private IPartListener2 partListener2 = new IPartListener2() {
+		public void partActivated(IWorkbenchPartReference ref) {
+		}
+		public void partBroughtToTop(IWorkbenchPartReference ref) {
+		}
+		public void partClosed(IWorkbenchPartReference ref) {
+		}
+		public void partDeactivated(IWorkbenchPartReference ref) {
+		}
+		public void partOpened(IWorkbenchPartReference ref) {
+		}
+		public void partHidden(IWorkbenchPartReference ref) {
+		}
+		public void partVisible(IWorkbenchPartReference ref) {
+			if(ref.getPart(true) == VersionTreeView.this)
+				editorActivated(getViewSite().getPage().getActiveEditor());
+		}
+		public void partInputChanged(IWorkbenchPartReference ref) {
+		}
+	};
+	
 	/**
 	 * Job that fetches the CVS log entries.
 	 */
@@ -254,6 +297,10 @@ public class VersionTreeView
 		hookContextMenu();
 		//hookDoubleClickAction();
 		contributeToActionBars();
+		
+		// add listener for editor page activation - this is to support editor linking
+		getSite().getPage().addPartListener(partListener);	
+		getSite().getPage().addPartListener(partListener2);
 	}
 
 	/**
@@ -286,9 +333,6 @@ public class VersionTreeView
 					else {
 						commentViewer.setDocument(new Document("")); //$NON-NLS-1$
 					}
-					if (remoteFile != null)
-						setPartName(VersionTreePlugin.getResourceString("VersionTreeView.CVS_Version_Tree_Name") 
-								+ " - " + remoteFile.getName()); //$NON-NLS-1$
 				} catch (TeamException e) {
 					CVSUIPlugin.openError(getViewSite().getShell(), null, null,	e);
 				}
@@ -301,7 +345,6 @@ public class VersionTreeView
 			treeView.clear();
 			tagViewer.setInput(null);
 			commentViewer.setDocument(new Document("")); //$NON-NLS-1$
-			setPartName(VersionTreePlugin.getResourceString("VersionTreeView.CVS_Version_Tree_Name")); //$NON-NLS-1$
 		}
 	}
 	
@@ -321,10 +364,6 @@ public class VersionTreeView
 		} else {
 			commentViewer.setDocument(new Document("")); //$NON-NLS-1$
 		}
-		if (remoteFile != null)
-			setPartName(VersionTreePlugin
-					.getResourceString("VersionTreeView.CVS_Version_Tree_Name")
-					+ " - " + remoteFile.getName()); //$NON-NLS-1$
 	}
 
 	/**
@@ -499,9 +538,9 @@ public class VersionTreeView
 				ICVSRemoteFile remoteFile = currentSelection.getRemoteFile();
 				try {
 					if (confirmOverwrite()) {
-						CVSTeamProvider provider =
-							(CVSTeamProvider) RepositoryProvider.getProvider(
-								file.getProject());
+//						CVSTeamProvider provider =
+//							(CVSTeamProvider) RepositoryProvider.getProvider(
+//								file.getProject());
 						CVSTag revisionTag =
 							new CVSTag(
 								remoteFile.getRevision(),
@@ -749,6 +788,8 @@ public class VersionTreeView
 			versionImage.dispose();
 			versionImage = null;
 		}
+		getSite().getPage().removePartListener(partListener);
+		getSite().getPage().removePartListener(partListener2);
 	}
 	
 	/**
