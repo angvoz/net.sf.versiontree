@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
+import net.sf.versiontree.data.IBranch;
 import net.sf.versiontree.data.IRevision;
 import net.sf.versiontree.data.RevisionTreeFactory;
 import net.sf.versiontree.ui.DetailTableProvider;
@@ -191,12 +192,15 @@ public class VersionTreeView
 									.getRemoteResourceFor(
 								file);
 						final ILogEntry[] logs = getLogEntries(remoteFile);
-
-						// set new content
-						treeView.setInput(
-							RevisionTreeFactory.createRevisionTree(
-								logs,
-								remoteFile.getRevision()));
+						
+						
+						IBranch[] ibr = RevisionTreeFactory.createRevisionTree(
+							logs, remoteFile.getRevision());
+						
+						/* TODO connect */
+						//GraphLayout gr = new GraphLayout(ibr);
+						treeView.setInput(ibr);
+						
 						updateTableData(currentEntry);
 						tableViewer.setInput(tableData);
 						tagViewer.setInput(currentEntry.getTags());
