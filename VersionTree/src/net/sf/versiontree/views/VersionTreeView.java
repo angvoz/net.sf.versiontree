@@ -10,12 +10,18 @@
  *******************************************************************************/
 package net.sf.versiontree.views;
 
+import java.lang.reflect.InvocationTargetException;
+
+import net.sf.versiontree.data.RevisionTreeFactory;
 import net.sf.versiontree.ui.TreeViewer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -28,6 +34,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.ui.ISharedImages;
@@ -56,6 +63,10 @@ public class VersionTreeView extends ViewPart {
 
 	public static final String VIEW_ID =
 		"net.sf.versiontree.views.VersionTreeView";
+
+	private TreeViewer viewer;
+
+	private ILogEntry[] entries;
 
 	private CVSTeamProvider provider;
 	private IFile file;
@@ -118,9 +129,10 @@ public class VersionTreeView extends ViewPart {
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();*/
-		
-		TreeViewer viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		
+
+		viewer =
+			new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+
 	}
 
 	/**
@@ -143,10 +155,12 @@ public class VersionTreeView extends ViewPart {
 					ICVSRemoteFile remoteFile =
 						(ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(
 							file);
-					//TODO: implement treeProvider & treeViewer
-					/*historyTableProvider.setFile(remoteFile);
-					tableViewer.setInput(remoteFile);*/
-					setTitle("CVS Version Tree - " + file.getName());
+					final ILogEntry[] logs = getLogEntries(remoteFile);
+
+					viewer.setInput(RevisionTreeFactory.createRevisionTree(logs, remoteFile.getRevision()));
+
+					if (logs.length > 0)
+						setTitle("CVS Version Tree - " + remoteFile.getName());
 				} catch (TeamException e) {
 					CVSUIPlugin.openError(
 						getViewSite().getShell(),
@@ -158,29 +172,35 @@ public class VersionTreeView extends ViewPart {
 			return;
 		}
 		this.file = null;
-		//tableViewer.setInput(null);
+		viewer.setInput(null);
 		setTitle("CVS Version Tree");
 	}
 
-	/**
-	 * Shows the version tree for the given ICVSRemoteFile in the view.
-	 */
-	public void showVersionTree(ICVSRemoteFile remoteFile) {
-		//TODO: implement treeProvider & treeViewer
-//		try {
-			if (remoteFile == null) {
-				//tableViewer.setInput(null);
-				setTitle("CVS Version Tree");
-				return;
-			}
-			this.file = null;
-			//historyTableProvider.setFile(remoteFile);
-			//tableViewer.setInput(remoteFile);
-			setTitle("CVS Version Tree - " + remoteFile.getName());
-//		} catch (CVSException e) {
-//			CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
-//		}
-		setTitle("CVS Version Tree");
+	private ILogEntry[] getLogEntries(final ICVSRemoteFile remoteFile) {
+		final ILogEntry[][] result = new ILogEntry[1][];
+		try {
+			new ProgressMonitorDialog(
+				this
+					.getViewSite()
+					.getShell())
+					.run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
+					try {
+						entries = remoteFile.getLogEntries(monitor);
+						result[0] = entries;
+					} catch (TeamException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			});
+		} catch (InterruptedException e) { // ignore cancellation
+			result[0] = new ILogEntry[0];
+		} catch (InvocationTargetException e) {
+			CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
+			result[0] = new ILogEntry[0];
+		}
+		return result[0];
 	}
 
 	private void hookContextMenu() {

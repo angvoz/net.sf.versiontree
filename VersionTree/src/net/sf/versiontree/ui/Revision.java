@@ -29,19 +29,19 @@ public class Revision extends Canvas {
 
 	private IRevision revisionData;
 
-	String revisionNumber;
-
 	int preferredWidth;
 	int preferredHeight;
 
-	Color background;
+	private Color background;
+	private Color selectedColor;
 
 	public Revision(Composite parent, int style) {
 		super(parent, style);
 
-		preferredHeight = 40;
+		preferredHeight = 35;
 		preferredWidth = 80;
 		background = new Color(null, 255, 255, 255);
+		selectedColor = new Color(null, 230, 230, 255);
 		setBackground(background);
 
 		// add paint listener
@@ -54,6 +54,7 @@ public class Revision extends Canvas {
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				background.dispose();
+				selectedColor.dispose();
 			}
 		});
 	}
@@ -63,11 +64,21 @@ public class Revision extends Canvas {
 	 */
 	protected void paintControl(PaintEvent e) {
 		GC gc = e.gc;
-		Point extent = gc.stringExtent(revisionData.getNumber());
+		if ((revisionData.getState() & IRevision.STATE_SELECTED) > 0)
+			setBackground(selectedColor);
+		
+		int yOffset = 3;
+		Point extent = gc.stringExtent(revisionData.getRevision());
 		gc.drawString(
-			revisionData.getNumber(),
+			revisionData.getRevision(),
 			(preferredWidth + 2) / 2 - (extent.x / 2),
-			(preferredHeight + 2) / 2 - (extent.y / 2) - 1);
+			yOffset);
+		yOffset += 2 + extent.y;
+		extent = gc.stringExtent(revisionData.getAuthor());
+		gc.drawString(
+			revisionData.getAuthor(),
+			(preferredWidth + 2) / 2 - (extent.x / 2),
+			yOffset);
 
 		gc.drawRectangle(0, 0, preferredWidth + 1, preferredHeight + 1);
 	}
@@ -89,7 +100,7 @@ public class Revision extends Canvas {
 	 * @return
 	 */
 	public String getRevisionNumber() {
-		return revisionData.getNumber();
+		return revisionData.getRevision();
 	}
 
 	/**
@@ -134,7 +145,8 @@ public class Revision extends Canvas {
 	 */
 	public void setRevisionData(IRevision data) {
 		revisionData = data;
-		this.setToolTipText("Revision Date: " + data.getDate());
+		this.setToolTipText(
+			"Date: " + data.getDate() + "\nComment: " + data.getComment());
 		redraw();
 	}
 

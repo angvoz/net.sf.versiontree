@@ -32,9 +32,5 @@ public interface IBranch {
 	 * @param string
 	 */
 	public abstract void setName(String string);
-	/**
-	 * @param data
-	 */
-	public abstract void setSource(IRevision data);
-	public abstract void addRevisionData(IRevision rData);
+
 }

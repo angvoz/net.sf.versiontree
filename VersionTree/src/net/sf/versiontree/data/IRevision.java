@@ -14,7 +14,10 @@ import java.util.List;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public interface IRevision {
+public interface IRevision extends Comparable {
+	
+	public static final int STATE_SELECTED = 1;
+	
 	/**
 	 * @return
 	 */
@@ -23,36 +26,39 @@ public interface IRevision {
 	 * @return
 	 */
 	public abstract String getDate();
+	
+	public abstract String getAuthor();
 	/**
 	 * @return
 	 */
-	public abstract String getNumber();
+	public abstract String getRevision();
 	/**
 	 * @return
-	Revisionbstract RevisionData getPredecessor() ;
+	 */
+	public abstract IRevision getPredecessor() ;
 	/**
 	 * @return
 	 */
 	public abstract List getTags();
 	/**
+	 * @return
+	 */
+	public abstract String getComment();
+	
+	/**
 	 * @param data
 	 */
 	public abstract void setBranch(IBranch data);
 	/**
-	 * @param string
-	 */
-	public abstract void setDate(String string);
-	/**
-	 * @param string
-	 */
-	public abstract void setNumber(String string);
-	/**
 	 * @param data
 	 */
 	public abstract void setPredecessor(IRevision data);
-	/**
-	 * @param list
-	 */
-	public abstract void setTags(List list);
-	public abstract void addTag(String tag);
+	
+	public abstract int[] getParsedRevision();
+	
+	public abstract String getBranchPrefix();
+	
+	public abstract int getState();
+	
+	public abstract void setState(int state);
 }
