@@ -26,21 +26,22 @@ import net.sf.versiontree.layout.ui.*;
 
 /**
  * @author Andre
- * Constitutes a traversable revision-branch-graph
+ * Constitutes a self-traversing revision-branch-graph, function objects have to
+ * be supplied to complete traversal to an algorithm
  */
 public class RevisionGraph {
-	public static final String HEAD = "HEAD";
-	public boolean nobranches = false;
 	
-	private Command branchCmd;
-	private Command revisionCmd;
-	
+	private RecursiveLoopCmdAggregator cmdAggregat;
+		
 	private IBranch rgHead;
 	/** <sourceRevisionVersionNumber, ReferenceToGraphBranch> */
 	private HashMap sourceTargetLinks;
 	
-	public RevisionGraph (IBranch[] branches) {
+	public RevisionGraph (IBranch[] branches, RecursiveLoopCmdAggregator cmdAggregat) {
+		this.cmdAggregat = cmdAggregat;
+		
 		if (branches.length == 0) throw new NullPointerException("No data present");
+		
 		
 		/* search for HEAD branch (here: the one that has no source revision)
 		 * additionally remember which branch belongs to which source revision  */
@@ -58,27 +59,24 @@ public class RevisionGraph {
 		/* if we have no HEAD branch we don't know where to start */
 		if (rgHead == null) throw new NullPointerException("No HEAD branch present"); 
 	}
-	
-	public void configure(Command branchC, Command revisionC) {
-		branchCmd = branchC;
-		revisionCmd = revisionC;
-	}
-	
+	/** start traversal */
 	public void walk() {
 		walk(rgHead);
 	}
+	/** 
+	 * loop-recursion generalization supporting algorithm specification through
+	 * an externally supplied function objects 
+	 * @param currentBranch
+	 */
 	private void walk(IBranch currentBranch ){
 		
-		// TODO do branch specific stuff -> function object
-		// TODO branchCmd.execute(currentBranch);
-		// TODO fill intervals here
+		cmdAggregat.executePreLoop(currentBranch);
+		
 		Iterator rIter = currentBranch.getRevisions().iterator();
 		while (rIter.hasNext()) {
 			IRevision rev = (IRevision) rIter.next();
 			
-			//	TODO do revision specific stuff -> function object
-			//	TODO revisionCmd.execute(rev);
-			//  TODO fill intervals here
+			cmdAggregat.executePreRecursion(rev);
 			if ( rev.hasBranchTags() )
 				{
 					LinkedList list = (LinkedList) sourceTargetLinks.get( rev.getRevision() );
@@ -90,7 +88,9 @@ public class RevisionGraph {
 						walk(branch);
 					}
 				}
+			cmdAggregat.executePostRecursion(rev);
 		}
+		cmdAggregat.executePostLoop(currentBranch);
 	}
 
 }
