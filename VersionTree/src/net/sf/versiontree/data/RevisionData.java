@@ -135,7 +135,7 @@ public class RevisionData implements IRevision {
 	 * @return
 	 */
 	public String getBranchPrefix() {
-		StringBuffer revision = new StringBuffer(logEntry.getRevision());
+		String revision = logEntry.getRevision();
 		return revision.substring(0, revision.lastIndexOf("."));
 	}
 
