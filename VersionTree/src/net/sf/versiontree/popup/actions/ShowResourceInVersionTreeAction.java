@@ -12,6 +12,7 @@ package net.sf.versiontree.popup.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
+import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.views.VersionTreeView;
 
 import org.eclipse.core.resources.IResource;
@@ -21,7 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction;
-import net.sf.versiontree.VersionTreePlugin;
+import org.eclipse.ui.IActionDelegate;
 
 public class ShowResourceInVersionTreeAction extends WorkspaceAction {
 

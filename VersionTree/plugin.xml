@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
 <plugin
    id="net.sf.versiontree"
-   name="VersionTree Plug-in"
-   version="1.0.3"
+   name="CVS VersionTree Plug-in"
+   version="1.1.0"
    provider-name="versiontree.sf.net"
    class="net.sf.versiontree.VersionTreePlugin">
 
    <runtime>
-      <library name="VersionTree.jar"/>
+      <library name="versiontree.jar">
+         <export name="*"/>
+      </library>
    </runtime>
-   <requires>
-      <import plugin="org.eclipse.core.resources" version="2.1.0"/>
-      <import plugin="org.eclipse.ui" version="2.1.0"/>
-      <import plugin="org.eclipse.team.cvs.core" version="2.1.0"/>
-      <import plugin="org.eclipse.team.core" version="2.1.0"/>
-      <import plugin="org.eclipse.team.ui" version="2.1.0"/>
-      <import plugin="org.eclipse.compare" version="2.1.0"/>
-      <import plugin="org.eclipse.team.cvs.ui" version="2.1.0"/>
-   </requires>
 
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.team.ui"/>
+      <import plugin="org.eclipse.team.cvs.ui"/>
+      <import plugin="org.eclipse.team.cvs.core"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+   </requires>
 
    <extension
          point="org.eclipse.ui.views">
@@ -27,10 +33,11 @@
             id="org.eclipse.team.ccvs.ui">
       </category>
       <view
-            name="CVS Version Tree"
+            class="net.sf.versiontree.views.VersionTreeView"
             icon="icons/tree.gif"
             category="org.eclipse.team.ccvs.ui"
-            class="net.sf.versiontree.views.VersionTreeView"
+            name="CVS Version Tree"
+            fastViewWidthRatio="0.2"
             id="net.sf.versiontree.views.VersionTreeView">
       </view>
    </extension>
@@ -39,41 +46,40 @@
       <perspectiveExtension
             targetID="org.eclipse.ui.resourcePerspective">
          <view
-               ratio="0.5"
+               ratio="1.0"
                relative="org.eclipse.ui.views.TaskList"
-               relationship="right"
-               id="net.sf.versiontree.views.VersionTreeView">
+               relationship="stack"
+               id="net.sf.versiontree.views.TreeView">
          </view>
       </perspectiveExtension>
    </extension>
    <extension
+         id="net.sf.versiontree.ui.preferences.VersionTreePreferencePage"
+         name="Version Tree"
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="net.sf.versiontree.ui.preferences.VersionTreePreferencePage"
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
+            name="Version Tree"
+            id="net.sf.versiontree.ui.preferences.VersionTreePreferencePage"/>
+   </extension>
+   <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
             adaptable="true"
+            objectClass="org.eclipse.core.resources.IFile"
             id="net.sf.versiontree.popup.actions.ShowResourceInVersionTreeAction">
          <filter
-               name="projectPersistentProperty"
-               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
-         </filter>
+               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature"
+               name="projectPersistentProperty"/>
          <action
+               enablesFor="1"
                label="Show in Version Tree"
                tooltip="Displays the version tree for the selected resource."
                class="net.sf.versiontree.popup.actions.ShowResourceInVersionTreeAction"
                menubarPath="team.main/group2"
-               enablesFor="1"
-               id="net.sf.versiontree.popup.actions.ShowResourceInVersionTreeAction">
-         </action>
+               id="net.sf.versiontree.popup.actions.ShowResourceInVersionTreeAction"/>
       </objectContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            name="Version Tree"
-            category="org.eclipse.team.cvs.ui.CVSPreferences"
-            class="net.sf.versiontree.ui.preferences.VersionTreePreferencePage"
-            id="net.sf.versiontree.ui.preferences.VersionTreePreferencePage">
-      </page>
    </extension>
 
 </plugin>

@@ -16,9 +16,9 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * TODO Algorithm ideas: CenterFanoutLayout, LinedBranchesLayout (revision in order), mixed deep/wide algorithm
@@ -27,8 +27,10 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * TODO Dynamic Tree Element size: 
  * widen branches of a x layer until name fits, save added x value
  * TODO Eastern regions: normalization concept for true BIDI 
- * The main plugin class to be used in a perspective.
  * TODO TreeViewConfig: class should notify listeners if configuration changes.
+ * TODO Fetch CVS Log Entries in background
+ * 
+ * The main plugin class to be used in a perspective.
  */
 public class VersionTreePlugin extends AbstractUIPlugin {
 	/**
@@ -44,8 +46,8 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	/**
 	 * The constructor.
 	 */
-	public VersionTreePlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public VersionTreePlugin() {
+		super();
 		plugin = this;
 		try {
 			resourceBundle = ResourceBundle.getBundle("net.sf.versiontree.VersionTreePluginResources"); //$NON-NLS-1$
@@ -53,7 +55,20 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 			resourceBundle = null;
 		}
 	}
+	
+	/**
+	 * This method is called upon plug-in activation
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+	}
 
+	/**
+	 * This method is called when the plug-in is stopped
+	 */
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
+	}
 	/**
 	 * Returns the shared instance.
 	 */
@@ -100,6 +115,7 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 		store.setDefault(P_DEFAULT_ALGORITHM, "0"); //$NON-NLS-1$
 		store.setDefault(P_DEFAULT_ALGORITHM, false);
 		store.setDefault(P_DEFAULT_DIRECTION, "0"); //$NON-NLS-1$
+		store.setDefault(P_DEFAULT_DETAILS_POS, Integer.toString(org.eclipse.swt.SWT.HORIZONTAL));
 		return store;
 	}
 
@@ -112,4 +128,5 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	public static final String P_DEFAULT_ALGORITHM = "DefAlgorithm"; //$NON-NLS-1$
 	public static final String P_DEFAULT_EMPTY_BRANCHES = "DefEmptyBranches"; //$NON-NLS-1$
 	public static final String P_DEFAULT_DIRECTION = "DefDirection"; //$NON-NLS-1$
+	public static final String P_DEFAULT_DETAILS_POS = "DefDetailPos"; //$NON-NLS-1$
 }

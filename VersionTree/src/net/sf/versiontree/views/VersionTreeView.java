@@ -78,8 +78,6 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -117,9 +115,10 @@ public class VersionTreeView
 	private Action refreshAction;
 	private Action deepLayoutAction;
 	private Action wideLayoutAction;
-	Action showEmptyBranchesAction;
+	private Action showEmptyBranchesAction;
 	private Action getRevisionAction;
 	private Action getContentsAction;
+	private Action toggleHorVerDisplayAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
 	private OpenLogEntryAction openActionDelegate;
@@ -232,7 +231,7 @@ public class VersionTreeView
 						else
 							commentViewer.setDocument(new Document("")); //$NON-NLS-1$
 						if (remoteFile != null)
-							setTitle("CVS Version Tree - " + remoteFile.getName()); //$NON-NLS-1$
+							setPartName("CVS Version Tree - " + remoteFile.getName()); //$NON-NLS-1$
 					} catch (TeamException e) {
 						CVSUIPlugin.openError(
 							getViewSite().getShell(),
@@ -249,7 +248,7 @@ public class VersionTreeView
 			treeView.clear();
 			tagViewer.setInput(null);
 			commentViewer.setDocument(new Document("")); //$NON-NLS-1$
-			setTitle("CVS Version Tree"); //$NON-NLS-1$
+			setPartName("CVS Version Tree"); //$NON-NLS-1$
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 			CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
@@ -377,7 +376,9 @@ public class VersionTreeView
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(deepLayoutAction);
 		manager.add(wideLayoutAction);
+		manager.add(new Separator());
 		manager.add(showEmptyBranchesAction);
+		manager.add(toggleHorVerDisplayAction);
 		manager.add(refreshAction);
 	}
 
@@ -399,6 +400,23 @@ public class VersionTreeView
 
 		// open action delegate
 		openActionDelegate = new OpenLogEntryAction();
+		
+		toggleHorVerDisplayAction = new Action( VersionTreePlugin.getResourceString("VersionTreeView.Toggle_Detail_View_Action")) {
+			public void run() {
+				if (sashForm.getOrientation() == SWT.HORIZONTAL) {
+					sashForm.setOrientation(SWT.VERTICAL);
+					VersionTreePlugin.getDefault().getPreferenceStore().setValue(
+							VersionTreePlugin.P_DEFAULT_DETAILS_POS,
+							Integer.toString(SWT.VERTICAL));
+				} else {
+					sashForm.setOrientation(SWT.HORIZONTAL);
+					VersionTreePlugin.getDefault().getPreferenceStore().setValue(
+							VersionTreePlugin.P_DEFAULT_DETAILS_POS,
+							Integer.toString(SWT.HORIZONTAL));
+				}
+			}
+		};
+
 
 			getContentsAction = getContextMenuAction(VersionTreePlugin.getResourceString("VersionTreeView.Get_Content_Action"), new IWorkspaceRunnable() {//$NON-NLS-1$
 	public void run(IProgressMonitor monitor) throws CoreException {
@@ -445,14 +463,15 @@ public class VersionTreeView
 								getSite().getShell(),
 								new IResource[] { file },
 								revisionTag)) {
-							provider
-								.update(
-									new IResource[] { file },
-									new Command.LocalOption[] {
-										 Update.IGNORE_LOCAL_CHANGES },
-									revisionTag,
-									true /*create backups*/
-							, monitor);
+							//TODO update no longer available
+//							provider
+//								.update(
+//									new IResource[] { file },
+//									new Command.LocalOption[] {
+//										 Update.IGNORE_LOCAL_CHANGES },
+//									revisionTag,
+//									true /*create backups*/
+//							, monitor);
 							refresh();
 						}
 					}
