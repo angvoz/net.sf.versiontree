@@ -10,13 +10,13 @@
       <library name="VersionTree.jar"/>
    </runtime>
    <requires>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.team.cvs.core"/>
-      <import plugin="org.eclipse.team.core"/>
-      <import plugin="org.eclipse.team.ui"/>
-      <import plugin="org.eclipse.compare"/>
-      <import plugin="org.eclipse.team.cvs.ui"/>
+      <import plugin="org.eclipse.core.resources" version="2.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="2.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.team.cvs.core" version="2.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.team.core" version="2.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.team.ui" version="2.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.compare" version="2.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.team.cvs.ui" version="2.1.0" match="greaterOrEqual"/>
    </requires>
 
 
