@@ -22,7 +22,7 @@ import java.util.TreeMap;
 
 /**
  * @author Andre
- * 
+ * TODO check if lower bounds are used for iterating
  */
 public class IntegerIntervalIterator implements Iterator {
 	private TreeMap upperBounds;
