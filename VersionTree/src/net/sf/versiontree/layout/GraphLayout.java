@@ -18,6 +18,7 @@ package net.sf.versiontree.layout;
 
 import net.sf.versiontree.data.IBranch;
 import net.sf.versiontree.data.graph.RevisionGraph;
+import net.sf.versiontree.layout.cmd.*;
 
 
 /**

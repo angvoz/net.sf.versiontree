@@ -16,7 +16,7 @@
  */
 package net.sf.versiontree.layout.optimizerStrategies;
 
-import net.sf.versiontree.layout.IntervalManager;
+import net.sf.versiontree.layout.interval.IntervalManager;
 
 import org.eclipse.swt.graphics.Point;
 

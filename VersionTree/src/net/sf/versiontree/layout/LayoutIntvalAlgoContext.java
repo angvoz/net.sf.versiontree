@@ -16,6 +16,7 @@
  */
 package net.sf.versiontree.layout;
 
+import net.sf.versiontree.layout.interval.*;
 import net.sf.versiontree.layout.optimizerStrategies.IPlacementStrategy;
 import net.sf.versiontree.layout.optimizerStrategies.NoLayout;
 
