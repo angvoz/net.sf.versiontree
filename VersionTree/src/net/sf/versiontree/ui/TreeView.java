@@ -99,8 +99,7 @@ public class TreeView extends ScrolledComposite implements MouseListener {
 		drawSubBranches(
 			branchWidget,
 			branchesToBeDrawn,
-			headBranch.getRevisions(),
-			xOffset);
+			headBranch.getRevisions());
 
 		// resize content widget
 		content.setSize(content.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -109,8 +108,7 @@ public class TreeView extends ScrolledComposite implements MouseListener {
 	private void drawSubBranches(
 		Branch parent,
 		Map branches,
-		List revisions,
-		int xOffset) {
+		List revisions) {
 		// reverse List of revisions
 		Collections.reverse(revisions);
 		Iterator iter = revisions.iterator();
@@ -145,8 +143,7 @@ public class TreeView extends ScrolledComposite implements MouseListener {
 				drawSubBranches(
 					branchWidget,
 					branches,
-					branch.getRevisions(),
-					xOffset);
+					branch.getRevisions());
 			}
 		}
 	}
