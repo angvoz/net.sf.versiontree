@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.AbstractVersionTreeHelper;
@@ -34,6 +36,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -70,6 +73,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.core.RepositoryProvider;
@@ -81,19 +85,24 @@ import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput;
 import org.eclipse.team.internal.ccvs.ui.SimpleContentProvider;
 import org.eclipse.team.internal.ccvs.ui.TextViewerAction;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
+import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
+import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -134,6 +143,7 @@ public class VersionTreeView
 	private Action getContentsAction;
 	private Action toggleHorVerDisplayAction;
 	private Action linkWithEditorAction;
+	private Action tagWithExistingAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
 	private OpenLogEntryAction openActionDelegate;
@@ -234,7 +244,7 @@ public class VersionTreeView
 					final String revisionId = remoteFile.getRevision();
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
-							if(entries != null && tableViewer != null && ! tableViewer.getTable().isDisposed()) {
+							if(entries != null && treeView != null && ! treeView.isDisposed()) {
 								// set current revision
 								for (int i = 0; i < entries.length; i++) {
 									ILogEntry entry = entries[i];
@@ -248,7 +258,6 @@ public class VersionTreeView
 								updateTableData(currentEntry);
 								tableViewer.setInput(tableData);
 								tagViewer.setInput(currentEntry.getTags());
-								tableViewer.add(entries);
 							}
 						}
 					});
@@ -276,7 +285,7 @@ public class VersionTreeView
 		
 		initializeImages();
 
-		sashForm = new SashForm(parent, SWT.HORIZONTAL);
+		sashForm = new SashForm(parent, settings.getInt(VersionTreePlugin.P_DEFAULT_DETAILS_POS));
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		treeView =
 			new TreeView(
@@ -473,6 +482,7 @@ public class VersionTreeView
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(getContentsAction);
 		manager.add(getRevisionAction);
+		manager.add(tagWithExistingAction);
 		manager.add(new Separator());
 		manager.add(deepLayoutAction);
 		manager.add(wideLayoutAction);
@@ -493,15 +503,10 @@ public class VersionTreeView
 			public void run() {
 				if (sashForm.getOrientation() == SWT.HORIZONTAL) {
 					sashForm.setOrientation(SWT.VERTICAL);
-					VersionTreePlugin.getDefault().getPreferenceStore().setValue(
-							VersionTreePlugin.P_DEFAULT_DETAILS_POS,
-							Integer.toString(SWT.VERTICAL));
 				} else {
 					sashForm.setOrientation(SWT.HORIZONTAL);
-					VersionTreePlugin.getDefault().getPreferenceStore().setValue(
-							VersionTreePlugin.P_DEFAULT_DETAILS_POS,
-							Integer.toString(SWT.HORIZONTAL));
 				}
+				settings.setValue(VersionTreePlugin.P_DEFAULT_DETAILS_POS, sashForm.getOrientation());
 			}
 		};
 
@@ -614,7 +619,7 @@ public class VersionTreeView
 			wideLayoutAction.setChecked(true);
 
 		// refresh action
-			refreshAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.Refresh_View_Action")) {//$NON-NLS-1$
+		refreshAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.Refresh_View_Action")) {//$NON-NLS-1$
 	public void run() {
 				refresh();
 			}
@@ -634,9 +639,75 @@ public class VersionTreeView
 		linkWithEditorAction.setToolTipText(VersionTreePlugin.getResourceString("VersionTreeView.linkWithLabel")); //$NON-NLS-1$
 		linkWithEditorAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LINK_WITH_EDITOR));
 		linkWithEditorAction.setChecked(isLinkingEnabled());
-
+		
+		// Override MoveRemoteTagAction to work for log entries
+		final IActionDelegate tagActionDelegate = new MoveRemoteTagAction() {
+			protected ICVSResource[] getSelectedCVSResources() {
+				ICVSResource[] resources = super.getSelectedCVSResources();
+				if (resources == null || resources.length == 0) {
+					ArrayList logEntrieFiles = null;
+					if (!selection.isEmpty()) {
+						logEntrieFiles = new ArrayList();
+						Iterator elements = selection.iterator();
+						while (elements.hasNext()) {
+							Object next = elements.next();
+							if (next instanceof ILogEntry) {
+								logEntrieFiles.add(((ILogEntry)next).getRemoteFile());
+								continue;
+							}
+							if (next instanceof IAdaptable) {
+								IAdaptable a = (IAdaptable) next;
+								Object adapter = a.getAdapter(ICVSResource.class);
+								if (adapter instanceof ICVSResource) {
+									logEntrieFiles.add(((ILogEntry)adapter).getRemoteFile());
+									continue;
+								}
+							}
+						}
+					}
+					if (logEntrieFiles != null && !logEntrieFiles.isEmpty()) {
+						return (ICVSResource[])logEntrieFiles.toArray(new ICVSResource[logEntrieFiles.size()]);
+					}
+				}
+				return resources;
+			}
+		};
+		tagWithExistingAction = new Action(Policy.bind("HistoryView.tagWithExistingAction")) {
+			public void run() {
+				if (file == null)
+					return;
+				ISelection selection = treeView.getSelection();
+				if (!(selection instanceof IStructuredSelection))
+					return;
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				Object o = ss.getFirstElement();
+				currentSelection = (ILogEntry) o;
+				tagActionDelegate.selectionChanged(tagWithExistingAction,
+						treeView.getSelection());
+				tagActionDelegate.run(tagWithExistingAction);
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						if (!((TagAction) tagActionDelegate).wasCancelled()) {
+							refresh();
+						}
+					}
+				});
+			}
+			
+			public boolean isEnabled() {
+				ISelection selection = treeView.getSelection();
+				if (!(selection instanceof IStructuredSelection))
+					return false;
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				if (ss.size() != 1)
+					return false;
+				return true;
+			}
+		}; 	
+		WorkbenchHelp.setHelp(tagWithExistingAction, IHelpContextIds.TAG_AS_VERSION_DIALOG);
+		
+	
 		IActionBars actionBars = getViewSite().getActionBars();
-
 		// Create actions for the text editor
 		copyAction =
 			new TextViewerAction(commentViewer, ITextOperationTarget.COPY);
@@ -797,12 +868,9 @@ public class VersionTreeView
 	 * @since 3.0
 	 */
 	public void setLinkingEnabled(boolean enabled) {
-		this.linkingEnabled = enabled;
-
+		linkingEnabled = enabled;
 		// remember the last setting in the dialog settings		
-		settings.setValue(ICVSUIConstants.PREF_HISTORY_VIEW_EDITOR_LINKING, enabled);
-		
-	
+		settings.setValue(VersionTreePlugin.P_HISTORY_VIEW_EDITOR_LINKING, enabled);
 		// if turning linking on, update the selection to correspond to the active editor
 		if (enabled) {
 			editorActivated(getSite().getPage().getActiveEditor());

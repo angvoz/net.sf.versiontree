@@ -88,21 +88,6 @@ public class VersionTreePreferencePage
 				VersionTreePlugin.getResourceString(
 					"VersionTreePreferencePage.Default_Empty_Branches"), //$NON-NLS-1$
 				getFieldEditorParent()));
-		addField(new RadioGroupFieldEditor(
-			VersionTreePlugin.P_DEFAULT_DETAILS_POS,
-			VersionTreePlugin.getResourceString(
-				"VersionTreePreferencePage.Default_Details_Pos"), //$NON-NLS-1$
-			1,
-			new String[][] {
-				{
-					VersionTreePlugin.getResourceString(
-						"VersionTreePreferencePage.Element_Details_Right"), //$NON-NLS-1$
-					Integer.toString(org.eclipse.swt.SWT.HORIZONTAL) },
-				{
-				VersionTreePlugin.getResourceString(
-					"VersionTreePreferencePage.Element_Details_Bottom"), //$NON-NLS-1$
-					Integer.toString(org.eclipse.swt.SWT.VERTICAL) }
-		}, getFieldEditorParent()));
 	}
 
 	public void init(IWorkbench workbench) {
