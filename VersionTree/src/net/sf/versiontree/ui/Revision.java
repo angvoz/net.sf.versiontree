@@ -19,7 +19,6 @@ package net.sf.versiontree.ui;
 import net.sf.versiontree.Globals;
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.IRevision;
-import net.sf.versiontree.ui.preferences.VersionTreePreferencePage;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -66,10 +65,17 @@ public class Revision extends Canvas {
 
 		initializeImages();
 
-		IPreferenceStore prefStore = VersionTreePlugin.getDefault().getPreferenceStore();
-		preferredHeight = prefStore.getInt(VersionTreePreferencePage.P_REVISION_HEIGHT);
-		preferredWidth = prefStore.getInt(VersionTreePreferencePage.P_REVISION_WIDTH);
-		background = new Color(null, 255, 255, 255);
+		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
+		preferredHeight = store.getInt(VersionTreePlugin.P_REVISION_HEIGHT);
+		preferredWidth = store.getInt(VersionTreePlugin.P_REVISION_WIDTH);
+		
+		// Parse background color
+		String color = store.getString(VersionTreePlugin.P_REVISION_BACKGROUNDCOLOR);
+		int temp1 = color.indexOf(',');
+		int temp2 = color.indexOf(',',temp1+1);
+		background = new Color(null,Integer.valueOf(color.substring(0,temp1)).intValue(), 
+			Integer.valueOf(color.substring(temp1 + 1, temp2)).intValue(), 
+			Integer.valueOf(color.substring(temp2 + 1, color.length())).intValue());
 		selectedColor = new Color(null, 230, 230, 255);
 		focusColor = getDisplay().getSystemColor(SWT.COLOR_RED);
 

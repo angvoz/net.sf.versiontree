@@ -17,7 +17,9 @@
 package net.sf.versiontree.ui;
 
 import net.sf.versiontree.Globals;
+import net.sf.versiontree.VersionTreePlugin;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
@@ -48,8 +50,10 @@ public class SimpleConnector extends Canvas {
 	 */
 	public SimpleConnector(Composite parent, int style) {
 		super(parent, style);
-		preferredHeight = 40;
-		preferredWidth = 80;
+		
+		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
+		preferredHeight = store.getInt(VersionTreePlugin.P_BRANCH_HEIGHT);
+		preferredWidth = store.getInt(VersionTreePlugin.P_BRANCH_WIDTH);
 		preferredConnectionLength = 10;
 		// add paint listener
 		addPaintListener(new PaintListener() {
