@@ -45,6 +45,27 @@ public class RevisionData implements IRevision {
 		this.logEntry = logEntry;
 	}
 
+	/** @author Andre
+	 * Uses CVSLog to return whether any branches from this revision exist,
+	 * introduced here to avoid adding another level of indirection */
+	public boolean hasBranchTags() {
+		return hasTag(CVSTag.BRANCH);
+	}
+	/** @see net.sf.versiontree.data.IRevision#hasVersionTags() */
+	public boolean hasVersionTags() {
+		return hasTag(CVSTag.VERSION);
+	}
+	/** @author Andre
+	 * Generalization of all has-X calls, like hasVersions() (==CVSTag.VERSION) */
+	public boolean hasTag(int tagname) {
+		CVSTag[] tags = logEntry.getTags();
+		for (int i = 0; i < tags.length; i++) {
+			CVSTag tag = tags[i];
+			if (tag.getType() == tagname) return true;
+		}
+		return false;
+	}
+
 	/**
 	 * @see net.sf.versiontree.data.IRevision#getBranch()
 	 */
@@ -184,16 +205,6 @@ public class RevisionData implements IRevision {
 		return logEntry;
 	}
 
-	/**
-	 * @see net.sf.versiontree.data.IRevision#hasVersionTags()
-	 */
-	public boolean hasVersionTags() {
-		CVSTag[] tags = logEntry.getTags();
-		for (int i = 0; i < tags.length; i++) {
-			CVSTag tag = tags[i];
-			if (tag.getType() == CVSTag.VERSION) return true;
-		}
-		return false;
-	}
+
 
 }
