@@ -16,31 +16,22 @@
  */
 package net.sf.versiontree.layout;
 
-import java.util.HashMap;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.widgets.Composite;
 
-import net.sf.versiontree.layout.interval.*;
-import net.sf.versiontree.layout.optimizerStrategies.IPlacementStrategy;
-import net.sf.versiontree.layout.optimizerStrategies.*;
-
-
-import org.eclipse.swt.graphics.Point;
 
 /**
  * @author Andre
- * This struct-class provides the context for variables for the operations that are
- * performed externally within the graph traversal
  */
-public class LayoutIntvalAlgoContext {
-	public IntervalManager ivManager;
-	public Point position;
-	public IPlacementStrategy strategy;
-	public HashMap stack;
-
-	public LayoutIntvalAlgoContext() {
-		ivManager = new IntervalManager();
-		position = new Point(-1,0);
-		strategy = new Simple();
-		stack = new HashMap();
+public class DrawGraphContext {
+	
+	public Composite parent;
+	public MouseListener listener;
+	public UIDefaultValues uidefaults;
+	
+	public DrawGraphContext(Composite parent, MouseListener listener) {
+		uidefaults = new UIDefaultValues();
+		this.parent = parent;
+		this.listener = listener;
 	}
-
 }

@@ -19,36 +19,34 @@ package net.sf.versiontree.layout.cmd;
 
 /**
  * @author Andre
- * This class supplies function objects for generic loops with recursion to be
+ * supplies function objects for generic loops with recursion to be
  * executed on the respective part of the algorithm, it aggregates multiple
  * command objects and executes them if present
  */
-public class RecursiveLoopCmdAggregator {
+public class RecursiveLoopCmdAggregator extends LoopCmdAggregator {
 
-	private ICommand postRecursion;
-	private ICommand preRecursion;
-	private ICommand postLoop;
-	private ICommand preLoop;
+	protected ICommand postRecursion;
+	protected ICommand preRecursion;
+	
 	public RecursiveLoopCmdAggregator(
-			ICommand preLoop, ICommand postLoop, ICommand preRecursion, ICommand postRecursion) {
-				this.preLoop = preLoop;
-				this.postLoop = postLoop;
+			
+			ICommand preAlgo, ICommand preLoop, ICommand preRecursion,
+			ICommand postRecursion, ICommand postLoop, ICommand postAlgo) {
+				
+				super(preAlgo, preLoop, null, postLoop, postAlgo);
 				this.preRecursion = preRecursion;
 				this.postRecursion = postRecursion;
 			}
 
-	public void executePreLoop(Object obj) {
-		if (preLoop != null) preLoop.execute(obj);
-	}
-	public void executePostLoop(Object obj) {
-		if (postLoop != null) postLoop.execute(obj);
-	}
+	
 	public void executePreRecursion(Object obj) {
 		if (preRecursion != null) preRecursion.execute(obj);
 	}
 	public void executePostRecursion(Object obj) {
 		if (postRecursion != null) postRecursion.execute(obj);
 	}
-	
-
+	// override due to N/A
+	public void executeInLoop(Object obj) {
+		throw new UnsupportedOperationException();
+	}
 }

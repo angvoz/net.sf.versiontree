@@ -18,6 +18,7 @@ package net.sf.versiontree.layout.interval;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.swt.graphics.Point;
@@ -59,12 +60,11 @@ public class IntegerInterval implements IInterval {
 	 * @see net.sf.versiontree.layout.IInterval#get(int)
 	 */
 	public Point getFreeInterval(int position) {
-		
+		SortedMap tail = lowerBounds.tailMap( new Integer(position) );
+		SortedMap sub  = upperBounds.subMap( new Integer(0), new Integer(position) );
 		return new Point (
-			((Integer)lowerBounds.tailMap( new Integer(position) )
-				.firstKey() ).intValue(),
-			((Integer)upperBounds.subMap( new Integer(0), new Integer(position) )
-				.lastKey() ).intValue()
+			sub.isEmpty() ? 0 : ((Integer)sub.lastKey()).intValue(),
+			tail.isEmpty() ? Integer.MAX_VALUE : ((Integer)tail.firstKey()).intValue()
 						);
 	}
 	/* (non-Javadoc)
@@ -78,6 +78,6 @@ public class IntegerInterval implements IInterval {
 		
 	}
 	public Iterator iterator() {
-		return new IntegerIntervalIterator(lowerBounds, upperBounds); 
+		return new ElementIntIntervalIterator(lowerBounds); 
 	}
 }

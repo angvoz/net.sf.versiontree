@@ -16,6 +16,7 @@
  */
 package net.sf.versiontree.layout.interval;
 
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.eclipse.swt.graphics.Point;
@@ -61,6 +62,8 @@ public class IntervalManager {
 		}
 		iv.setInterval(p, o);	
 	}
-	
+	public Iterator iterator() {
+		return new ElementIntervalManagerIterator(columns);
+	}
 
 }

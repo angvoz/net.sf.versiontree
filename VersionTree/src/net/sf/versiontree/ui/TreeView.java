@@ -45,7 +45,7 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
  */
 public class TreeView extends ScrolledComposite implements MouseListener {
 
-	private Composite content = null;
+	public Composite content = null;
 
 	private LogEntrySelectionListener logSelectionListener;
 
@@ -149,6 +149,7 @@ public class TreeView extends ScrolledComposite implements MouseListener {
 
 	/**
 	 * Removes all widgets from the content pane.
+	 * TODO delete me!
 	 */
 	private void removeAllWidgets() {
 		Control[] childs = content.getChildren();

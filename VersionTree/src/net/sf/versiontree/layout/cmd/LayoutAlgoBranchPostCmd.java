@@ -14,33 +14,33 @@
  * Free Software Foundation, Inc., 
  * 59 TemplePlace - Suite 330, Boston, MA 02111-1307, USA 
  */
-package net.sf.versiontree.layout;
-
-import java.util.HashMap;
-
-import net.sf.versiontree.layout.interval.*;
-import net.sf.versiontree.layout.optimizerStrategies.IPlacementStrategy;
-import net.sf.versiontree.layout.optimizerStrategies.*;
-
+package net.sf.versiontree.layout.cmd;
 
 import org.eclipse.swt.graphics.Point;
 
+import net.sf.versiontree.data.IBranch;
+import net.sf.versiontree.layout.LayoutIntvalAlgoContext;
+
 /**
  * @author Andre
- * This struct-class provides the context for variables for the operations that are
- * performed externally within the graph traversal
+ * Allocates intervals for the branches to be placed, uses a strategy to check
+ * for collisions
  */
-public class LayoutIntvalAlgoContext {
-	public IntervalManager ivManager;
-	public Point position;
-	public IPlacementStrategy strategy;
-	public HashMap stack;
+public class LayoutAlgoBranchPostCmd implements ICommand {
 
-	public LayoutIntvalAlgoContext() {
-		ivManager = new IntervalManager();
-		position = new Point(-1,0);
-		strategy = new Simple();
-		stack = new HashMap();
+	private LayoutIntvalAlgoContext ctx;
+	/**
+	 * @param ctx
+	 */
+	public LayoutAlgoBranchPostCmd(LayoutIntvalAlgoContext ctx) {
+		this.ctx = ctx;
 	}
-
+	/* (non-Javadoc)
+	 * @see net.sf.versiontree.layout.ui.Command#execute(java.lang.Object)
+	 */
+	public void execute(Object obj) {
+		IBranch branch = (IBranch) obj;
+		/* restore from stack */
+		ctx.position = (Point)ctx.stack.get(branch.getBranchPrefix());
+	}
 }

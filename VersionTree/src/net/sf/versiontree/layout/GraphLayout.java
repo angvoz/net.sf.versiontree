@@ -16,9 +16,22 @@
  */
 package net.sf.versiontree.layout;
 
+import java.util.Iterator;
+
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.widgets.Composite;
+
+
 import net.sf.versiontree.data.IBranch;
 import net.sf.versiontree.data.graph.RevisionGraph;
-import net.sf.versiontree.layout.cmd.*;
+import net.sf.versiontree.layout.cmd.DrawNodeCmd;
+import net.sf.versiontree.layout.cmd.DrawFinalizeCmd;
+import net.sf.versiontree.layout.cmd.DrawRemoveAllCmd;
+import net.sf.versiontree.layout.cmd.LayoutAlgoBranchPostCmd;
+import net.sf.versiontree.layout.cmd.LayoutAlgoBranchPreCmd;
+import net.sf.versiontree.layout.cmd.LayoutAlgoRevisionPreCmd;
+import net.sf.versiontree.layout.cmd.LoopCmdAggregator;
+import net.sf.versiontree.layout.cmd.RecursiveLoopCmdAggregator;
 
 
 /**
@@ -27,25 +40,45 @@ import net.sf.versiontree.layout.cmd.*;
  */
 public class GraphLayout {
 
-	private RecursiveLoopCmdAggregator aggregator;
 	private RevisionGraph graph;
+	//private Composite viewContext;
 	
-	public GraphLayout(IBranch[] ibr) {
+	public GraphLayout(IBranch[] ibr, Composite parent, MouseListener listener) {
+		//viewContext = parent;
+		
 		/* The data context for algorithm operations */
 		LayoutIntvalAlgoContext ctx = new LayoutIntvalAlgoContext();
-		/* assemble operations to be executed during traversal */
-		aggregator = new RecursiveLoopCmdAggregator(
-			new LayoutAlgoBranchCmd(ctx), null,
-			new LayoutAlgoRevisionCmd(ctx), null );
-		/* create and traverse graph using specified operations */
-		graph = new RevisionGraph( ibr, aggregator);
+		/* assemble operations to be executed during traversal for creating
+		 * the relative layout matrix using intervals */
+		RecursiveLoopCmdAggregator intervalPlacer = new RecursiveLoopCmdAggregator(
+			null, new LayoutAlgoBranchPreCmd(ctx), new LayoutAlgoRevisionPreCmd(ctx),
+			null, new LayoutAlgoBranchPostCmd(ctx), null );
+		graph = new RevisionGraph( ibr, intervalPlacer);
 		graph.walk();
 		
-	
-	}
-	
+		/* assemble operations for painting actual branches and revisions */
+		//graph.
+		DrawGraphContext dctx = new DrawGraphContext(parent, listener);
+		LoopCmdAggregator drawer = new LoopCmdAggregator(
+			new DrawRemoveAllCmd(dctx),	null,
+			new DrawNodeCmd(dctx),
+			null, 	new DrawFinalizeCmd(dctx) );
 
+		// TODO remove  => refactor <Hack>
+		drawer.executePreAlgo();
+		Iterator intervalIter = ctx.ivManager.iterator();
+		while (intervalIter.hasNext()) {
+			drawer.executeInLoop(intervalIter.next());		
+		}
+		drawer.executePostAlgo();
+		//	</hack>
+		
+		
+		
+		
+		
 	}
+}
 
 	
 	

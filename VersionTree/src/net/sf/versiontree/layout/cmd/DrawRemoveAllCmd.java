@@ -14,33 +14,31 @@
  * Free Software Foundation, Inc., 
  * 59 TemplePlace - Suite 330, Boston, MA 02111-1307, USA 
  */
-package net.sf.versiontree.layout;
+package net.sf.versiontree.layout.cmd;
 
-import java.util.HashMap;
+import org.eclipse.swt.widgets.Control;
 
-import net.sf.versiontree.layout.interval.*;
-import net.sf.versiontree.layout.optimizerStrategies.IPlacementStrategy;
-import net.sf.versiontree.layout.optimizerStrategies.*;
-
-
-import org.eclipse.swt.graphics.Point;
+import net.sf.versiontree.layout.DrawGraphContext;
 
 /**
  * @author Andre
- * This struct-class provides the context for variables for the operations that are
- * performed externally within the graph traversal
+ * 
  */
-public class LayoutIntvalAlgoContext {
-	public IntervalManager ivManager;
-	public Point position;
-	public IPlacementStrategy strategy;
-	public HashMap stack;
-
-	public LayoutIntvalAlgoContext() {
-		ivManager = new IntervalManager();
-		position = new Point(-1,0);
-		strategy = new Simple();
-		stack = new HashMap();
+public class DrawRemoveAllCmd implements ICommand {
+	
+	public DrawGraphContext dctx;
+	public DrawRemoveAllCmd(DrawGraphContext dctx) {
+		this.dctx = dctx;
+	}
+	/* (non-Javadoc)
+	 * @see net.sf.versiontree.layout.cmd.ICommand#execute(java.lang.Object)
+	 */
+	public void execute(Object obj) {
+		Control[] childs = dctx.parent.getChildren();
+		for (int i = 0; i < childs.length; i++) {
+			Control control = childs[i];
+			control.dispose();
+		}
 	}
 
 }

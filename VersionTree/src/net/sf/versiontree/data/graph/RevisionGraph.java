@@ -68,8 +68,15 @@ public class RevisionGraph {
 	}
 	/** start traversal */
 	public void walk() {
+		cmdAggregat.executePreAlgo();
 		walk(rgHead);
+		cmdAggregat.executePostAlgo();
 	}
+	/** for exchanging algorithm operations */
+	public void configureAlgorithm(RecursiveLoopCmdAggregator cmdAggregat) {
+		this.cmdAggregat = cmdAggregat;
+	}
+	 
 	/** 
 	 * loop-recursion generalization supporting algorithm specification through
 	 * an externally supplied function objects 

@@ -16,6 +16,8 @@
  */
 package net.sf.versiontree.layout.interval;
 
+import java.util.Iterator;
+
 import org.eclipse.swt.graphics.Point;
 
 /**
@@ -44,4 +46,8 @@ public interface IInterval {
 	 * @return Free interval bounds
 	 */
 	public abstract Point getFreeInterval(int position);
+	/**
+	 * Iterator over stored objects 
+	 */
+	public abstract Iterator iterator();
 }
