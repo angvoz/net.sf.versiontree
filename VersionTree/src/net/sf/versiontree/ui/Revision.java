@@ -16,7 +16,6 @@
  */
 package net.sf.versiontree.ui;
 
-import net.sf.versiontree.Globals;
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.IRevision;
 
@@ -66,7 +65,8 @@ public class Revision extends Canvas {
 
 		IPreferenceStore store =
 			VersionTreePlugin.getDefault().getPreferenceStore();
-		minimumHeight = store.getInt(VersionTreePlugin.P_MINIMUM_REVISION_HEIGHT);
+		minimumHeight =
+			store.getInt(VersionTreePlugin.P_MINIMUM_REVISION_HEIGHT);
 		minimumWidth = store.getInt(VersionTreePlugin.P_MINIMUM_REVISION_WIDTH);
 
 		// Parse background color
@@ -164,7 +164,7 @@ public class Revision extends Canvas {
 			size.x = minimumWidth;
 		if (size.y < minimumHeight)
 			size.y = minimumHeight;
-			
+
 		return size;
 	}
 
@@ -200,11 +200,7 @@ public class Revision extends Canvas {
 	public Point getConnectorPoint(int orientation) {
 		Point size = this.getSize();
 		Point connectionPoint;
-		if (orientation == Globals.NORTH_SOUTH) {
-			connectionPoint = new Point(size.x, size.y / 2);
-		} else {
-			connectionPoint = new Point(size.x / 2, size.y);
-		}
+		connectionPoint = new Point(size.x, size.y / 2);
 		return connectionPoint;
 	}
 

@@ -16,7 +16,6 @@
  */
 package net.sf.versiontree.ui;
 
-import net.sf.versiontree.Globals;
 import net.sf.versiontree.VersionTreePlugin;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -147,11 +146,7 @@ public class BranchMarker extends Canvas {
 	public Point getConnectorPoint(int orientation) {
 		Point size = this.getSize();
 		Point connectionPoint;
-		if (orientation == Globals.NORTH_SOUTH) {
-			connectionPoint = new Point(size.x / 2, 0);
-		} else {
-			connectionPoint = new Point(0, size.y / 2);
-		}
+		connectionPoint = new Point(size.x / 2, 0);
 		return connectionPoint;
 	}
 

@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.versiontree.Globals;
 import net.sf.versiontree.data.IBranch;
 import net.sf.versiontree.data.IRevision;
 
@@ -105,10 +104,7 @@ public class TreeView extends ScrolledComposite implements MouseListener {
 		content.setSize(content.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
-	private void drawSubBranches(
-		Branch parent,
-		Map branches,
-		List revisions) {
+	private void drawSubBranches(Branch parent, Map branches, List revisions) {
 		// reverse List of revisions
 		Collections.reverse(revisions);
 		Iterator iter = revisions.iterator();
@@ -127,32 +123,27 @@ public class TreeView extends ScrolledComposite implements MouseListener {
 			bIter = subBranches.iterator();
 			while (bIter.hasNext()) {
 				IBranch branch = (IBranch) bIter.next();
-				Branch branchWidget =
-					new Branch(branch, content, Globals.NORTH_SOUTH);
+				Branch branchWidget = new Branch(branch, content, SWT.DEFAULT);
 				branchWidget.addMouseListenerToRevisions(this);
 				Point sp =
 					parent.getRevisionConnectorPoint(
 						branch.getSource(),
-						Globals.NORTH_SOUTH);
+						SWT.DEFAULT);
 				branchWidget.setLocation(xOffset, sp.y + 10);
 				branchWidget.setSize(
 					branchWidget.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 				createBranchConnector(branchWidget, sp);
 				xOffset += branchWidget.getSize().x + 10;
 				// recursive call
-				drawSubBranches(
-					branchWidget,
-					branches,
-					branch.getRevisions());
+				drawSubBranches(branchWidget, branches, branch.getRevisions());
 			}
 		}
 	}
 
 	private void createBranchConnector(Branch branchWidget, Point sp) {
 		RevisionToBranchConnector connector =
-			new RevisionToBranchConnector(content, Globals.NORTH_SOUTH);
-		Point ep =
-			branchWidget.getBranchMarkerConnectorPoint(Globals.NORTH_SOUTH);
+			new RevisionToBranchConnector(content, SWT.DEFAULT);
+		Point ep = branchWidget.getBranchMarkerConnectorPoint(SWT.DEFAULT);
 		Rectangle bounds = new Rectangle(sp.x, sp.y, ep.x - sp.x, ep.y - sp.y);
 		connector.setBounds(bounds);
 	}
@@ -203,7 +194,7 @@ public class TreeView extends ScrolledComposite implements MouseListener {
 					if (selection.getFirstElement() != null
 						&& selection.getFirstElement()
 							!= selected.getRevisionData()) {
-								logSelectionListener.twoLogEntriesSelected(selection);
+						logSelectionListener.twoLogEntriesSelected(selection);
 					}
 				} else {
 					selection.setLeftSelection(selected.getRevisionData());

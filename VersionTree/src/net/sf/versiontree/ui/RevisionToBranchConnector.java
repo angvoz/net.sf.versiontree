@@ -16,8 +16,6 @@
  */
 package net.sf.versiontree.ui;
 
-import net.sf.versiontree.Globals;
-
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
@@ -35,8 +33,6 @@ import org.eclipse.swt.widgets.Composite;
 public class RevisionToBranchConnector extends Canvas {
 
 	private int arcSize = 9;
-
-	int mainDirection = Globals.NORTH_SOUTH;
 
 	/**
 	 * @param arg0
@@ -68,23 +64,6 @@ public class RevisionToBranchConnector extends Canvas {
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		Rectangle bounds = this.getBounds();
 		return new Point(bounds.height, bounds.height);
-	}
-
-	/**
-	 * @return
-	 */
-	public int getMainDirection() {
-		return mainDirection;
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setMainDirection(int i) {
-		if (i == Globals.NORTH_SOUTH || i == Globals.WEST_EAST) {
-			mainDirection = i;
-			redraw();
-		}
 	}
 
 }

@@ -16,7 +16,6 @@
  */
 package net.sf.versiontree.ui;
 
-import net.sf.versiontree.Globals;
 import net.sf.versiontree.VersionTreePlugin;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -42,17 +41,17 @@ public class SimpleConnector extends Canvas {
 	int preferredHeight;
 	int preferredConnectionLength;
 
-	int mainDirection = Globals.NORTH_SOUTH;
-
 	/**
 	 * @param arg0
 	 * @param arg1
 	 */
 	public SimpleConnector(Composite parent, int style) {
 		super(parent, style);
-		
-		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
-		preferredHeight = store.getInt(VersionTreePlugin.P_MINIMUM_BRANCH_HEIGHT);
+
+		IPreferenceStore store =
+			VersionTreePlugin.getDefault().getPreferenceStore();
+		preferredHeight =
+			store.getInt(VersionTreePlugin.P_MINIMUM_BRANCH_HEIGHT);
 		preferredWidth = store.getInt(VersionTreePlugin.P_MINIMUM_BRANCH_WIDTH);
 		preferredConnectionLength = 10;
 		// add paint listener
@@ -64,49 +63,16 @@ public class SimpleConnector extends Canvas {
 	}
 
 	/**
-			 * @param e Paint Event
-			 */
+	 * @param e Paint Event
+	 */
 	protected void paintControl(PaintEvent e) {
 		GC gc = e.gc;
 		Rectangle bounds = this.getBounds();
-		if (mainDirection == Globals.NORTH_SOUTH) {
-			gc.drawLine(
-				bounds.width / 2,
-				0,
-				bounds.width / 2,
-				bounds.height);
-		} else {
-			gc.drawLine(
-				0,
-				bounds.height / 2,
-				bounds.width,
-				bounds.height / 2);
-		}
+		gc.drawLine(bounds.width / 2, 0, bounds.width / 2, bounds.height);
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
-		if (mainDirection == Globals.NORTH_SOUTH) {
-			return new Point(preferredWidth + 2, preferredConnectionLength + 2);
-		} else {
-			return new Point(preferredConnectionLength + 2, preferredHeight + 2);
-		}
-	}
-
-	/**
-	 * @return
-	 */
-	public int getMainDirection() {
-		return mainDirection;
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setMainDirection(int i) {
-		if (i == Globals.NORTH_SOUTH || i == EAST_WEST) {
-			mainDirection = i;
-			redraw();
-		}
+		return new Point(preferredWidth + 2, preferredConnectionLength + 2);
 	}
 
 }
