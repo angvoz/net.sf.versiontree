@@ -17,6 +17,7 @@
       <import plugin="org.eclipse.team.ui" version="2.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.compare" version="2.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.team.cvs.ui" version="2.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text"/>
    </requires>
 
 

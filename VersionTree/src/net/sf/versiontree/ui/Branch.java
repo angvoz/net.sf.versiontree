@@ -93,7 +93,7 @@ public class Branch extends Canvas {
 		Rectangle size = getBounds();
 
 		gc.setBackground(background);
-		gc.fillRoundRectangle(0, 0, size.width, size.height, 20, 20);
+		gc.fillRoundRectangle(0, 0, size.width - 1, size.height - 1, 20, 20);
 
 		int yOffset = inset;
 		Point extent = gc.stringExtent(branchData.getName());
@@ -108,7 +108,7 @@ public class Branch extends Canvas {
 			(size.width / 2) - (extent.x / 2),
 			yOffset);
 
-		gc.drawRoundRectangle(0, 0, size.width, size.height, 20, 20);
+		gc.drawRoundRectangle(0, 0, size.width - 1, size.height - 1, 20, 20);
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
