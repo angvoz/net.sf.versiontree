@@ -22,7 +22,7 @@ import java.util.LinkedList;
 
 import net.sf.versiontree.data.IBranch;
 import net.sf.versiontree.data.IRevision;
-import net.sf.versiontree.layout.ui.*;
+import net.sf.versiontree.layout.*;
 
 /**
  * @author Andre
