@@ -35,9 +35,8 @@ public class GraphLayout {
 		LayoutIntvalAlgoContext ctx = new LayoutIntvalAlgoContext();
 		/* assemble operations to be executed during traversal */
 		aggregator = new RecursiveLoopCmdAggregator(
-			new LayoutAlgoBranchCmd(ctx),
-			new LayoutAlgoBranchCmd(ctx),
-			null, null );
+			new LayoutAlgoBranchCmd(ctx), null,
+			new LayoutAlgoRevisionCmd(ctx), null );
 		/* create and traverse graph using specified operations */
 		graph = new RevisionGraph( ibr, aggregator);
 		graph.walk();
