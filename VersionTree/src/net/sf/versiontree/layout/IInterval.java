@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.Point;
 public interface IInterval {
 	/**
 	 * Sets interval to span from param1 to param1+param2 (excluded) within
-	 * which param3 is returned, Intervals must be disjoint
+	 * which param3 is returned, Intervals must not be disjoint
 	 * Additionally stores an object belonging to an interval
 	 */
 	public abstract void setInterval(Point intval, Object obj);
