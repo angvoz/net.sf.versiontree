@@ -10,12 +10,9 @@
  *******************************************************************************/
 package net.sf.versiontree.data.algo;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedMap;
 
 import net.sf.versiontree.data.BranchTree;
 import net.sf.versiontree.data.IBranch;
@@ -58,14 +55,11 @@ public class WideLayout extends AbstractLayout {
 	private void foreachBranchStepDownAndOptimize(int x, int y, IRevision rev) {
 		int x_tmp = x;
 		// always start drawing the branch with the lowest height
-		SortedMap branches = TreeViewHelper.getHeightSortedBranchesForRevision(rev, emptyBranches);
+		List branches = TreeViewHelper.getHeightSortedBranchesForRevision(rev, emptyBranches);
 
-		List keys = new ArrayList(branches.keySet());
-		Collections.sort(keys);
-		for (Iterator iter = keys.iterator(); iter.hasNext();	)
+		for (Iterator iter = branches.iterator(); iter.hasNext();	)
 			{
-			Integer key = (Integer) iter.next();
-			IBranch branch = (IBranch) branches.get(key);
+			IBranch branch = (IBranch) iter.next();
 			int d = 0;
 			do {
 				if (reservedHeight.containsKey(new Integer(x_tmp + 1))) {

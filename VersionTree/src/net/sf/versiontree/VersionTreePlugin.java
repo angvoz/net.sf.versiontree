@@ -26,7 +26,6 @@ import org.osgi.framework.BundleContext;
  * TODO Birdview: add window for, hide text + icons for birdview, w + w/o branchnames
  * TODO Dynamic Tree Element size: 
  * widen branches of a x layer until name fits, save added x value
- * TODO Eastern regions: normalization concept for true BIDI 
  * TODO TreeViewConfig: class should notify listeners if configuration changes.
  * 
  * The main plugin class to be used in a perspective.

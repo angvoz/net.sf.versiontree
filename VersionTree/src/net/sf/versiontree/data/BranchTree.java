@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -33,7 +32,6 @@ public class BranchTree {
 
 	private HashMap branches;
 	private HashMap revisions;
-	private HashMap prefixToNameLink;
 
 	public boolean isEmpty() {
 		return numberOfBranches == 0;
@@ -49,22 +47,12 @@ public class BranchTree {
 
 		// basic initializations
 		revisions = new HashMap(logs.length);
-		prefixToNameLink = new HashMap((int) (Math.ceil(logs.length / 20)));
 		branches = new HashMap((int) (Math.ceil(logs.length / 20)));
 
 		// set up branches, revision
 		setUpHashMaps(logs, selectedRevision);
-		// prefix to name
-		setUpPrefixToNameMap();
 		// build complete tree structure
 		buildCompleteTreeStructure();
-	}
-	
-	private void setUpPrefixToNameMap() {
-		for (Iterator iter = branches.values().iterator(); iter.hasNext();) {
-			IBranch element = (IBranch) iter.next();
-			prefixToNameLink.put(element.getName(), element.getBranchPrefix());
-		}
 	}
 	
 	private void setUpHashMaps(ILogEntry[] logs, String selectedRevision) {
@@ -81,7 +69,6 @@ public class BranchTree {
 			ifIsActiveRevisionInIDErememberIt(
 				selectedRevision,
 				currentRevision);
-			
 			createBranches(logEntry);
 		}
 		
@@ -91,6 +78,21 @@ public class BranchTree {
 			IRevision currentRevision = (IRevision) iter.next();
 			String branchPrefix = currentRevision.getBranchPrefix();
 			BranchData branch = (BranchData) branches.get(branchPrefix);
+			if (branch == null) {
+				if (currentRevision.getRevision() == IRevision.INITIAL_REVISION) {
+					branch = (BranchData) branches.get(IBranch.HEAD_PREFIX);
+				} else {
+					// no branch tag! create adhoc branch
+					int branchNumber = Integer.parseInt(branchPrefix
+							.substring(branchPrefix.lastIndexOf(".") + 1));
+					branch = createBranch(branchPrefix, branchNumber, "<n/a>");
+					String parentPrefix = branchPrefix.substring(0,
+							branchPrefix.lastIndexOf("."));
+					IRevision branchParent = (IRevision) revisions
+							.get(parentPrefix);
+					branchParent.addChild(branch);
+				}
+			}
 			// get/create the branch and add revision
 			branch.addRevisionData(currentRevision);
 		}
@@ -107,16 +109,19 @@ public class BranchTree {
 		for (int j = tags.length - 1; j >= 0; j--) {
 			if (tags[j].getType() == CVSTag.BRANCH) {
 				branchNumber += 2;
-				BranchData branch = new BranchData();
-				String branchPrefix =
-					logEntry.getRevision() + "." + branchNumber;
-				branch.setBranchPrefix(branchPrefix);
-				branch.setName(tags[j].getName());
-				branches.put(branchPrefix, branch);
+				createBranch(logEntry.getRevision() + "." + branchNumber, branchNumber, tags[j].getName());
 			}
 		}
 	}
 	
+	private BranchData createBranch(String branchPrefix, int branchNumber, String name) {
+		BranchData branch = new BranchData();
+		branch.setBranchPrefix(branchPrefix);
+		branch.setName(name);
+		branches.put(branchPrefix, branch);
+		return branch;
+	}
+
 	private void buildCompleteTreeStructure() {
 		for (Iterator iter = branches.values().iterator(); iter.hasNext();) {
 			IBranch outerBranch = (IBranch) iter.next();
@@ -134,7 +139,7 @@ public class BranchTree {
 					prev.addChild(innerRevision);
 				// ... all branches are children
 				for (Iterator innerBranches =
-					findBranchesForRevision(innerRevision).values().iterator();
+					findBranchesForRevision(innerRevision).iterator();
 					innerBranches.hasNext();
 					) {
 					IBranch branchChild = (IBranch) innerBranches.next();
@@ -153,22 +158,14 @@ public class BranchTree {
 		}
 	}
 
-	public Map findBranchesForRevision(IRevision rev) {
-		Map sortedBranches = new HashMap();
-		ArrayList branchTagList = (ArrayList) rev.getBranchTags();
-		for (Iterator iter = branchTagList.iterator(); iter.hasNext();) {
-			String element = (String) iter.next();
-			// get prefix with name, then object with prefix
-			Object prefix = prefixToNameLink.get(element);
-			if (prefix != null) {
-				IBranch b = (IBranch) branches.get(prefix);
-				sortedBranches.put(new Integer(b.getHeight() + 1), b);
-				// +1 == account for own			
-			} else {
-				sortedBranches.put(
-					new Integer(1),
-					new BranchData(element, ""));
-			}
+	public List findBranchesForRevision(IRevision rev) {
+		List sortedBranches = new ArrayList();
+		int branchId = 2;
+		IBranch branch = (IBranch) branches.get(rev.getRevision()+ "." + branchId);
+		while (branch != null) {
+			sortedBranches.add(branch);
+			branchId += 2;
+			branch = (IBranch) branches.get(rev.getRevision()+ "." + branchId);
 		}
 		return sortedBranches;
 	}
@@ -187,12 +184,17 @@ public class BranchTree {
 	 * the root revision is recognized by its revision number
 	 */
 	private void ifIsRootSetRoot(
-		ILogEntry logEntry,
-		IRevision currentRevision) {
-		// check if this is the root revision
-		if (logEntry.getRevision().equals("1.1") //$NON-NLS-1$
-		|| logEntry.getRevision().equals("1.1.1.1")) //$NON-NLS-1$
-			rootRevision = currentRevision;
+		ILogEntry logEntry, IRevision currentRevision) {
+		// check if this is the root revision. The repository can have 1.1 only or 1.1 and 1.1.1.1!
+		// 1.1.1.1 rulez!
+		if (logEntry.getRevision().equals(IRevision.FIRST_REVISION)
+				|| logEntry.getRevision().equals(IRevision.INITIAL_REVISION)) {
+			if (rootRevision == null) {
+				rootRevision = currentRevision;
+			} else if (!rootRevision.equals(IRevision.INITIAL_REVISION)){
+				rootRevision = currentRevision;
+			}
+		}
 	}
 
 	/** 

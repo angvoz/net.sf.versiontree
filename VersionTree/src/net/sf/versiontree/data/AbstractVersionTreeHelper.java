@@ -10,9 +10,10 @@
  *******************************************************************************/
 package net.sf.versiontree.data;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedMap;
 
 /**
  * walk ITreeElement trees and draw connectors (and other stuff in the future)
@@ -33,9 +34,7 @@ public abstract class AbstractVersionTreeHelper {
 		return null;
 	}
 
-	public static List getBranchesForRevision(
-		IRevision rev,
-		boolean emptyBranches) {
+	public static List getBranchesForRevision(IRevision rev,boolean emptyBranches) {
 		ArrayList l = new ArrayList();
 		for (Iterator iter = rev.getChildren().iterator(); iter.hasNext();) {
 			ITreeElement element = (ITreeElement) iter.next();
@@ -48,31 +47,37 @@ public abstract class AbstractVersionTreeHelper {
 						&& !((IBranch) element)
 							.isEmpty())) // add no empty branches if not required
 			)
+				
 				l.add(element);
 		}
 		return l;
 	}
 
-	public static SortedMap getHeightSortedBranchesForRevision(
+	public static List getHeightSortedBranchesForRevision(
 		IRevision rev,
 		boolean emptyBranches) {
-		SortedMap sortedBranches;
-		if (rev.getCache() == null)
-			rev.initCache();
-		sortedBranches = (SortedMap) rev.getCache();
-		for (Iterator iter =
-			TreeViewHelper
-				.getBranchesForRevision(rev, emptyBranches)
-				.iterator();
+		List sortedBranches = new ArrayList();
+		for (Iterator iter = TreeViewHelper.getBranchesForRevision(rev, emptyBranches).iterator();
 			iter.hasNext();
 			) {
 			IBranch b = (IBranch) iter.next();
-			sortedBranches.put(new Integer(b.getHeight() + 1), b);
-			// +1 == account for own
+			sortedBranches.add(b);
 		}
-		return emptyBranches
-			? sortedBranches
-			: sortedBranches.tailMap(new Integer(2));
+		// sort list by height of branches
+		Collections.sort(sortedBranches, new Comparator(){
+			public int compare(Object arg0, Object arg1) {
+				if (arg0 instanceof IBranch && arg1 instanceof IBranch) {
+					IBranch b1 = (IBranch) arg0;
+					IBranch b2 = (IBranch) arg1;
+					if (b1.getHeight() < b2.getHeight()) return -1;
+					if (b1.getHeight() == b2.getHeight()) return 0;
+					return 1;
+				}
+				return 0;
+			}
+			
+		});
+		return sortedBranches;
 	}
 
 	/** connects branches and revision to parent revisions and parent branches */

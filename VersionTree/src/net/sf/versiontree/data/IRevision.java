@@ -17,6 +17,9 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
 /** query functions for revisions */
 public interface IRevision extends Comparable, ITreeElement {
+	
+	public static final String INITIAL_REVISION = "1.1.1.1";
+	public static final String FIRST_REVISION = "1.1";
 
 	/** to team dispatched methods... */
 	public abstract String getDate();
@@ -47,7 +50,4 @@ public interface IRevision extends Comparable, ITreeElement {
 	 * (e.g. revision number "1.2.4.8" --> returns "8") */
 	public abstract String getRevisionSuffix();
 	
-	/** cache */
-	public abstract Object getCache();
-	public abstract void initCache();
 }

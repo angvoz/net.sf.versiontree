@@ -21,6 +21,7 @@ import java.util.List;
  */
 public class BranchData extends AbstractTreeElement implements IBranch {
 
+
 	public BranchData() {
 		revisions = new ArrayList();
 	}
@@ -96,6 +97,10 @@ public class BranchData extends AbstractTreeElement implements IBranch {
 	public boolean isEmpty() {
 		return revisions.size()==0;
 	}
-
+	
+	// I am on bottom of class, I like honey, hmmm
+	public String toString() {
+		return name;
+	}
 
 }

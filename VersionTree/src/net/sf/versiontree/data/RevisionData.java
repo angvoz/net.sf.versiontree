@@ -13,9 +13,7 @@ package net.sf.versiontree.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 import java.util.StringTokenizer;
-import java.util.TreeMap;
 
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -29,7 +27,6 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
  */
 public class RevisionData extends AbstractTreeElement implements IRevision{
 
-	private SortedMap sortedBranches;
 	private int state = 0;
 	private ILogEntry logEntry = null;
 	private int[] parsedRevision = null;
@@ -109,10 +106,13 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	/**
 	 * Returns the branch prefix from the revision number.
 	 * (e.g. revision number "1.2.4.1" --> returns "1.2.4")
+	 * We need to handle one special case for the initial revision 1.1.1.1 --> 1!
 	 * @return 
 	 */
 	public String getBranchPrefix() {
 		String revision = logEntry.getRevision();
+		if (revision.length() == 0 || revision.lastIndexOf(".")==-1) throw new RuntimeException("Revision malformed: "+revision);
+		if (revision.equals(IRevision.INITIAL_REVISION)) return IBranch.HEAD_PREFIX;
 		return revision.substring(0, revision.lastIndexOf(".")); //$NON-NLS-1$
 	}
 
@@ -134,6 +134,8 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	public int compareTo(Object other) {
 		if (other instanceof RevisionData) {
 			RevisionData rev = (RevisionData) other;
+			if (this.getRevision().equals(IRevision.INITIAL_REVISION)) return -1;
+			if (rev.getRevision().equals(IRevision.INITIAL_REVISION)) return 1;
 			return logEntry.getDate().compareTo(rev.logEntry.getDate());
 		}
 		return -1;
@@ -208,14 +210,9 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 		} else
 			return false;
 	}
+	
+	public String toString() {
+		return logEntry.getRevision();
+	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.data.IRevision#getCache()
-	 */
-	public Object getCache() {
-		return sortedBranches;
-	}
-	public void initCache() {
-		sortedBranches = new TreeMap();
-	}
 }
