@@ -16,6 +16,9 @@
  */
 package net.sf.versiontree.layout.cmd;
 
+import org.eclipse.swt.graphics.Point;
+
+import net.sf.versiontree.data.IRevision;
 import net.sf.versiontree.layout.LayoutIntvalAlgoContext;
 
 /**
@@ -33,7 +36,9 @@ public class LayoutAlgoRevisionPostCmd implements ICommand {
 	 * @see net.sf.versiontree.layout.ui.Command#execute(java.lang.Object)
 	 */
 	public void execute(Object obj) {
-
+		IRevision rev = (IRevision) obj;
+		/* restore from stack */
+		ctx.position = (Point)ctx.stack.get(rev.getRevision());
 	}
 
 }

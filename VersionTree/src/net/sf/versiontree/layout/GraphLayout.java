@@ -29,6 +29,7 @@ import net.sf.versiontree.layout.cmd.DrawFinalizeCmd;
 import net.sf.versiontree.layout.cmd.DrawRemoveAllCmd;
 import net.sf.versiontree.layout.cmd.LayoutAlgoBranchPostCmd;
 import net.sf.versiontree.layout.cmd.LayoutAlgoBranchPreCmd;
+import net.sf.versiontree.layout.cmd.LayoutAlgoRevisionPostCmd;
 import net.sf.versiontree.layout.cmd.LayoutAlgoRevisionPreCmd;
 import net.sf.versiontree.layout.cmd.LoopCmdAggregator;
 import net.sf.versiontree.layout.cmd.RecursiveLoopCmdAggregator;
@@ -52,7 +53,7 @@ public class GraphLayout {
 		 * the relative layout matrix using intervals */
 		RecursiveLoopCmdAggregator intervalPlacer = new RecursiveLoopCmdAggregator(
 			null, new LayoutAlgoBranchPreCmd(ctx), new LayoutAlgoRevisionPreCmd(ctx),
-			null, new LayoutAlgoBranchPostCmd(ctx), null );
+			new LayoutAlgoRevisionPostCmd(ctx), new LayoutAlgoBranchPostCmd(ctx), null );
 		graph = new RevisionGraph( ibr, intervalPlacer);
 		graph.walk();
 		

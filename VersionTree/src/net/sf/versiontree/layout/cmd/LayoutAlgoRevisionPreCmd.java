@@ -18,6 +18,7 @@ package net.sf.versiontree.layout.cmd;
 
 import net.sf.versiontree.data.IRevision;
 import net.sf.versiontree.layout.LayoutIntvalAlgoContext;
+import net.sf.versiontree.layout.interval.Interval;
 
 import org.eclipse.swt.graphics.Point;
 
@@ -37,13 +38,22 @@ public class LayoutAlgoRevisionPreCmd implements ICommand {
 	 */
 	public void execute(Object obj) {
 		IRevision rev = (IRevision) obj;
-		
 		ctx.position.y++;
 		/* collision check using all branches */
+		// DEBUG 
+		System.out.println("  y before,r: "+ctx.position.y); // */
 		ctx.position.y += ctx.strategy.algorithm(ctx.position, rev.numBranchTags(), ctx.ivManager).y;
+		// DEBUG
+		System.out.println("  y after,r: "+ctx.position.y); // */
+		
+		/** save to stack, we need to reverse the effects of all branches to this
+				 * revision on position in the postLoop part to be able to continue
+				 * with the next revision */
+		ctx.stack.put(rev.getRevision(),new Point(ctx.position.x,ctx.position.y));
+		
 		/* allocate new interval */
 		ctx.ivManager.set(ctx.position.x,
-			new Point(ctx.position.y, ctx.position.y ), // revisions always have size 1
+			new Interval(ctx.position.y, ctx.position.y),// revisions always have size 1
 			rev);
 	}
 

@@ -16,6 +16,8 @@
  */
 package net.sf.versiontree.layout.cmd;
 
+//import java.util.HashMap;
+
 import org.eclipse.swt.SWT;
 
 import net.sf.versiontree.data.IBranch;
@@ -29,9 +31,14 @@ import net.sf.versiontree.layout.interval.PositionPOPPair;
  */
 public class DrawNodeCmd implements ICommand {
 
+	/* DEBUG
+	private HashMap usedPositions; // */
+	
 	public DrawGraphContext dctx;
 	public DrawNodeCmd(DrawGraphContext dctx) {
 		this.dctx = dctx;
+		/* DEBUG
+		usedPositions = new HashMap(); // */
 	}
 
 	/* (non-Javadoc)
@@ -51,7 +58,14 @@ public class DrawNodeCmd implements ICommand {
 			b.branchName = revision.getRevision();
 		}
 		b.setSize(dctx.uidefaults.minimumWidth, dctx.uidefaults.minimumHeight);
-		b.setLocation(ppop.column*80, ppop.pop.p.x*20);
+		b.setLocation(ppop.column*80, ppop.pop.i.begin*30);
+		/* DEBUG
+		String key;
+		if (!usedPositions.containsKey( key = new String(ppop.column+","+ppop.pop.p.x) ) )
+			{ 	usedPositions.put(key, b.branchName);
+				System.out.println("Draw at "+key+" with "+b.branchName); } 
+		else System.out.println("Collision at "+key+" with "+b.branchName);
+		// */
 
 		b.addMouseListener(dctx.listener);
 		b.computeSize(SWT.DEFAULT, SWT.DEFAULT);

@@ -17,9 +17,10 @@
 package net.sf.versiontree.layout.interval;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Vector;
 
-import org.eclipse.swt.graphics.Point;
+import net.sf.versiontree.data.*;
 
 /**
  * @author Andre
@@ -42,8 +43,8 @@ public class IntervalManager {
 	 */
 	public int getFreeBound(int columnnr, int height, boolean BOUND) {
 		try {
-			Point p = ((IntegerInterval)columns.get(columnnr) ).getFreeInterval(height);
-			return BOUND==IntervalManager.LOWER ? p.x : p.y;
+			Interval i = ((IntegerInterval)columns.get(columnnr) ).getFreeInterval(height);
+			return BOUND==IntervalManager.LOWER ? i.begin : i.end;
 		} catch (ArrayIndexOutOfBoundsException e)
 		{
 			columns.addElement(new IntegerInterval());
@@ -53,14 +54,29 @@ public class IntervalManager {
 	/**
 	 * Set interval in a specific column while attaching object o to it 
 	 */
-	public void set(int columnnr, Point p, Object o){
+	public void set(int columnnr, Interval i, Object o){
 		IntegerInterval iv;
 		try {
 			iv = (IntegerInterval)columns.get(columnnr); 
 		} catch (ArrayIndexOutOfBoundsException ae){
 			columns.add(columnnr, iv = new IntegerInterval());
 		}
-		iv.setInterval(p, o);	
+		// DEBUG
+		System.out.print("Manager Set Col/IV "+columnnr+"/"+i.begin+","+i.end+" ");
+		System.out.print(o instanceof IBranch ?
+			((IBranch)o).getName() : ((IRevision)o).getRevision() );
+		//System.out.print(" "+o.getClass());
+		System.out.println();
+		//		*/
+		try {
+			iv.setInterval(i, o);
+		} catch (NoSuchElementException e) {
+			// TODO disallow or ignore?
+			throw new NoSuchElementException("Bound "+e.getMessage()+" in column "+columnnr+" already present");
+		}
+		
+		
+		
 	}
 	public Iterator iterator() {
 		return new ElementIntervalManagerIterator(columns);

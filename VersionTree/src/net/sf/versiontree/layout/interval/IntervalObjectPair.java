@@ -14,34 +14,22 @@
  * Free Software Foundation, Inc., 
  * 59 TemplePlace - Suite 330, Boston, MA 02111-1307, USA 
  */
-package net.sf.versiontree.layout;
+package net.sf.versiontree.layout.interval;
 
-import java.util.HashMap;
-
-import net.sf.versiontree.layout.interval.*;
-import net.sf.versiontree.layout.optimizerStrategies.IPlacementStrategy;
-import net.sf.versiontree.layout.optimizerStrategies.*;
-
-
-import org.eclipse.swt.graphics.Point;
 
 /**
  * @author Andre
- * This struct-class provides the context for variables for the operations that are
- * performed externally within the graph traversal
+ * Value class for storing pairs of Points and arbitrary objects
  */
-public class LayoutIntvalAlgoContext {
-	public IntervalManager ivManager;
-	public Point position;
-	public IPlacementStrategy strategy;
-	public HashMap stack;
-
-	public LayoutIntvalAlgoContext() {
-		ivManager = new IntervalManager();
-		position = new Point(-1,0);
-		strategy = new Simple();
-		//strategy = new NoLayout();
-		stack = new HashMap();
+public class IntervalObjectPair {
+	/**
+	 * @param intval
+	 * @param obj
+	 */
+	public IntervalObjectPair(Interval intval, Object obj) {
+		i = intval;
+		o = obj;
 	}
-
+	public Interval i;
+	public Object o;
 }

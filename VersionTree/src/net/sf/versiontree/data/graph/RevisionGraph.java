@@ -83,16 +83,16 @@ public class RevisionGraph {
 	 * @param currentBranch
 	 */
 	private void walk(IBranch currentBranch ){
-		
+		// Algo: For this branch execute PreLoop
 		cmdAggregat.executePreLoop(currentBranch);
-		// flase iff no Revisions but branched, true else
+		
 		if (currentBranch.getRevisions() != null) {	
-			// for all revisions do...
+			// Algo: For every revision execute PreRecursion
 			Iterator rIter = currentBranch.getRevisions().iterator();
 			while (rIter.hasNext()) {
 				IRevision rev = (IRevision) rIter.next();		
 				cmdAggregat.executePreRecursion(rev);
-				// for all branches of a revision do...
+				
 				if ( rev.hasBranchTags() )
 					{
 						LinkedList list = (LinkedList) sourceTargetLinks.get( rev.getRevision() );
@@ -104,9 +104,12 @@ public class RevisionGraph {
 							walk(branch);
 						}
 					}
+				// Algo: For every revision execute PostRecursion, regardless
+				// of recursive function calls
 				cmdAggregat.executePostRecursion(rev);
 			}
 		}
+		// Algo: For this branch execute PostLoop regardless if looped
 		cmdAggregat.executePostLoop(currentBranch);
 	}
 

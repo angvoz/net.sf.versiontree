@@ -25,10 +25,10 @@ public class PositionPOPPair {
 	 * @param column
 	 * @param pep
 	 */
-	public PositionPOPPair(int column, PointObjectPair pep) {
+	public PositionPOPPair(int column, IntervalObjectPair pep) {
 		this.column = column;
 		this.pop = pep;
 	}
 	public int column;
-	public PointObjectPair pop;
+	public IntervalObjectPair pop;
 }

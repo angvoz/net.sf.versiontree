@@ -29,37 +29,46 @@ public class ElementIntervalManagerIterator implements Iterator {
 	
 	Iterator columnIterator;
 	Iterator intervalIterator;
+	//Vector columns;
 	int column = 0;
 	/**
 	 * @param columns
 	 */
 	public ElementIntervalManagerIterator(Vector columns) {
 		columnIterator = columns.iterator();
-		intervalIterator = ((IInterval)columnIterator.next()).iterator();
+		
+		// try to find an iterator in a column having (the iterator) hasNext()==true
+		nextValidIterator();
 	}
 
-	/* (non-Javadoc) @see java.util.Iterator#hasNext() */
+	private void nextValidIterator() throws NoSuchElementException {
+		do {
+			if (!columnIterator.hasNext()) throw new NoSuchElementException("No elements to iterate over");
+			intervalIterator = ((IntegerInterval)columnIterator.next()).iterator();
+			// column value need in next() for assembling the return value
+			column++;
+		} while(!intervalIterator.hasNext());
+	}
+
+	/** PRECONDITION intervalIterator != null
+	 *  @see java.util.Iterator#hasNext() */
 	public boolean hasNext() {
-		if (intervalIterator.hasNext()) return true;
-		else {
-			if (!columnIterator.hasNext()) return false;
-			else {
-				intervalIterator =
-					intervalIterator = ((IInterval)columnIterator.next()).iterator();
-				column++;
-				return hasNext();				
-				}
+		try {
+			if (!intervalIterator.hasNext()) nextValidIterator();
+		} catch (NoSuchElementException e) {
+			return false;
 		}
+		return true;
 	}
 
 	/* (non-Javadoc) @see java.util.Iterator#next() */
 	public Object next() {
-		/* this not only ensure there is a next value, it also sets up the data
+		/* this not only ensures there is a next value, it also sets up the data
 		 * structures, hence the return statement is correct */
 		if (!hasNext()) throw new NoSuchElementException();
-		PointObjectPair pep = (PointObjectPair) intervalIterator.next();
+		IntervalObjectPair pep = (IntervalObjectPair) intervalIterator.next();
 		
-		// the original point object pair stores
+		// DEBUG System.out.println("Coords "+column+"m"+pep.p.x+pep.o.getClass());
 		return new PositionPOPPair(column,pep);
 	}
 	

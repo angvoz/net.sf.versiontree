@@ -38,7 +38,9 @@ public class Simple implements IPlacementStrategy {
 			boolean conflict = false;
 			try {
 				for (i = position.x; i <= position.x+steps; i++) {
+					// no conflict
 					if ( (diff = position.y - iv.getFreeBound(i,position.y,IntervalManager.LOWER) ) > 0  ) continue;
+					// conflict, select maximum conflict always
 					else {
 						conflict = true;
 						maxdiff = Math.min(maxdiff, diff);

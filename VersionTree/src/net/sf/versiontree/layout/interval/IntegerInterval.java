@@ -21,62 +21,67 @@ import java.util.NoSuchElementException;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.swt.graphics.Point;
-
 /**
  * @author Andre
  * Stores integer intervals+object and returns free intervals intervals
  */
 public class IntegerInterval implements IInterval {
-	/**
-	 * TreeMap to be read towards 0, saves Interval Upper bounds in natural
-	 * order
-	 * element: corresponding interval 
-	 */
+	/** saves upper bounds upperBounds.size() always is <= lowerBounds.size() 	 */
 	private TreeMap upperBounds;
-	/**
-	 * TreeMap to be read towards inf, key saves interval lower bounds in natural
-	 * order, element: corresponding interval upper bound
-	 */
+	/** TreeMap to be read towards inf, key saves interval lower bounds in natural
+	 * order, element: corresponding interval upper bound */
 	private TreeMap lowerBounds;
 	
-	/**
-	 * Constructs an empty one-dimensional Interval	
-	 */
+	/** Constructs an empty one-dimensional Interval */
 	public IntegerInterval() {
 		upperBounds = new TreeMap();
 		lowerBounds = new TreeMap();
 	}
 	/* (non-Javadoc)
-	 * @see net.sf.versiontree.layout.IInterval#setInterval(org.eclipse.swt.graphics.Point)
-	 */
-	public void setInterval(Point intval, Object obj) {
-		PointObjectPair po = new PointObjectPair(intval, obj);
-		upperBounds.put(new Integer(intval.y),po);
-		lowerBounds.put(new Integer(intval.x),po);
+	 * @ see net.sf.versiontree.layout.IInterval#setInterval(org.eclipse.swt.graphics.Point)*/
+	public void setInterval(Interval intval, Object obj) {
+		IntervalObjectPair po = new IntervalObjectPair(intval, obj);
+		// upper bounds are not unique, we must not associate objects with them
+		upperBounds.put(new Integer(intval.end),null);
+		// TODO find better exception
+		if (lowerBounds.containsKey(new Integer(intval.begin))) throw new NoSuchElementException(""+intval.begin);
+		lowerBounds.put(new Integer(intval.begin),po);
 	}
 
 	/* (non-Javadoc)
-	 * @see net.sf.versiontree.layout.IInterval#get(int)
-	 */
-	public Point getFreeInterval(int position) {
-		SortedMap tail = lowerBounds.tailMap( new Integer(position) );
-		SortedMap sub  = upperBounds.subMap( new Integer(0), new Integer(position) );
-		return new Point (
-			sub.isEmpty() ? 0 : ((Integer)sub.lastKey()).intValue(),
-			tail.isEmpty() ? Integer.MAX_VALUE : ((Integer)tail.firstKey()).intValue()
-						);
-	}
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.layout.IInterval#get(int)
-	 */
-	public PointObjectPair get(int position) {
-		if ( upperBounds.tailMap( new Integer(position) ).isEmpty() ) throw new NoSuchElementException();
-		return (PointObjectPair)upperBounds.get(	
-			((Integer)upperBounds.tailMap( new Integer(position) ).firstKey() )
-			);
+	 * @see net.sf.versiontree.layout.IInterval#get(int) */
+	public Interval getFreeInterval(int position) {
+		IntervalObjectPair iop;
+		try {
+			// check if we are within an interval
+			iop = get(position);
+		} catch (NoSuchElementException e) {
+			// obviously not, how lucky we are
+			SortedMap sub  = upperBounds.subMap( new Integer(0), new Integer(position) );
+			SortedMap tail = lowerBounds.tailMap( new Integer(position) );
+			return new Interval (
+				sub.isEmpty() ? 0 : ((Integer)sub.lastKey()).intValue(),
+				tail.isEmpty() ? Integer.MAX_VALUE : ((Integer)tail.firstKey()).intValue()
+									);	
+		}
+		return null;
+				
 		
 	}
+	/* (non-Javadoc)
+	 * @see net.sf.versiontree.layout.IInterval#get(int) */
+	public IntervalObjectPair get(int position) {
+		SortedMap mp;
+		IntervalObjectPair pop;
+		// get map [0,position] (headMap => strictly less than param)
+		if (! (mp = lowerBounds.headMap(new Integer(position+1))).isEmpty() ) {
+			pop = (IntervalObjectPair)mp.get( (Integer)mp.lastKey() );
+			// upper bound <= position?
+			if (pop.i.end <= position) return pop;
+		}
+		throw new NoSuchElementException();
+	}
+	
 	public Iterator iterator() {
 		return new ElementIntIntervalIterator(lowerBounds); 
 	}

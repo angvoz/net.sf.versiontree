@@ -18,8 +18,6 @@ package net.sf.versiontree.layout.interval;
 
 import java.util.Iterator;
 
-import org.eclipse.swt.graphics.Point;
-
 /**
  * @author Andre
  * Query for free intervals and used intervals with associated objects
@@ -31,13 +29,13 @@ public interface IInterval {
 	 * which param3 is returned, Intervals must not be disjoint
 	 * Additionally stores an object belonging to an interval
 	 */
-	public abstract void setInterval(Point intval, Object obj);
+	public abstract void setInterval(Interval intval, Object obj);
 	/**
 	 * Gets the Object from the interval param1 belongs to + interval bounds
 	 * @param position
 	 * @return object valid within specified range
 	 */
-	public abstract PointObjectPair get(int position);
+	public abstract IntervalObjectPair get(int position);
 	/**
 	 * Gets the free interval the supplied position lies within
 	 * if x >= position => x is the next free slot
@@ -45,7 +43,7 @@ public interface IInterval {
 	 * @param position
 	 * @return Free interval bounds
 	 */
-	public abstract Point getFreeInterval(int position);
+	public abstract Interval getFreeInterval(int position);
 	/**
 	 * Iterator over stored objects 
 	 */

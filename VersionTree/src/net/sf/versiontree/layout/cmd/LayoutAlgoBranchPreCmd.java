@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Point;
 
 import net.sf.versiontree.data.IBranch;
 import net.sf.versiontree.layout.LayoutIntvalAlgoContext;
+import net.sf.versiontree.layout.interval.Interval;
 
 /**
  * @author Andre
@@ -39,19 +40,23 @@ public class LayoutAlgoBranchPreCmd implements ICommand {
 	 * @see net.sf.versiontree.layout.ui.Command#execute(java.lang.Object)
 	 */
 	public void execute(Object obj) {
-
 		IBranch branch = (IBranch) obj;
-		// save to stack
 		ctx.position.x++;
+		/* collision check */
+		// Debug
+		System.out.println("  y before,b: "+ctx.position.y); // */
+		ctx.position.y += ctx.strategy.algorithm(ctx.position, 0, ctx.ivManager).y;
+		// Debug
+		System.out.println("  y after,b: "+ctx.position.y); // */
+		
+		/* save to stack, we want to continue with the next branch in line for
+		 * a revision, hence we need the effects in position of all descendants
+		 * reversed */
 		ctx.stack.put(branch.getBranchPrefix(),new Point(ctx.position.x,ctx.position.y));
 		
-		
-			
-		/* collision check */
-		ctx.position.x += ctx.strategy.algorithm(ctx.position, 0, ctx.ivManager).x;
 		/* allocate new interval */
 		ctx.ivManager.set(ctx.position.x,
-			new Point(ctx.position.y, ctx.position.y +branch.getHeight() ),
+			new Interval(ctx.position.y, ctx.position.y +branch.getHeight()),
 			branch);
 	}
 }
