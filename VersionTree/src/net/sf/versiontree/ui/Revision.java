@@ -15,10 +15,13 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 
 /**
  * @author Jan
@@ -37,8 +40,12 @@ public class Revision extends Canvas {
 	private Color background;
 	private Color selectedColor;
 
+	private Image versionImage;
+
 	public Revision(Composite parent, int style) {
 		super(parent, style);
+
+		initializeImages();
 
 		preferredHeight = 35;
 		preferredWidth = 80;
@@ -57,8 +64,17 @@ public class Revision extends Canvas {
 			public void widgetDisposed(DisposeEvent e) {
 				background.dispose();
 				selectedColor.dispose();
+				versionImage.dispose();
 			}
 		});
+	}
+
+	private void initializeImages() {
+		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
+		versionImage =
+			plugin
+				.getImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION)
+				.createImage();
 	}
 
 	/**
@@ -68,6 +84,11 @@ public class Revision extends Canvas {
 		GC gc = e.gc;
 		if ((revisionData.getState() & IRevision.STATE_SELECTED) > 0)
 			setBackground(selectedColor);
+
+		// draw version tag icon if revison is tagged
+		if (revisionData.hasVersionTags()) {
+			gc.drawImage(versionImage, 3, 3);
+		}
 
 		int yOffset = 3;
 		Point extent = gc.stringExtent(logEntry.getRevision());

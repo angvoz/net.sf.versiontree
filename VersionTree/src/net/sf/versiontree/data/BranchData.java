@@ -92,6 +92,15 @@ public class BranchData implements IBranch {
 		}
 	}
 
+	public String getBranchSourceRevision() {
+		if (branchPrefix == null) return null;
+		// return empty String if this is the HEAD branch
+		if (getName().equals(IBranch.HEAD_NAME)) return "";
+		StringBuffer sourceRevision = new StringBuffer(branchPrefix);
+		sourceRevision.delete(sourceRevision.lastIndexOf("."), sourceRevision.length());
+		return sourceRevision.toString();
+	}
+	
 	/**
 	 * @return
 	 */

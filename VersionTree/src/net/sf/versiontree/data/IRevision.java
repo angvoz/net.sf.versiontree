@@ -42,6 +42,13 @@ public interface IRevision extends Comparable {
 	 * @return
 	 */
 	public abstract List getTags();
+	
+	/**
+	 * Returns true if this revision has any version tags attached.
+	 * @return
+	 */
+	public boolean hasVersionTags();
+	
 	/**
 	 * @return
 	 */

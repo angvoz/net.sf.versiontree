@@ -15,6 +15,10 @@ import java.util.List;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public interface IBranch {
+	
+	public static final String HEAD_NAME = "HEAD";
+	public static final String HEAD_PREFIX = "1";
+	
 	/**
 	 * Returns an iterator over the revisions contained in this branch.
 	 * All revisions are of type ILogEntry
@@ -25,6 +29,8 @@ public interface IBranch {
 	 * @return
 	 */
 	public abstract String getName();
+	
+	public abstract String getBranchPrefix();
 	/**
 	 * @return
 	 */

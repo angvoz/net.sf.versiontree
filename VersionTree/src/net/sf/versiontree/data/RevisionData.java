@@ -172,4 +172,16 @@ public class RevisionData implements IRevision {
 		return logEntry;
 	}
 
+	/**
+	 * @see net.sf.versiontree.data.IRevision#hasVersionTags()
+	 */
+	public boolean hasVersionTags() {
+		CVSTag[] tags = logEntry.getTags();
+		for (int i = 0; i < tags.length; i++) {
+			CVSTag tag = tags[i];
+			if (tag.getType() == CVSTag.VERSION) return true;
+		}
+		return false;
+	}
+
 }

@@ -390,7 +390,7 @@ public class VersionTreeView extends ViewPart {
 	 * Passing the focus request to the viewer's control.
 	 */
 	public void setFocus() {
-		//viewer.getControl().setFocus();
+		treeView.setFocus();
 	}
 
 	private void initializeImages() {
