@@ -59,20 +59,10 @@ public class RevisionToBranchConnector extends Canvas {
 		GC gc = e.gc;
 		Rectangle bounds = this.getBounds();
 		Point point1 = new Point(0, 0);
-		Point point2;
-		Point point3;
-		Point point4 = new Point(bounds.width - 2, bounds.height);
-		if (mainDirection == Globals.NORTH_SOUTH) {
-			point2 = new Point(bounds.width - arcSize - 2, 0);
-			point3 = new Point(bounds.width - 2, arcSize);
-			gc.drawArc(point2.x-arcSize, point2.y, arcSize*2, arcSize*2, 0, 90);
-		} else {
-			point2 = new Point(2, bounds.height - arcSize - 2);
-			point3 = new Point(bounds.width + 2, -2);
-			gc.drawArc(point2.x, point2.y-arcSize, arcSize*2, arcSize*2, 180, 90);
-		}
+		Point point2 = new Point(bounds.width - 2, 0);
+		Point point3 = new Point(bounds.width - 2, bounds.height);
 		gc.drawLine(point1.x, point1.y, point2.x, point2.y);
-		gc.drawLine(point3.x, point3.y, point4.x, point4.y);
+		gc.drawLine(point2.x, point2.y, point3.x, point3.y);
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
