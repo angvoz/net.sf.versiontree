@@ -22,10 +22,7 @@ import org.eclipse.swt.graphics.Point;
 
 /**
  * @author Andre
- * TODOs Strategy Optimizations:
- * TODO lower Check #2 => stretch right
- * TODO lower Check #3 => strecht parent/root down
- * TODO evaluate whether recursive (correct) algorithms makes sense
+ * TODO Strategy Optimizations, lower Check #2 => stretch right, lower Check #3 => strecht parent/root down, evaluate whether recursive  * (correct) algorithms makes sense  
  * Using a position and #(steps)-y-directed-checks exploiting methods
  * supplied by the intervalmanager modifiers for the coordinates are returned	
  */

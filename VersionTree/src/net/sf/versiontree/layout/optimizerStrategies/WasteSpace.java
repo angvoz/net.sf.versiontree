@@ -31,7 +31,7 @@ public class WasteSpace implements IPlacementStrategy {
 	 * @see net.sf.versiontree.layout.optimizerStrategies.IPlacementStrategy#algorithm(org.eclipse.swt.graphics.Point, int, net.sf.versiontree.layout.IntervalManager)
 	 */
 	public Point algorithm(Point position, int steps, IntervalManager iv) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
