@@ -90,8 +90,8 @@ public class TreeView
 		super(parent, style);
 		logSelectionListener = listener;
 		treeViewConfig = new TreeViewConfig();
-		initViewer();
 		reloadPrefrences();
+		initViewer();
 	}
 
 	/**
@@ -102,8 +102,8 @@ public class TreeView
 		content.setLayout(null);
 		content.setMenu(this.getMenu());
 		this.setContent(content);
-		this.getVerticalBar().setIncrement(10);
-		this.getHorizontalBar().setIncrement(10);
+		this.getVerticalBar().setIncrement(width);
+		this.getHorizontalBar().setIncrement(height);
 	}
 
 	/**

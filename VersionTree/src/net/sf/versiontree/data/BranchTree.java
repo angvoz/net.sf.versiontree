@@ -28,49 +28,52 @@ public class BranchTree {
 
 	private int numberOfBranches = 0;
 	private int numberOfRevisions = 0;
-	
+
 	private IBranch headBranch;
 	private IRevision rootRevision;
-	
+
 	private HashMap branches;
 	private HashMap revisions;
 	private HashMap prefixToNameLink;
-	
+
 	public boolean isEmpty() {
 		return numberOfBranches == 0;
 	}
-	/**  sets up all data structures from CVS Logs */
+	
+	/**
+	 * Sets up all data structures from CVS Logs 
+	 */
 	public BranchTree(ILogEntry[] logs, String selectedRevision) {
 		// no logs, empty tree
-		if (logs.length <= 0) return;
-		
+		if (logs.length <= 0)
+			return;
+
 		// basic initializations
 		revisions = new HashMap(logs.length);
-		prefixToNameLink = new HashMap((int)(Math.ceil(logs.length/20)));
-		branches = new HashMap((int)(Math.ceil(logs.length/20)));
-									
+		prefixToNameLink = new HashMap((int) (Math.ceil(logs.length / 20)));
+		branches = new HashMap((int) (Math.ceil(logs.length / 20)));
+
 		// set up branches, revision
-		setUpHashMaps(logs, selectedRevision);		 
-		// add branch name information to branches
-		matchBranchNamesWithBranches();
+		setUpHashMaps(logs, selectedRevision);
 		// prefix to name
 		setUpPrefixToNameMap();
 		// build complete tree structure
 		buildCompleteTreeStructure();
 	}
+	
 	private void setUpPrefixToNameMap() {
 		for (Iterator iter = branches.values().iterator(); iter.hasNext();) {
 			IBranch element = (IBranch) iter.next();
-			prefixToNameLink.put(element.getName(),element.getBranchPrefix());
+			prefixToNameLink.put(element.getName(), element.getBranchPrefix());
 		}
 	}
+	
 	private void setUpHashMaps(ILogEntry[] logs, String selectedRevision) {
-		headBranch = new BranchData(IBranch.HEAD_NAME,
-									IBranch.HEAD_PREFIX);
+		headBranch = new BranchData(IBranch.HEAD_NAME, IBranch.HEAD_PREFIX);
 		branches.put(headBranch.getBranchPrefix(), headBranch);
-		
-		 // create revisions hashmap + remember selected
-		 for (int i = 0; i < logs.length; i++) {
+
+		// create revisions hashmap and branches + remember selected
+		for (int i = 0; i < logs.length; i++) {
 			ILogEntry logEntry = logs[i];
 			IRevision currentRevision = new RevisionData(logEntry);
 			revisions.put(currentRevision.getRevision(), currentRevision);
@@ -79,39 +82,60 @@ public class BranchTree {
 			ifIsActiveRevisionInIDErememberIt(
 				selectedRevision,
 				currentRevision);
-		 }
+			
+			createBranches(logEntry);
+		}
+		
+		// connect revisions to branches
 		headBranch.addChild(rootRevision);
-		 // create branches hashmap
-		 for (Iterator iter = revisions.values().iterator(); iter.hasNext();) {
+		for (Iterator iter = revisions.values().iterator(); iter.hasNext();) {
 			IRevision currentRevision = (IRevision) iter.next();
 			String branchPrefix = currentRevision.getBranchPrefix();
 			BranchData branch = (BranchData) branches.get(branchPrefix);
-			/** this works for all branches except empty branches, because they have no source revision */
-			 if (branch == null) {
-				 branch = new BranchData();
-				 branch.setBranchPrefix(branchPrefix);
-				 branches.put(branchPrefix, branch);
-			 }
 			// get/create the branch and add revision
 			branch.addRevisionData(currentRevision);
 		}
 	}
+	
+	/**
+	 * Creates all branches for the given log entry (including
+	 * empty branches).
+	 * @param logEntry
+	 */
+	private void createBranches(ILogEntry logEntry) {
+		int branchNumber = 0;
+		CVSTag[] tags = logEntry.getTags();
+		for (int j = tags.length - 1; j >= 0; j--) {
+			if (tags[j].getType() == CVSTag.BRANCH) {
+				branchNumber += 2;
+				BranchData branch = new BranchData();
+				String branchPrefix =
+					logEntry.getRevision() + "." + branchNumber;
+				branch.setBranchPrefix(branchPrefix);
+				branch.setName(tags[j].getName());
+				branches.put(branchPrefix, branch);
+			}
+		}
+	}
+	
 	private void buildCompleteTreeStructure() {
 		for (Iterator iter = branches.values().iterator(); iter.hasNext();) {
 			IBranch outerBranch = (IBranch) iter.next();
-		
+
 			// for all revisions of a branch in order
 			List revs = outerBranch.getRevisions();
 			Collections.sort(revs);
-			
+
 			Iterator innerIter = revs.iterator();
 			IRevision prev = null;
 			while (innerIter.hasNext()) {
 				IRevision innerRevision = (IRevision) innerIter.next();
 				// ... the next revision is a child
-				if (prev != null) prev.addChild(innerRevision);
+				if (prev != null)
+					prev.addChild(innerRevision);
 				// ... all branches are children
-				for (Iterator innerBranches = findBranchesForRevision(innerRevision).values().iterator();
+				for (Iterator innerBranches =
+					findBranchesForRevision(innerRevision).values().iterator();
 					innerBranches.hasNext();
 					) {
 					IBranch branchChild = (IBranch) innerBranches.next();
@@ -119,13 +143,17 @@ public class BranchTree {
 					branchChild.setParent(innerRevision);
 				}
 				// previous revision is parent,
-				innerRevision.setParent(prev == null ? (ITreeElement)outerBranch:(ITreeElement)prev);
-				if (prev == null) outerBranch.addChild(innerRevision);
+				innerRevision.setParent(
+					prev == null
+						? (ITreeElement) outerBranch
+						: (ITreeElement) prev);
+				if (prev == null)
+					outerBranch.addChild(innerRevision);
 				prev = innerRevision;
-			}	
+			}
 		}
 	}
-	
+
 	public Map findBranchesForRevision(IRevision rev) {
 		Map sortedBranches = new HashMap();
 		ArrayList branchTagList = (ArrayList) rev.getBranchTags();
@@ -135,69 +163,43 @@ public class BranchTree {
 			Object prefix = prefixToNameLink.get(element);
 			if (prefix != null) {
 				IBranch b = (IBranch) branches.get(prefix);
-				sortedBranches.put(new Integer(b.getHeight()+1), b); // +1 == account for own			
+				sortedBranches.put(new Integer(b.getHeight() + 1), b);
+				// +1 == account for own			
 			} else {
 				BranchData tmp;
-				sortedBranches.put(new Integer(1), tmp = new BranchData(element, ""));
+				sortedBranches.put(
+					new Integer(1),
+					tmp = new BranchData(element, ""));
 			}
 		}
 		return sortedBranches;
 	}
-	
-	/** the active revision currently has a "*" currently displayed */
+
+	/** 
+	 * the active revision currently has a "*" currently displayed
+	 */
 	private void ifIsActiveRevisionInIDErememberIt(
 		String selectedRevision,
 		IRevision currentRevision) {
-		 if (currentRevision.getRevision().equals(selectedRevision))
-			 currentRevision.setState(IRevision.STATE_CURRENT);
+		if (currentRevision.getRevision().equals(selectedRevision))
+			currentRevision.setState(IRevision.STATE_CURRENT);
 	}
-	/** the root revision is recognized by its revision number */
-	private void ifIsRootSetRoot(ILogEntry logEntry, IRevision currentRevision) {
-		 // check if this is the root revision
-		 if (logEntry.getRevision().equals("1.1") //$NON-NLS-1$
-			 || logEntry.getRevision().equals("1.1.1.1")) //$NON-NLS-1$
-			 rootRevision = currentRevision;
-	}
-	/**
-	 * This function sets the branch name to the correct BranchData object.
-	 * @param branches
-	 * @param revisions	 */
-	void matchBranchNamesWithBranches() {
-		Iterator itr = branches.values().iterator();
-		while (itr.hasNext()) {
-			BranchData branch = (BranchData) itr.next();
-			// skip branch if the name is already set
-			if (branch.getName() != null)
-				continue;
 	
-			String revision = branch.getBranchSourceRevision();
-			RevisionData revisionData = (RevisionData) revisions.get(revision);
-	
-			CVSTag[] tags = revisionData.getLogEntry().getTags();
-			if (tags.length > 0) {
-				// get tags of branch type
-				List branchTags = new ArrayList(tags.length);
-				for (int j = 0; j < tags.length; j++) {
-					if (tags[j].getType() == CVSTag.BRANCH) {
-						branchTags.add(0, tags[j].getName());
-					}
-				}
-				// set branch names
-				Iterator tagIter = branchTags.iterator();
-				int branchSuffix = 0;
-				while (tagIter.hasNext()) {
-					branchSuffix += 2;
-					String branchName = (String) tagIter.next();
-					BranchData namedBranch =
-						(BranchData) branches.get(
-							revision + "." + branchSuffix); //$NON-NLS-1$
-					if (namedBranch != null && namedBranch.getName() == null)
-						namedBranch.setName(branchName);
-				}
-			}
-		}
+	/** 
+	 * the root revision is recognized by its revision number
+	 */
+	private void ifIsRootSetRoot(
+		ILogEntry logEntry,
+		IRevision currentRevision) {
+		// check if this is the root revision
+		if (logEntry.getRevision().equals("1.1") //$NON-NLS-1$
+		|| logEntry.getRevision().equals("1.1.1.1")) //$NON-NLS-1$
+			rootRevision = currentRevision;
 	}
-	/** gets head Branch for decension */
+
+	/** 
+	 * gets head Branch for decension 
+	 */
 	public IBranch getHeadBranch() {
 		return headBranch;
 	}
