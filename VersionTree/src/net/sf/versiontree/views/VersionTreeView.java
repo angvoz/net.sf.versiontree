@@ -24,6 +24,7 @@ import java.util.Iterator;
 import net.sf.versiontree.data.IBranch;
 import net.sf.versiontree.data.IRevision;
 import net.sf.versiontree.data.RevisionTreeFactory;
+import net.sf.versiontree.layout.GraphLayout;
 import net.sf.versiontree.ui.DetailTableProvider;
 import net.sf.versiontree.ui.LogEntrySelectionListener;
 import net.sf.versiontree.ui.TreeView;
@@ -198,7 +199,7 @@ public class VersionTreeView
 							logs, remoteFile.getRevision());
 						
 						/* TODO connect */
-						//GraphLayout gr = new GraphLayout(ibr);
+						GraphLayout gr = new GraphLayout(ibr);
 						treeView.setInput(ibr);
 						
 						updateTableData(currentEntry);
