@@ -25,9 +25,6 @@ public class TreeViewConfig {
 	public static final int WIDE_LAYOUT = 0;
 	public static final int DEEP_LAYOUT = 1;
 
-	private static final int DIRECTION_TOP_DOWN = 0;
-	private static final int DIRECTION_LEFT_RIGHT = 1;
-
 	/**
 	 * True if empty branches should be displayed.
 	 */

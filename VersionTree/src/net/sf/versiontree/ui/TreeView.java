@@ -320,7 +320,6 @@ public class TreeView
 	 */
 	public void mouseDoubleClick(MouseEvent e) {
 		if (e.getSource() instanceof Revision && e.button == 1) {
-			Revision rev = (Revision) e.getSource();
 			logSelectionListener.logEntryDoubleClicked(
 				selectionManager.getStructuredSelection());
 		}

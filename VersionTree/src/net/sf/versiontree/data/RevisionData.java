@@ -31,7 +31,6 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 
 	private SortedMap sortedBranches;
 	private int state = 0;
-	private IRevision successor = null;
 	private ILogEntry logEntry = null;
 	private int[] parsedRevision = null;
 

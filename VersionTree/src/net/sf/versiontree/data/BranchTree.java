@@ -27,7 +27,6 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
 public class BranchTree {
 
 	private int numberOfBranches = 0;
-	private int numberOfRevisions = 0;
 
 	private IBranch headBranch;
 	private IRevision rootRevision;
@@ -166,10 +165,9 @@ public class BranchTree {
 				sortedBranches.put(new Integer(b.getHeight() + 1), b);
 				// +1 == account for own			
 			} else {
-				BranchData tmp;
 				sortedBranches.put(
 					new Integer(1),
-					tmp = new BranchData(element, ""));
+					new BranchData(element, ""));
 			}
 		}
 		return sortedBranches;

@@ -10,13 +10,16 @@
  *******************************************************************************/
 package net.sf.versiontree.ui.preferences;
 
-import org.eclipse.jface.preference.*;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.IWorkbench;
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.ui.TreeViewConfig;
 
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
  * @author Jan
@@ -35,12 +38,12 @@ public class VersionTreePreferencePage
 		setDescription("Version Tree Plugin"); //$NON-NLS-1$
 		initializeDefaults();
 	}
+	
 	/**	
 	 * Sets the default values of the preferences.
 	 */
 	private void initializeDefaults() {
-		IPreferenceStore store = getPreferenceStore();
-
+		getPreferenceStore();
 	}
 
 	/**

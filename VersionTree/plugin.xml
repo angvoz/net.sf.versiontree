@@ -24,6 +24,7 @@
       <import plugin="org.eclipse.team.cvs.core"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.compare"/>
    </requires>
 
    <extension
@@ -79,6 +80,17 @@
                class="net.sf.versiontree.popup.actions.ShowResourceInVersionTreeAction"
                menubarPath="team.main/group2"
                id="net.sf.versiontree.popup.actions.ShowResourceInVersionTreeAction"/>
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
+            objectClass="org.eclipse.team.internal.ccvs.core.ICVSRemoteFile"
+            id="net.sf.versiontree.popup.actions.ShowRemoteInVersionTreeAction">
+         <action
+               enablesFor="1"
+               label="Show in Version Tree"
+               tooltip="Displays the version tree for the selected resource."
+               class="net.sf.versiontree.popup.actions.ShowRemoteInVersionTreeAction"
+               id="net.sf.versiontree.popup.actions.ShowRemoteInVersionTreeAction"/>
       </objectContribution>
    </extension>
 

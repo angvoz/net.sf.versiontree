@@ -10,6 +10,8 @@
  *******************************************************************************/
 package net.sf.versiontree.ui;
 
+import net.sf.versiontree.VersionTreePlugin;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -25,15 +27,9 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.VersionCollator;
-import net.sf.versiontree.VersionTreePlugin;
 
 /**
  * @author Jan
@@ -41,9 +37,6 @@ import net.sf.versiontree.VersionTreePlugin;
  * detail data.
  */
 public class DetailTableProvider {
-
-	private ICVSFile currentFile;
-	private Shell shell;
 
 	/**
 	 * Constructor for DetailTableProvider.
@@ -79,8 +72,6 @@ public class DetailTableProvider {
 	class ValueSorter extends ViewerSorter {
 		private boolean reversed = false;
 		private int columnNumber;
-
-		private VersionCollator versionCollator = new VersionCollator();
 
 		// column headings:	"Key" "Value"
 		private int[][] SORT_ORDERS_BY_COLUMN =
@@ -242,23 +233,6 @@ public class DetailTableProvider {
 				}
 			}
 		};
-	}
-
-	/**
-	 * Method getRevision.
-	 * @param currentEdition
-	 */
-	private String getRevision(ICVSFile currentEdition) throws CVSException {
-		if (currentEdition == null)
-			return ""; //$NON-NLS-1$
-		ResourceSyncInfo info = currentEdition.getSyncInfo();
-		if (info == null)
-			return ""; //$NON-NLS-1$
-		return info.getRevision();
-	}
-
-	public void setFile(ICVSFile file) throws CVSException {
-		this.currentFile = file;
 	}
 
 }

@@ -49,10 +49,8 @@ public class WideLayout extends AbstractLayout {
 				walk(succ, x, y+1);
 			}
 			foreachBranchStepDownAndOptimize(x, y, ((IRevision)treeElement));
-		} else {
-			IBranch br = (IBranch) treeElement;
-			if (treeElement.getChildren().size() != 0)
-				walk((ITreeElement) treeElement.getChildren().get(0), x, y+1);
+		} else if (treeElement.getChildren().size() != 0) {
+			walk((ITreeElement) treeElement.getChildren().get(0), x, y+1);
 		} 
 		m_delegate.draw(treeElement,x,y);
 		reservedHeight.put(new Integer(x), new Integer(y));
