@@ -97,7 +97,7 @@ public class Branch extends Composite {
 				Revision element = (Revision) iter.next();
 				if (theRevision
 					.getRevision()
-					.equals(element.getRevisionNumber())) {
+					.equals(element.getRevision())) {
 					revision = element;
 					break;
 				}

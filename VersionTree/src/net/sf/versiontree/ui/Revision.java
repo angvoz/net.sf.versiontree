@@ -121,13 +121,10 @@ public class Revision extends Canvas {
 			gc.drawImage(versionImage, inset, inset);
 		}
 
-		String revision = logEntry.getRevision();
-		if ((revisionData.getState() & IRevision.STATE_SELECTED) > 0)
-			revision = "*" + revision;
 		int yOffset = inset;
-		Point extent = gc.stringExtent(revision);
+		Point extent = gc.stringExtent(getRevisionString());
 		// draw revision string
-		gc.drawString(revision, stringXPosition, yOffset);
+		gc.drawString(getRevisionString(), stringXPosition, yOffset);
 		yOffset += offsetBetweenStrings + extent.y;
 		// draw author string
 		extent = gc.stringExtent(logEntry.getAuthor());
@@ -144,10 +141,8 @@ public class Revision extends Canvas {
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		//TODO: check for constraints (wHint, hHint)
 		GC gc = new GC(this);
-		String revision = revisionData.getRevision();
-		if ((revisionData.getState() & IRevision.STATE_SELECTED) > 0)
-			revision = "*" + revision;
-		Point extRevision = gc.stringExtent(revision);
+
+		Point extRevision = gc.stringExtent(getRevisionString());
 		Point extAuthor = gc.stringExtent(revisionData.getRevision());
 		gc.dispose();
 
@@ -171,8 +166,20 @@ public class Revision extends Canvas {
 	/**
 	 * @return
 	 */
-	public String getRevisionNumber() {
+	public String getRevision() {
 		return logEntry.getRevision();
+	}
+
+	/**
+	 * Returns the revision as a String. Prepended with a "*" if this
+	 * is the current revision in the workingspace.
+	 * @return
+	 */
+	private String getRevisionString() {
+		if ((revisionData.getState() & IRevision.STATE_SELECTED) > 0)
+			return "*" + logEntry.getRevision();
+		else
+			return logEntry.getRevision();
 	}
 
 	/**
