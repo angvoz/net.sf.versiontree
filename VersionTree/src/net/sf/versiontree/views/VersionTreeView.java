@@ -10,11 +10,7 @@
  *******************************************************************************/
 package net.sf.versiontree.views;
 
-import net.sf.versiontree.Globals;
-import net.sf.versiontree.data.BranchData;
-import net.sf.versiontree.data.RevisionData;
-import net.sf.versiontree.ui.Branch;
-import net.sf.versiontree.ui.RevisionToBranchConnector;
+import net.sf.versiontree.ui.TreeViewer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -26,8 +22,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -62,7 +56,7 @@ public class VersionTreeView extends ViewPart {
 
 	public static final String VIEW_ID =
 		"net.sf.versiontree.views.VersionTreeView";
-		
+
 	private CVSTeamProvider provider;
 	private IFile file;
 
@@ -124,55 +118,16 @@ public class VersionTreeView extends ViewPart {
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();*/
-		parent.setLayout(null);
-		BranchData bData = new BranchData();
-		bData.setName("HEAD");
-		RevisionData rData1 =
-			new RevisionData("1.1", "21.05.03", null, bData, null);
-		bData.addRevisionData(rData1);
-		RevisionData rData2 =
-			new RevisionData("1.2", "27.05.03", rData1, bData, null);
-		bData.addRevisionData(rData2);
-
-		Branch branch = new Branch(bData, parent, 0);
-		branch.setLocation(10, 10);
-		Point p = branch.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		branch.setSize(p.x, p.y);
-
-		BranchData bData2 = new BranchData();
-		bData2.setName("test");
-		RevisionData rData12 =
-			new RevisionData("1.2.1.1", "21.05.03", null, bData2, null);
-		bData2.addRevisionData(rData12);
-		RevisionData rData22 =
-			new RevisionData("1.2.1.2", "27.05.03", rData12, bData2, null);
-		bData2.addRevisionData(rData22);
-		RevisionData rData32 =
-			new RevisionData("1.2.1.3", "27.02.03", rData22, bData2, null);
-		bData2.addRevisionData(rData32);
-
-		Branch branch2 = new Branch(bData2, parent, 0);
-		System.out.println(
-			"pref size: " + branch2.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		branch2.setLocation(120, 100);
-		p = branch2.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		branch2.setSize(p.x, p.y);
-
-		Point sp =
-			branch.getRevisionConnectorPoint(rData1, Globals.NORTH_SOUTH);
-		Point ep = branch2.getBranchMarkerConnectorPoint(Globals.NORTH_SOUTH);
-
-		RevisionToBranchConnector conn3 =
-			new RevisionToBranchConnector(parent, 0);
-		Rectangle bounds = new Rectangle(sp.x, sp.y, ep.x - sp.x, ep.y - sp.y);
-		conn3.setBounds(bounds);
+		
+		TreeViewer viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		
 	}
 
 	/**
-		 * Shows the version tree for the given IResource in the view.
-		 * 
-		 * Only files are supported for now.
-		 */
+	 * Shows the version tree for the given IResource in the view.
+	 * 
+	 * Only files are supported for now.
+	 */
 	public void showVersionTree(IResource resource) {
 		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;
@@ -188,6 +143,7 @@ public class VersionTreeView extends ViewPart {
 					ICVSRemoteFile remoteFile =
 						(ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(
 							file);
+					//TODO: implement treeProvider & treeViewer
 					/*historyTableProvider.setFile(remoteFile);
 					tableViewer.setInput(remoteFile);*/
 					setTitle("CVS Version Tree - " + file.getName());
@@ -203,27 +159,28 @@ public class VersionTreeView extends ViewPart {
 		}
 		this.file = null;
 		//tableViewer.setInput(null);
-		setTitle("Gammel es geht mit IResource!");
+		setTitle("CVS Version Tree");
 	}
 
 	/**
 	 * Shows the version tree for the given ICVSRemoteFile in the view.
 	 */
 	public void showVersionTree(ICVSRemoteFile remoteFile) {
-		/*try {
+		//TODO: implement treeProvider & treeViewer
+//		try {
 			if (remoteFile == null) {
-				tableViewer.setInput(null);
-				setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+				//tableViewer.setInput(null);
+				setTitle("CVS Version Tree");
 				return;
 			}
 			this.file = null;
-			historyTableProvider.setFile(remoteFile);
-			tableViewer.setInput(remoteFile);
-			setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
-		} catch (CVSException e) {
-			CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
-		}*/
-		setTitle("Gammel es geht mit ICVSRemoteFile!");
+			//historyTableProvider.setFile(remoteFile);
+			//tableViewer.setInput(remoteFile);
+			setTitle("CVS Version Tree - " + remoteFile.getName());
+//		} catch (CVSException e) {
+//			CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
+//		}
+		setTitle("CVS Version Tree");
 	}
 
 	private void hookContextMenu() {
