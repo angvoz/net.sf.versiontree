@@ -14,13 +14,27 @@
  * Free Software Foundation, Inc., 
  * 59 TemplePlace - Suite 330, Boston, MA 02111-1307, USA 
  */
-package net.sf.versiontree.layout.ui;
+package net.sf.versiontree.layout;
+
+import net.sf.versiontree.layout.optimizerStrategies.IPlacementStrategy;
+import net.sf.versiontree.layout.optimizerStrategies.NoLayout;
+
+import org.eclipse.swt.graphics.Point;
 
 /**
  * @author Andre
- * Executes operations on obj
+ * This struct-class provides the context for variables for the operations that are
+ * performed externally within the graph traversal
  */
-public interface ICommand {
-	public void execute(Object obj);
+public class LayoutIntvalAlgoContext {
+	public IntervalManager ivManager;
+	public Point position;
+	public IPlacementStrategy strategy;
+
+	public LayoutIntvalAlgoContext() {
+		ivManager = new IntervalManager();
+		position = new Point(-1,0);
+		strategy = new NoLayout();
+	}
 
 }
