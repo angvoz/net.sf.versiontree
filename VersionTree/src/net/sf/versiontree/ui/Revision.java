@@ -1,8 +1,18 @@
 /*
- * Created on 05.05.2003
- *
- * To change the template for this generated file go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * VersionTree - Eclipse Plugin 
+ * Copyright (C) 2003 Jan Karstens <jan.karstens@web.de>
+ * This program is free software; you can redistribute it and/or modify it under 
+ * the terms of the GNU General Public License as published by the Free Software 
+ * Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with 
+ * this program; if not, write to the 
+ * Free Software Foundation, Inc., 
+ * 59 TemplePlace - Suite 330, Boston, MA 02111-1307, USA 
  */
 package net.sf.versiontree.ui;
 
@@ -32,8 +42,12 @@ import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
  */
 public class Revision extends Canvas {
 
+	public static final int STATE_SELECTED = 1;
+
 	private IRevision revisionData;
 	private ILogEntry logEntry;
+
+	private int state;
 
 	int preferredWidth;
 	int preferredHeight;
@@ -53,8 +67,8 @@ public class Revision extends Canvas {
 		preferredWidth = 80;
 		background = new Color(null, 255, 255, 255);
 		selectedColor = new Color(null, 230, 230, 255);
-		focusColor = getDisplay().getSystemColor (SWT.COLOR_RED);
-		
+		focusColor = getDisplay().getSystemColor(SWT.COLOR_RED);
+
 		setBackground(background);
 
 		// add paint listener
@@ -87,8 +101,6 @@ public class Revision extends Canvas {
 	 */
 	protected void paintControl(PaintEvent e) {
 		GC gc = e.gc;
-		if ((revisionData.getState() & IRevision.STATE_SELECTED) > 0)
-			setBackground(selectedColor);
 
 		// draw version tag icon if revison is tagged
 		if (revisionData.hasVersionTags()) {
@@ -97,18 +109,25 @@ public class Revision extends Canvas {
 
 		int yOffset = 3;
 		Point extent = gc.stringExtent(logEntry.getRevision());
+		// draw revision string
 		gc.drawString(
 			logEntry.getRevision(),
 			(preferredWidth + 2) / 2 - (extent.x / 2),
 			yOffset);
 		yOffset += 2 + extent.y;
+		// draw author string
 		extent = gc.stringExtent(logEntry.getAuthor());
 		gc.drawString(
 			logEntry.getAuthor(),
 			(preferredWidth + 2) / 2 - (extent.x / 2),
 			yOffset);
-
-		gc.drawRectangle(0, 0, preferredWidth + 1, preferredHeight + 1);
+		
+		// draw rectangle (or focus border if selected)
+		if (isSelected()) {
+			gc.drawFocus(0, 0, preferredWidth + 2, preferredHeight + 2);
+		} else {
+			gc.drawRectangle(0, 0, preferredWidth + 1, preferredHeight + 1);
+		}
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
@@ -184,6 +203,32 @@ public class Revision extends Canvas {
 			connectionPoint = new Point(size.x / 2, size.y);
 		}
 		return connectionPoint;
+	}
+
+	private int getState() {
+		return state;
+	}
+
+	private void setState(int i) {
+		state |= i;
+		redraw();
+	}
+
+	private void unsetState(int i) {
+		state &= ~i;
+		redraw();
+	}
+
+	public void setSelected(boolean b) {
+		if (b) {
+			setState(STATE_SELECTED);
+		} else {
+			unsetState(STATE_SELECTED);
+		}
+	}
+
+	public boolean isSelected() {
+		return (getState() & STATE_SELECTED) > 0;
 	}
 
 }

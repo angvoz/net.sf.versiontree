@@ -1,6 +1,18 @@
 /*
- * Created on 13.06.2003
- *
+ * VersionTree - Eclipse Plugin 
+ * Copyright (C) 2003 Jan Karstens <jan.karstens@web.de>
+ * This program is free software; you can redistribute it and/or modify it under 
+ * the terms of the GNU General Public License as published by the Free Software 
+ * Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with 
+ * this program; if not, write to the 
+ * Free Software Foundation, Inc., 
+ * 59 TemplePlace - Suite 330, Boston, MA 02111-1307, USA 
  */
 package net.sf.versiontree.data;
 
@@ -49,10 +61,6 @@ public class RevisionTreeFactory {
 				|| logEntry.getRevision().equals("1.1.1.1"))
 				rootRevision = currentRevision;
 
-			// check if this is the selected revision
-			if (currentRevision.getRevision().equals(selectedRevision))
-				currentRevision.setState(IRevision.STATE_SELECTED);
-
 			// get the branch for this revision
 			String branchPrefix = currentRevision.getBranchPrefix();
 			BranchData branch = (BranchData) branches.get(branchPrefix);
@@ -65,6 +73,11 @@ public class RevisionTreeFactory {
 			}
 			// add revision to this branch
 			branch.addRevisionData(currentRevision);
+
+			// check if this is the selected revision
+			if (currentRevision.getRevision().equals(selectedRevision))
+				currentRevision.setState(IRevision.STATE_SELECTED);
+
 		}
 
 		// now return the branches in an array

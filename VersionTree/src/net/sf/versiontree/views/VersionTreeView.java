@@ -1,6 +1,23 @@
+/*
+ * VersionTree - Eclipse Plugin 
+ * Copyright (C) 2003 Jan Karstens <jan.karstens@web.de>
+ * This program is free software; you can redistribute it and/or modify it under 
+ * the terms of the GNU General Public License as published by the Free Software 
+ * Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with 
+ * this program; if not, write to the 
+ * Free Software Foundation, Inc., 
+ * 59 TemplePlace - Suite 330, Boston, MA 02111-1307, USA 
+ */
 package net.sf.versiontree.views;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
 
 import net.sf.versiontree.data.IRevision;
 import net.sf.versiontree.data.RevisionTreeFactory;
@@ -8,6 +25,8 @@ import net.sf.versiontree.ui.DetailTableProvider;
 import net.sf.versiontree.ui.LogEntrySelectionListener;
 import net.sf.versiontree.ui.TreeView;
 
+import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,6 +45,7 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
@@ -35,8 +55,6 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -50,10 +68,14 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSCompareEditorInput;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.ResourceEditionNode;
 import org.eclipse.team.internal.ccvs.ui.SimpleContentProvider;
 import org.eclipse.team.internal.ccvs.ui.TextViewerAction;
+import org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction;
+import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -80,7 +102,8 @@ public class VersionTreeView
 	private Action refreshAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
-
+	private OpenLogEntryAction openAction;
+	private CompareWithRemoteAction compareAction;
 	private Image branchImage;
 	private Image versionImage;
 
@@ -92,7 +115,6 @@ public class VersionTreeView
 
 	private CVSTeamProvider provider;
 	private IFile file;
-
 
 	/**
 	 * Content provider for the table in the detail view 
@@ -123,7 +145,10 @@ public class VersionTreeView
 		sashForm = new SashForm(parent, SWT.HORIZONTAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		treeView =
-			new TreeView(sashForm, this, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+			new TreeView(
+				sashForm,
+				this,
+				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 
 		innerSashForm = new SashForm(sashForm, SWT.VERTICAL);
 		innerSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -159,10 +184,12 @@ public class VersionTreeView
 					try {
 						// for a file this will return the base
 						ICVSRemoteFile remoteFile =
-							(ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(
+							(
+								ICVSRemoteFile) CVSWorkspaceRoot
+									.getRemoteResourceFor(
 								file);
 						final ILogEntry[] logs = getLogEntries(remoteFile);
-			
+
 						// set new content
 						treeView.setInput(
 							RevisionTreeFactory.createRevisionTree(
@@ -177,7 +204,8 @@ public class VersionTreeView
 						else
 							commentViewer.setDocument(new Document(""));
 						if (remoteFile != null)
-							setTitle("CVS Version Tree - " + remoteFile.getName());
+							setTitle(
+								"CVS Version Tree - " + remoteFile.getName());
 					} catch (TeamException e) {
 						CVSUIPlugin.openError(
 							getViewSite().getShell(),
@@ -291,6 +319,12 @@ public class VersionTreeView
 	}
 
 	private void makeActions() {
+		// Double click open action
+		openAction = new OpenLogEntryAction();
+
+		// Compare Action
+		compareAction = new CompareWithRemoteAction();
+
 		// refresh action
 		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
 		refreshAction = new Action("Refresh View") {
@@ -343,19 +377,8 @@ public class VersionTreeView
 	}
 
 	private void hookDoubleClickAction() {
-		treeView.addMouseListener(new MouseListener() {
-
-			public void mouseDoubleClick(MouseEvent e) {
-				//TODO: Forward double clicks on revisions to update detail display
-				System.out.println("Dbl-Clk on Mouse");
-				System.out.println("source: " + e.getSource());
-			}
-			public void mouseDown(MouseEvent e) {
-			}
-			public void mouseUp(MouseEvent e) {
-			}
-		});
 	}
+	
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
 			treeView.getShell(),
@@ -503,6 +526,10 @@ public class VersionTreeView
 	 * @see net.sf.versiontree.ui.LogEntrySelectionListener#logEntrySelected(org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry)
 	 */
 	public void logEntrySelected(ILogEntry log) {
+		// return if file is already selected
+		if (currentEntry.getRevision().equals(log.getRevision()))
+			return;
+		// update display
 		currentEntry = log;
 		updateTableData(currentEntry);
 		tableViewer.setInput(tableData);
@@ -512,6 +539,27 @@ public class VersionTreeView
 		else
 			commentViewer.setDocument(new Document(""));
 
+	}
+
+	public void logEntryDoubleClicked(IStructuredSelection selection) {
+		openAction.selectionChanged(null, selection);
+		openAction.run(null);
+	}
+
+	/**
+	 * 
+	 */
+	public void twoLogEntriesSelected(IStructuredSelection selection) {
+		Iterator iter = selection.iterator();
+		ICVSRemoteFile first = ((ILogEntry) iter.next()).getRemoteFile();
+		ICVSRemoteFile second = ((ILogEntry) iter.next()).getRemoteFile();
+		
+		ResourceEditionNode left = new ResourceEditionNode(first);
+		ResourceEditionNode right = new ResourceEditionNode(second);
+		
+		CompareEditorInput input = new CVSCompareEditorInput(left, right);
+		
+		CompareUI.openCompareEditor(input);
 	}
 
 }

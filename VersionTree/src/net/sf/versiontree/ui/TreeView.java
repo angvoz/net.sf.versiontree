@@ -1,6 +1,18 @@
 /*
- * Created on 13.06.2003
- *
+ * VersionTree - Eclipse Plugin 
+ * Copyright (C) 2003 Jan Karstens <jan.karstens@web.de>
+ * This program is free software; you can redistribute it and/or modify it under 
+ * the terms of the GNU General Public License as published by the Free Software 
+ * Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with 
+ * this program; if not, write to the 
+ * Free Software Foundation, Inc., 
+ * 59 TemplePlace - Suite 330, Boston, MA 02111-1307, USA 
  */
 package net.sf.versiontree.ui;
 
@@ -15,6 +27,7 @@ import net.sf.versiontree.Globals;
 import net.sf.versiontree.data.IBranch;
 import net.sf.versiontree.data.IRevision;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseEvent;
@@ -23,6 +36,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
 /**
  * @author Jan
@@ -90,7 +104,6 @@ public class TreeView extends ScrolledComposite implements MouseListener {
 
 		// resize content widget
 		content.setSize(content.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		System.out.println("Content bounds:" + content.getBounds());
 	}
 
 	private void drawSubBranches(
@@ -157,20 +170,89 @@ public class TreeView extends ScrolledComposite implements MouseListener {
 			control.dispose();
 		}
 
+		// remove references to removed widgets
+		selected = null;
 	}
 
 	/* ***************** Mouse Listener Implementation ********************** */
 
+	Revision selected = null;
+	Revision left = null;
+	Revision right = null;
+
+	StructuredSelectionWrapper selection = new StructuredSelectionWrapper();
+
 	public void mouseDoubleClick(MouseEvent e) {
+		if (e.getSource() instanceof Revision && e.button == 1) {
+			Revision rev = (Revision) e.getSource();
+			logSelectionListener.logEntryDoubleClicked(selection);
+		}
 	}
 
 	public void mouseDown(MouseEvent e) {
 		if (e.getSource() instanceof Revision) {
 			Revision rev = (Revision) e.getSource();
-			logSelectionListener.logEntrySelected(rev.getRevisionData());
+			if (e.button == 1) {
+				// handle selection
+				if (selected != null && !selected.isDisposed()) {
+					selected.setSelected(false);
+				}
+				selected = rev;
+				selected.setSelected(true);
+				logSelectionListener.logEntrySelected(rev.getRevisionData());
+				if (e.stateMask == SWT.SHIFT) {
+					selection.setRightSelection(selected.getRevisionData());
+					// show compare if selection is correct
+					if (selection.getFirstElement() != null
+						&& selection.getFirstElement()
+							!= selected.getRevisionData()) {
+								logSelectionListener.twoLogEntriesSelected(selection);
+					}
+				} else {
+					selection.setLeftSelection(selected.getRevisionData());
+					selection.setRightSelection(null);
+				}
+			}
+			if (e.button == 2) {
+				selection.setRightSelection(selected.getRevisionData());
+			}
 		}
 	}
 
 	public void mouseUp(MouseEvent e) {
+	}
+
+	protected class StructuredSelectionWrapper
+		implements IStructuredSelection {
+		ArrayList logs;
+		protected StructuredSelectionWrapper() {
+			logs = new ArrayList(2);
+			logs.add(null);
+			logs.add(null);
+		}
+		public void setLeftSelection(ILogEntry left) {
+			logs.set(0, left);
+		}
+		public void setRightSelection(ILogEntry right) {
+			logs.set(1, right);
+		}
+		public Object getFirstElement() {
+			return logs.get(0);
+		}
+		public Iterator iterator() {
+			return logs.iterator();
+		}
+		public int size() {
+			return logs.size();
+		}
+		public Object[] toArray() {
+			return logs.toArray();
+		}
+		public List toList() {
+			return logs;
+		}
+		public boolean isEmpty() {
+			return false;
+		}
 	}
 }
