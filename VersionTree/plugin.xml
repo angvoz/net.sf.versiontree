@@ -43,5 +43,25 @@
          </view>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            adaptable="true"
+            id="net.sf.versiontree.ui.showVersionTree">
+         <filter
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
+         </filter>
+         <action
+               label="Show Version Tree"
+               tooltip="Displays the version tree for the selected resource."
+               class="net.sf.versiontree.popup.actions.ShowResourceInVersionTreeAction"
+               menubarPath="team.main/group2"
+               enablesFor="1"
+               id="net.sf.versiontree.popup.actions.showVersionTree">
+         </action>
+      </objectContribution>
+   </extension>
 
 </plugin>
