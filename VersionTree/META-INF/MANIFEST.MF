@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CVS VersionTree Plug-in
+Bundle-SymbolicName: net.sf.versiontree; singleton:=true
+Bundle-Version: 1.4.0
+Bundle-ClassPath: VersionTree.jar
+Bundle-Activator: net.sf.versiontree.VersionTreePlugin
+Bundle-Vendor: versiontree.sf.net
+Bundle-Localization: plugin
+Export-Package: net.sf.versiontree,
+ net.sf.versiontree.data,
+ net.sf.versiontree.data.algo,
+ net.sf.versiontree.layout.drawer,
+ net.sf.versiontree.popup.actions,
+ net.sf.versiontree.ui,
+ net.sf.versiontree.ui.preferences,
+ net.sf.versiontree.views
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.team.core,
+ org.eclipse.team.ui,
+ org.eclipse.team.cvs.ui,
+ org.eclipse.team.cvs.core,
+ org.eclipse.jface.text,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.compare
+Eclipse-AutoStart: true

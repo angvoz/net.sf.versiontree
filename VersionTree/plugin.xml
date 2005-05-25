@@ -1,33 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="net.sf.versiontree"
-   name="CVS VersionTree Plug-in"
-   version="1.3.0"
-   provider-name="versiontree.sf.net"
-   class="net.sf.versiontree.VersionTreePlugin">
+<plugin>
 
-   <runtime>
-      <library name="VersionTree.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-
-   <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.team.core"/>
-      <import plugin="org.eclipse.team.ui"/>
-      <import plugin="org.eclipse.team.cvs.ui"/>
-      <import plugin="org.eclipse.team.cvs.core"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.compare"/>
-   </requires>
-
-   <extension
+     <extension
          point="org.eclipse.ui.views">
       <category
             name="CVS"

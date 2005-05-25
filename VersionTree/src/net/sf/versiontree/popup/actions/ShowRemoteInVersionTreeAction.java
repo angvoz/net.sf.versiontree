@@ -90,7 +90,7 @@ public class ShowRemoteInVersionTreeAction extends CVSAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("ShowHistoryAction.showHistory"); //$NON-NLS-1$
+		return Policy.getActionBundle().getString("ShowHistoryAction.showHistory"); //$NON-NLS-1$
 	}
 
 }

@@ -91,7 +91,6 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput;
 import org.eclipse.team.internal.ccvs.ui.SimpleContentProvider;
 import org.eclipse.team.internal.ccvs.ui.TextViewerAction;
@@ -232,7 +231,7 @@ public class VersionTreeView
 	private class FetchLogEntriesJob extends Job {
 		public ICVSRemoteFile remoteFile;
 		public FetchLogEntriesJob() {
-			super(VersionTreePlugin.getResourceString("VersionTreeView.fetchHistoryJob"));
+			super(VersionTreePlugin.getResourceString("VersionTreeView.fetchHistoryJob")); //$NON-NLS-1$
 		}
 		public void setRemoteFile(ICVSRemoteFile file) {
 			this.remoteFile = file;
@@ -496,7 +495,7 @@ public class VersionTreeView
 		// open action delegate
 		openActionDelegate = new OpenLogEntryAction();
 		
-		toggleHorVerDisplayAction = new Action( VersionTreePlugin.getResourceString("VersionTreeView.Toggle_Detail_View_Action")) {
+		toggleHorVerDisplayAction = new Action( VersionTreePlugin.getResourceString("VersionTreeView.Toggle_Detail_View_Action")) { //$NON-NLS-1$
 			public void run() {
 				if (sashForm.getOrientation() == SWT.HORIZONTAL) {
 					sashForm.setOrientation(SWT.VERTICAL);
@@ -669,7 +668,8 @@ public class VersionTreeView
 				return resources;
 			}
 		};
-		tagWithExistingAction = new Action(Policy.bind("HistoryView.tagWithExistingAction")) {
+		
+		tagWithExistingAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.TagWithExisting")) { //$NON-NLS-1$
 			public void run() {
 				if (file == null)
 					return;
