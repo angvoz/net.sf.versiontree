@@ -52,9 +52,9 @@ public class ShowRemoteInVersionTreeAction extends CVSAction {
 	 */
 	protected ICVSRemoteFile[] getSelectedRemoteFiles() {
 		ArrayList resources = null;
-		if (!selection.isEmpty()) {
+		if (!getSelection().isEmpty()) {
 			resources = new ArrayList();
-			Iterator elements = selection.iterator();
+			Iterator elements = getSelection().iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof ICVSRemoteFile) {
