@@ -8,6 +8,7 @@
  * Contributors:
  *     Jan Karstens <jan.karstens@web.de> - initial implementation
  *     André Langhorst <andre@masse.de> - extensions
+ *     Dmitry Mitskevich <dmitskevich@gmail.com> - support (migrate to Eclipse 3.4.1)
  *******************************************************************************/
 package net.sf.versiontree.views;
 
@@ -78,10 +79,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
@@ -91,7 +90,6 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput;
 import org.eclipse.team.internal.ccvs.ui.SimpleContentProvider;
 import org.eclipse.team.internal.ccvs.ui.TextViewerAction;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
@@ -99,19 +97,20 @@ import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
 import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
@@ -226,6 +225,38 @@ public class VersionTreeView
 	};
 	
 	/**
+	 * Implementation is similar to:
+	 * org.eclipse.team.internal.ui.history.GenericHistoryView.selectionListener
+	 * 
+	 * @see org.eclipse.team.internal.ui.history.GenericHistoryView
+	 */
+	private ISelectionListener selectionListener = new ISelectionListener() {
+		@Override
+		public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
+			
+			if (!isLinkingEnabled() || !checkIfPageIsVisible())  return;
+			if (selection instanceof IStructuredSelection == false) return;
+			IStructuredSelection structSelection = (IStructuredSelection) selection;
+
+			// always take the first element - this is not intended to work with multiple selection
+			Object firstElement = structSelection.getFirstElement();
+			
+			if (firstElement != null) {
+				IResource resource;
+				if (firstElement  instanceof SyncInfoModelElement) {
+					SyncInfoModelElement syncInfoModelElement = (SyncInfoModelElement) firstElement;
+					resource = syncInfoModelElement.getSyncInfo().getLocal();
+				} else {
+					resource = (IResource) Utils.getAdapter(firstElement , IResource.class);
+				}
+				if (resource != null && !resource.equals(file)) {
+					showVersionTree(resource);
+				}
+			}
+		}
+	};
+	
+	/**
 	 * Job that fetches the CVS log entries.
 	 */
 	private class FetchLogEntriesJob extends Job {
@@ -309,6 +340,9 @@ public class VersionTreeView
 		// add listener for editor page activation - this is to support editor linking
 		getSite().getPage().addPartListener(partListener);	
 		getSite().getPage().addPartListener(partListener2);
+		
+		// see GenericHistoryView behaviour
+		getSite().getPage().addPostSelectionListener(selectionListener);
 	}
 
 	/**
@@ -318,8 +352,7 @@ public class VersionTreeView
 	 */
 	public void showVersionTree(IResource resource) {
 		if (resource != null && resource instanceof IFile) {
-			IFile newFile = (IFile) resource;
-			this.file = newFile;
+			this.file = (IFile) resource;
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject(), CVSProviderPlugin.getTypeId());
 			if (teamProvider != null) {
 				try {
@@ -434,7 +467,7 @@ public class VersionTreeView
 			try {
 				fetchLogEntriesJob.join();
 			} catch (InterruptedException e) {
-				CVSUIPlugin.log(new CVSException(e.getLocalizedMessage(), e));
+				CVSUIPlugin.log(CVSException.wrapException(e));
 			}
 		}
 		fetchLogEntriesJob.setRemoteFile(remoteFile);
@@ -895,30 +928,11 @@ public class VersionTreeView
 			return;
 		}		
 		IEditorInput input = editor.getEditorInput();
-		// Handle compare editors opened from the Synchronize View
-		if (input instanceof SyncInfoCompareInput) {
-			SyncInfoCompareInput syncInput = (SyncInfoCompareInput) input;
-			SyncInfo info = syncInput.getSyncInfo();
-			if(info instanceof CVSSyncInfo && info.getLocal().getType() == IResource.FILE) {
-				ICVSRemoteFile remote = (ICVSRemoteFile)info.getRemote();
-				ICVSRemoteFile base = (ICVSRemoteFile)info.getBase();
-				if(remote != null) {
-					showVersionTree(remote);
-				} else if(base != null) {
-					showVersionTree(base);
-				}
-			}
-		// Handle editors opened on remote files
-		} else if(input instanceof RemoteFileEditorInput) {
-			ICVSRemoteFile remote = ((RemoteFileEditorInput)input).getCVSRemoteFile();
-			if(remote != null) {
-				showVersionTree(remote);
-			}
-		// Handle regular file editors
-		} else if (input instanceof IFileEditorInput) {
-			IFileEditorInput fileInput = (IFileEditorInput) input;
-			showVersionTree(fileInput.getFile());			
-		}
+        IFile file = ResourceUtil.getFile(input);
+        
+        if (file != null && !file.equals(this.file)) {
+        	showVersionTree(file);
+        }
 	}
 	
 	private boolean checkIfPageIsVisible() {

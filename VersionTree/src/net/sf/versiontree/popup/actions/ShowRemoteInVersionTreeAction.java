@@ -82,7 +82,7 @@ public class ShowRemoteInVersionTreeAction extends CVSAction {
 	/**
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
+	public boolean isEnabled() {
 		ICVSRemoteFile[] resources = getSelectedRemoteFiles();
 		return resources.length == 1;
 	}
