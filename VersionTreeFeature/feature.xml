@@ -2,7 +2,7 @@
 <feature
       id="VersionTree"
       label="CVS VersionTree Plug-in"
-      version="1.6.0"
+      version="1.6.0.qualifier"
       provider-name="versiontree.sf.net"
       nl="en">
 
@@ -238,8 +238,8 @@ litigation.
 
    <plugin
          id="net.sf.versiontree"
-         download-size="121"
+         download-size="0"
          install-size="0"
-         version="1.6.0"/>
+         version="0.0.0"/>
 
 </feature>
