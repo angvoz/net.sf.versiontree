@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="VersionTree"
+      id="net.fs.versiontree.feature"
       label="CVS VersionTree Plug-in"
       version="1.6.0.qualifier"
       provider-name="versiontree.sf.net"
