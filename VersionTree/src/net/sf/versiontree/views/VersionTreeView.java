@@ -231,7 +231,7 @@ public class VersionTreeView
 	 * @see org.eclipse.team.internal.ui.history.GenericHistoryView
 	 */
 	private ISelectionListener selectionListener = new ISelectionListener() {
-		@Override
+/*		@Override*/
 		public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
 			
 			if (!isLinkingEnabled() || !checkIfPageIsVisible())  return;
