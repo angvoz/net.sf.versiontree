@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: CVS VersionTree Plug-in
 Bundle-SymbolicName: net.sf.versiontree; singleton:=true
 Bundle-Version: 1.6.0.qualifier
-Bundle-ClassPath: VersionTree.jar
+Bundle-ClassPath: net.fs.versiontree.jar
 Bundle-Activator: net.sf.versiontree.VersionTreePlugin
 Bundle-Vendor: versiontree.sf.net
 Bundle-Localization: plugin
