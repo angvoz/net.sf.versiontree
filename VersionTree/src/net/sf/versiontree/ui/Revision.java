@@ -158,9 +158,9 @@ public class Revision extends Canvas {
 	 */
 	private String getRevisionString() {
 		if ((revisionData.getState() & IRevision.STATE_CURRENT) > 0)
-			return "*" + revisionData.getRevisionSuffix(); //$NON-NLS-1$
+			return "*" + revisionData.getRevision(); //$NON-NLS-1$
 		else
-			return revisionData.getRevisionSuffix();
+			return revisionData.getRevision();
 	}
 
 	/**
