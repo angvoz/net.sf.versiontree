@@ -218,7 +218,6 @@ litigation.
    </license>
 
    <url>
-      <update label="VersionTree Update Site" url="http://versiontree.sf.net/updatesite"/>
       <discovery label="VersionTree Homepage" url="http://versiontree.sourceforge.net/"/>
    </url>
 
