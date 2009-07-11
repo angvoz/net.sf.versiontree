@@ -2,11 +2,11 @@
 <feature
       id="net.fs.versiontree.feature"
       label="CVS VersionTree Plug-in"
-      version="1.6.1"
+      version="1.6.2"
       provider-name="versiontree.sf.net"
       nl="en">
 
-   <description url="http://versiontree.sourceforge.net/">
+   <description>
       Displays a graphical revision history for files under CVS control.
    </description>
 
@@ -217,22 +217,18 @@ Each party waives its rights to a jury trial in any resulting
 litigation.
    </license>
 
-   <url>
-      <discovery label="VersionTree Homepage" url="http://versiontree.sourceforge.net/"/>
-   </url>
-
    <requires>
+      <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.team.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.team.ui"/>
+      <import plugin="org.eclipse.team.cvs.ui"/>
+      <import plugin="org.eclipse.team.cvs.core"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.team.cvs.core"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.compare"/>
-      <import plugin="org.eclipse.team.cvs.ui"/>
    </requires>
 
    <plugin
