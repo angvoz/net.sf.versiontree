@@ -232,9 +232,10 @@ litigation.
    </requires>
 
    <plugin
-         id="net.sf.versiontree"
+         id="net.fs.versiontree"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
