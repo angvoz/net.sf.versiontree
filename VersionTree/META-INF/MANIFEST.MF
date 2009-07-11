@@ -4,7 +4,7 @@ Bundle-Name: CVS VersionTree Plug-in
 Bundle-SymbolicName: net.sf.versiontree; singleton:=true
 Bundle-Version: 1.6.2
 Bundle-Activator: net.sf.versiontree.VersionTreePlugin
-Bundle-Vendor: versiontree.sf.net
+Bundle-Vendor: net.fs.versiontree
 Bundle-Localization: plugin
 Export-Package: net.sf.versiontree,
  net.sf.versiontree.data,
