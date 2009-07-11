@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="net.fs.versiontree.feature"
+      id="net.fs.versiontree"
       label="CVS VersionTree Plug-in"
       version="1.6.2"
-      provider-name="versiontree.sf.net"
-      plugin="net.sf.versiontree"
-      nl="en">
+      provider-name="net.fs.versiontree"
+      plugin="net.fs.versiontree">
 
    <description>
       Displays a graphical revision history for files under CVS control.
