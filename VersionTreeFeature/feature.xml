@@ -4,6 +4,7 @@
       label="CVS VersionTree Plug-in"
       version="1.6.2"
       provider-name="versiontree.sf.net"
+      plugin="net.sf.versiontree"
       nl="en">
 
    <description>
