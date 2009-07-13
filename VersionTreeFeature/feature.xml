@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="net.fs.versiontree"
+      id="net.sf.versiontree"
       label="CVS VersionTree Plug-in"
       version="1.6.3"
-      provider-name="net.fs.versiontree"
-      plugin="net.fs.versiontree">
+      provider-name="net.sf.versiontree"
+      plugin="net.sf.versiontree">
 
    <description>
       Displays a graphical revision history for files under CVS control.
@@ -232,7 +232,7 @@ litigation.
    </requires>
 
    <plugin
-         id="net.fs.versiontree"
+         id="net.sf.versiontree"
          download-size="0"
          install-size="0"
          version="1.6.3"
