@@ -17,6 +17,7 @@ import java.util.List;
 public interface IBranch extends ITreeElement {
 	public static final String HEAD_NAME = "HEAD"; //$NON-NLS-1$
 	public static final String HEAD_PREFIX = "1"; //$NON-NLS-1$
+	public static final String VENDOR_PREFIX = "1.1.1"; //$NON-NLS-1$
 	/** 
 	 * Returns a List of the revisions contained in this branch.
 	 * All revisions are of type IRevision

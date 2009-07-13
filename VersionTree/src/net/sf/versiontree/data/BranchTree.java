@@ -83,13 +83,9 @@ public class BranchTree {
 					branch = (BranchData) branches.get(IBranch.HEAD_PREFIX);
 				} else {
 					// no branch tag! create adhoc branch
-					int branchNumber = Integer.parseInt(branchPrefix
-							.substring(branchPrefix.lastIndexOf(".") + 1));
-					branch = createBranch(branchPrefix, branchNumber, "<n/a>");
-					String parentPrefix = branchPrefix.substring(0,
-							branchPrefix.lastIndexOf("."));
-					IRevision branchParent = (IRevision) revisions
-							.get(parentPrefix);
+					branch = createBranch(branchPrefix, "<n/a>");
+					String parentPrefix = branchPrefix.substring(0,branchPrefix.lastIndexOf(".",branchPrefix.lastIndexOf(".")-1));
+					IRevision branchParent = (IRevision) revisions.get(parentPrefix);
 					branchParent.addChild(branch);
 				}
 			}
@@ -104,17 +100,16 @@ public class BranchTree {
 	 * @param logEntry
 	 */
 	private void createBranches(ILogEntry logEntry) {
-		int branchNumber = 0;
 		CVSTag[] tags = logEntry.getTags();
 		for (int j = tags.length - 1; j >= 0; j--) {
 			if (tags[j].getType() == CVSTag.BRANCH) {
-				branchNumber = new Integer(tags[j].getBranchNumber());
-				createBranch(logEntry.getRevision() + "." + branchNumber, branchNumber, tags[j].getName());
+				String branchNumber = tags[j].getBranchNumber();
+				createBranch(logEntry.getRevision() + "." + branchNumber, tags[j].getName());
 			}
 		}
 	}
 	
-	private BranchData createBranch(String branchPrefix, int branchNumber, String name) {
+	private BranchData createBranch(String branchPrefix, String name) {
 		BranchData branch = new BranchData();
 		branch.setBranchPrefix(branchPrefix);
 		branch.setName(name);
@@ -158,14 +153,19 @@ public class BranchTree {
 		}
 	}
 
+	/**
+	 * TODO: wrong algorithm because branch can be removed.
+	 * 
+	 * @param rev
+	 * @return
+	 */
 	public List findBranchesForRevision(IRevision rev) {
 		List sortedBranches = new ArrayList();
-		int branchId = 2;
-		IBranch branch = (IBranch) branches.get(rev.getRevision()+ "." + branchId);
-		while (branch != null) {
-			sortedBranches.add(branch);
-			branchId += 2;
-			branch = (IBranch) branches.get(rev.getRevision()+ "." + branchId);
+		for (Iterator iter = branches.values().iterator(); iter.hasNext();) {
+			IBranch branch = (IBranch) iter.next();
+			if (branch.getBranchPrefix().startsWith(rev+".0") || branch.getBranchPrefix().equals(rev+".1")) {
+				sortedBranches.add(branch);
+			}
 		}
 		return sortedBranches;
 	}
@@ -191,7 +191,7 @@ public class BranchTree {
 				|| logEntry.getRevision().equals(IRevision.INITIAL_REVISION)) {
 			if (rootRevision == null) {
 				rootRevision = currentRevision;
-			} else if (!rootRevision.equals(IRevision.INITIAL_REVISION)){
+			} else if (!rootRevision.getRevision().equals(IRevision.FIRST_REVISION)){
 				rootRevision = currentRevision;
 			}
 		}

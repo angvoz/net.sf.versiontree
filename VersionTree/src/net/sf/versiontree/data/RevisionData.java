@@ -112,8 +112,13 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	public String getBranchPrefix() {
 		String revision = logEntry.getRevision();
 		if (revision.length() == 0 || revision.lastIndexOf(".")==-1) throw new RuntimeException("Revision malformed: "+revision);
-		if (revision.equals(IRevision.INITIAL_REVISION)) return IBranch.HEAD_PREFIX;
-		return revision.substring(0, revision.lastIndexOf(".")); //$NON-NLS-1$
+		if (revision.equals(IRevision.INITIAL_REVISION)) return IBranch.VENDOR_PREFIX;
+		String branchNumber = revision.substring(0, revision.lastIndexOf("."));
+		if (branchNumber.lastIndexOf(".") == -1 || branchNumber.equals(IBranch.VENDOR_PREFIX)) {
+			return branchNumber;
+		}
+		String branchPrefix = branchNumber.substring(0,branchNumber.lastIndexOf("."))+".0"+branchNumber.substring(branchNumber.lastIndexOf("."));
+		return branchPrefix; //$NON-NLS-1$
 	}
 
 	/**
