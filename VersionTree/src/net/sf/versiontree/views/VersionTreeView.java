@@ -431,8 +431,7 @@ public class VersionTreeView
 		// draw connectors
 		AbstractVersionTreeHelper treeHelper = new TreeViewHelper(treeView);
 		ITreeElement head = bt.getHeadBranch();
-		treeHelper.walk(head,treeView.getTreeViewConfig().drawEmptyBranches());
-
+		treeHelper.walk(head,treeView.getTreeViewConfig().drawEmptyBranches(),bt.getAlltags());
 	}
 
 	private ILayout getLayoutAlgorithm(DrawerDispatcher dp) {

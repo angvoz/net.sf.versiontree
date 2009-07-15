@@ -162,15 +162,7 @@ public class TreeView
 	public void drawConnector(int x1, int y1, int x2, int y2) {
 		Point position = new Point(0, 0);
 		Point size = new Point(0, 0);
-		int mode = getBoundsAndMode(x1, y1, x2, y2, position, size);
-		// TODO: remove this return. calls should only be made with valid points.
-		if (mode == -1) {
-			return;
-		}
-		Connector connect = new Connector(content, 0, mode);
-		connect.setLocation(position);
-		connect.setSize(size);
-		connect.setMenu(this.getMenu());
+		setBoundsAndMode(x1, y1, x2, y2, position, size);
 	}
 
 	/**
@@ -184,15 +176,16 @@ public class TreeView
 	 * @param size
 	 * @return Connector mode (HORIZONTAL or VERTICAL)
 	 */
-	private int getBoundsAndMode(
+	private void setBoundsAndMode(
 		int xPos1,
 		int yPos1,
 		int xPos2,
 		int yPos2,
 		Point position,
 		Point size) {
-		int mode;
-		int x1, y1, x2, y2;
+		int mode = Connector.HORIZONTAL;
+		int direction = Connector.LEFT;
+		int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 		// connect horizontal if x offset is equal
 		if (xPos1 == xPos2) {
 			mode = Connector.VERTICAL;
@@ -206,6 +199,7 @@ public class TreeView
 				y1 = yPos2;
 				x2 = xPos1;
 				y2 = yPos1;
+				direction = Connector.RIGHT;
 			}
 		} else if (yPos1 == yPos2) {
 			mode = Connector.HORIZONTAL;
@@ -219,6 +213,7 @@ public class TreeView
 				y1 = yPos2;
 				x2 = xPos1;
 				y2 = yPos1;
+				direction = Connector.RIGHT;
 			}
 		} else {
 			System.out.println("Error: cannot draw diagonal connectors!");
@@ -232,7 +227,6 @@ public class TreeView
 					+ ","
 					+ yPos2
 					+ ")");
-			return -1;
 		}
 		if (mode == Connector.HORIZONTAL) {
 			position.x = BORDER + width + x1 * (hspacing + width);
@@ -245,7 +239,11 @@ public class TreeView
 			size.x = width;
 			size.y = (y2 - y1) * vspacing + (y2 - y1 - 1) * height;
 		}
-		return mode;
+		Connector connect = new Connector(content, 0, mode);
+		connect.setLocation(position);
+		connect.setSize(size);
+		connect.setDirection(direction);
+		connect.setMenu(this.getMenu());
 	}
 
 	/**

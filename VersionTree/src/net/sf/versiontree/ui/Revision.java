@@ -60,27 +60,10 @@ public class Revision extends Canvas {
 
 		initializeImages();
 
-		IPreferenceStore store =
-			VersionTreePlugin.getDefault().getPreferenceStore();
-		height =
-			store.getInt(VersionTreePlugin.P_DEFAULT_ELEMENT_HEIGHT);
+		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
+		height = store.getInt(VersionTreePlugin.P_DEFAULT_ELEMENT_HEIGHT);
 		width = store.getInt(VersionTreePlugin.P_DEFAULT_ELEMENT_WIDTH);
 
-		// Parse background color
-		String color =
-			store.getString(VersionTreePlugin.P_REVISION_BACKGROUNDCOLOR);
-		int temp1 = color.indexOf(',');
-		int temp2 = color.indexOf(',', temp1 + 1);
-		background =
-			new Color(
-				null,
-				Integer.valueOf(color.substring(0, temp1)).intValue(),
-				Integer.valueOf(color.substring(temp1 + 1, temp2)).intValue(),
-				Integer
-					.valueOf(color.substring(temp2 + 1, color.length()))
-					.intValue());
-
-		setBackground(background);
 
 		// add paint listener
 		addPaintListener(new PaintListener() {
@@ -157,10 +140,12 @@ public class Revision extends Canvas {
 	 * @return
 	 */
 	private String getRevisionString() {
+		String revisionNumber = revisionData.getRevision();
 		if ((revisionData.getState() & IRevision.STATE_CURRENT) > 0)
-			return "*" + revisionData.getRevision(); //$NON-NLS-1$
-		else
-			return revisionData.getRevision();
+			revisionNumber = "*" + revisionNumber; //$NON-NLS-1$
+		if (revisionData.getLogEntry().isDeletion())
+			revisionNumber += "("+revisionData.getLogEntry().getState()+")";
+		return revisionNumber;
 	}
 
 	/**
@@ -179,6 +164,24 @@ public class Revision extends Canvas {
 	public void setRevisionData(IRevision data) {
 		revisionData = data;
 		setToolTipText(revisionData.getRevision());
+		// Parse background color
+		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
+		String color = store.getString(VersionTreePlugin.P_REVISION_BACKGROUNDCOLOR);
+		if (revisionData.getLogEntry().isDeletion()) {
+			color = store.getString(VersionTreePlugin.P_DEADREVISION_BACKGROUNDCOLOR);
+		}
+		int temp1 = color.indexOf(',');
+		int temp2 = color.indexOf(',', temp1 + 1);
+		background =
+			new Color(
+				null,
+				Integer.valueOf(color.substring(0, temp1)).intValue(),
+				Integer.valueOf(color.substring(temp1 + 1, temp2)).intValue(),
+				Integer
+					.valueOf(color.substring(temp2 + 1, color.length()))
+					.intValue());
+
+		setBackground(background);
 		redraw();
 	}
 

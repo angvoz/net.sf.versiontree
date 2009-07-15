@@ -59,6 +59,7 @@ public class VersionTreePreferencePage
 		addField(new IntegerFieldEditor(VersionTreePlugin.P_DEFAULT_VSPACING, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Element_VSpacing"), getFieldEditorParent())); //$NON-NLS-1$
 		addField(new ColorFieldEditor(VersionTreePlugin.P_REVISION_BACKGROUNDCOLOR, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Revision_Color"), getFieldEditorParent())); //$NON-NLS-1$
 		addField(new ColorFieldEditor(VersionTreePlugin.P_BRANCH_BACKGROUNDCOLOR, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Branch_Color"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new ColorFieldEditor(VersionTreePlugin.P_DEADREVISION_BACKGROUNDCOLOR, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Dead_Revision_Color"), getFieldEditorParent())); //$NON-NLS-1$
 		addField(new RadioGroupFieldEditor(
 			VersionTreePlugin.P_DEFAULT_ALGORITHM,
 			VersionTreePlugin.getResourceString(

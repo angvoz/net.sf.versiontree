@@ -32,6 +32,11 @@ public class BranchTree {
 
 	private HashMap branches;
 	private HashMap revisions;
+	private HashMap<String,IRevision> alltags;
+
+	public HashMap<String, IRevision> getAlltags() {
+		return alltags;
+	}
 
 	public boolean isEmpty() {
 		return numberOfBranches == 0;
@@ -46,6 +51,7 @@ public class BranchTree {
 			return;
 
 		// basic initializations
+		alltags = new HashMap(logs.length);
 		revisions = new HashMap(logs.length);
 		branches = new HashMap((int) (Math.ceil(logs.length / 20)));
 
@@ -55,6 +61,16 @@ public class BranchTree {
 		buildCompleteTreeStructure();
 	}
 	
+	private void addRevision(String name, IRevision revision) {
+		revisions.put(name, revision);
+		CVSTag[] tags = revision.getLogEntry().getTags();
+		for (int j = tags.length - 1; j >= 0; j--) {
+			CVSTag tag = tags[j];
+			if (tag.getType() != CVSTag.BRANCH) {
+				alltags.put(tag.getName(),revision);
+			}
+		}
+	}
 	private void setUpHashMaps(ILogEntry[] logs, String selectedRevision) {
 		headBranch = new BranchData(IBranch.HEAD_NAME, IBranch.HEAD_PREFIX);
 		branches.put(headBranch.getBranchPrefix(), headBranch);
@@ -63,7 +79,7 @@ public class BranchTree {
 		for (int i = 0; i < logs.length; i++) {
 			ILogEntry logEntry = logs[i];
 			IRevision currentRevision = new RevisionData(logEntry);
-			revisions.put(currentRevision.getRevision(), currentRevision);
+			addRevision(currentRevision.getRevision(), currentRevision);
 			ifIsRootSetRoot(logEntry, currentRevision);
 			// check if this is the selected revision
 			ifIsActiveRevisionInIDErememberIt(

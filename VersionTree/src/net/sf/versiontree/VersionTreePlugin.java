@@ -108,8 +108,9 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 		store.setDefault(P_DEFAULT_ELEMENT_WIDTH, 70);
 		store.setDefault(P_DEFAULT_HSPACING, 20);
 		store.setDefault(P_DEFAULT_VSPACING, 10);
-		store.setDefault(P_REVISION_BACKGROUNDCOLOR, "255,255,255"); //$NON-NLS-1$
-		store.setDefault(P_BRANCH_BACKGROUNDCOLOR, "230,230,230"); //$NON-NLS-1$
+		store.setDefault(P_REVISION_BACKGROUNDCOLOR, "192,192,192"); //$NON-NLS-1$
+		store.setDefault(P_BRANCH_BACKGROUNDCOLOR, "128,128,128"); //$NON-NLS-1$
+		store.setDefault(P_DEADREVISION_BACKGROUNDCOLOR, "230,230,230"); //$NON-NLS-1$
 		store.setDefault(P_DEFAULT_ALGORITHM, "0"); //$NON-NLS-1$
 		store.setDefault(P_DEFAULT_DIRECTION, "0"); //$NON-NLS-1$
 		store.setDefault(P_DEFAULT_EMPTY_BRANCHES, false);
@@ -124,6 +125,7 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	public static final String P_DEFAULT_VSPACING = "DefVSpacing"; //$NON-NLS-1$
 	public static final String P_REVISION_BACKGROUNDCOLOR = "RevisionBGColor"; //$NON-NLS-1$
 	public static final String P_BRANCH_BACKGROUNDCOLOR = "BranchBGColor"; //$NON-NLS-1$
+	public static final String P_DEADREVISION_BACKGROUNDCOLOR = "DeadRevisionBGColor"; //$NON-NLS-1$
 	public static final String P_DEFAULT_ALGORITHM = "DefAlgorithm"; //$NON-NLS-1$
 	public static final String P_DEFAULT_EMPTY_BRANCHES = "DefEmptyBranches"; //$NON-NLS-1$
 	public static final String P_DEFAULT_DIRECTION = "DefDirection"; //$NON-NLS-1$

@@ -27,8 +27,11 @@ public class Connector extends Canvas {
 
 	public static final int VERTICAL = 1;
 	public static final int HORIZONTAL = 2;
+	public static final int LEFT = 1;
+	public static final int RIGHT = 2;
 
 	private int drawMode;
+	private int direction;
 
 	/**
 	 * Creates a connector widget.
@@ -53,11 +56,30 @@ public class Connector extends Canvas {
 	protected void paintControl(PaintEvent e) {
 		GC gc = e.gc;
 		Rectangle bounds = this.getBounds();
+		int arrowLen = 3;
 		if (drawMode == VERTICAL) {
 			gc.drawLine(bounds.width / 2, 0, bounds.width / 2, bounds.height);
+			if (direction == RIGHT ) {
+				gc.drawLine(bounds.width / 2 - arrowLen, bounds.height - arrowLen, bounds.width / 2, bounds.height);
+				gc.drawLine(bounds.width / 2 + arrowLen, bounds.height - arrowLen, bounds.width / 2, bounds.height);
+			} else {
+				gc.drawLine(bounds.width / 2 - arrowLen, 0 + arrowLen, bounds.width / 2, 0);
+				gc.drawLine(bounds.width / 2 + arrowLen, 0 + arrowLen, bounds.width / 2, 0);
+			}
 		} else {
 			gc.drawLine(0, bounds.height / 2, bounds.width, bounds.height / 2);
+			if ( direction == RIGHT ) {
+				gc.drawLine(bounds.width - arrowLen, bounds.height / 2 - arrowLen, bounds.width, bounds.height / 2);
+				gc.drawLine(bounds.width - arrowLen, bounds.height / 2 + arrowLen, bounds.width, bounds.height / 2);
+			} else {
+				gc.drawLine(0 + arrowLen, bounds.height / 2 - arrowLen, 0, bounds.height / 2);
+				gc.drawLine(0 + arrowLen, bounds.height / 2 + arrowLen, 0, bounds.height / 2);
+			}
 		}
+	}
+
+	public void setDirection(int direction) {
+		this.direction = direction;
 	}
 
 

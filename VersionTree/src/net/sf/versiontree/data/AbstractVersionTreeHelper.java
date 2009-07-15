@@ -12,14 +12,22 @@ package net.sf.versiontree.data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 
 /**
  * walk ITreeElement trees and draw connectors (and other stuff in the future)
  * @author Andre */
 public abstract class AbstractVersionTreeHelper {
 
+	String mergeExpression = "tag_(.*)_MERGE-TO_(.*)"; 
+    Pattern pattern = Pattern.compile(mergeExpression);
+	
 	public abstract void drawConnector(
 		ITreeElement element,
 		ITreeElement element2);
@@ -83,7 +91,33 @@ public abstract class AbstractVersionTreeHelper {
 	/** connects branches and revision to parent revisions and parent branches */
 	public void walk(
 		ITreeElement parameterElement,
-		boolean showEmptyBranches) {
+		boolean showEmptyBranches,
+		HashMap<String, IRevision> alltags) {
+//		if (parameterElement.isRevision()) {
+//			IRevision revision = (IRevision) parameterElement;
+//			CVSTag[] tags = revision.getLogEntry().getTags();
+//			for (int i = 0; i < tags.length; i++) {
+//				CVSTag tag = tags[i];
+//			    Matcher matcher = pattern.matcher(tag.getName());
+//			    while ( matcher.find() ) {
+//			    	String branchFrom = matcher.group(1);
+//			    	String branchTo = matcher.group(2);
+//			    	String mergeFromTag = "tag_"+branchTo+"_MERGE-FROM_"+branchFrom;
+//			    	IRevision revisionFrom = alltags.get(mergeFromTag);
+//			    	if ( revisionFrom != null &&
+//			    			revisionFrom != parameterElement )
+//			    	{
+//			    		if (revision.getRevision().length() < revisionFrom.getRevision().length()) {
+//			    			drawConnector(revision,revisionFrom);
+//			    		}
+//			    		if (revision.getRevision().length() > revisionFrom.getRevision().length()) {
+//			    			drawConnector(revisionFrom, revision);
+//			    		}
+//			    	}
+//			    }
+//			}
+//		}
+
 		for (Iterator iter = parameterElement.getChildren().listIterator();
 			iter.hasNext();
 			) {
@@ -92,9 +126,12 @@ public abstract class AbstractVersionTreeHelper {
 				|| showEmptyBranches
 				|| (!nextElement.isRevision()
 				&& !((IBranch) nextElement).isEmpty())) {
-					drawConnector(nextElement, parameterElement);
-					walk(nextElement, showEmptyBranches);
-				}			
+				    //case when parent is dead revision and next element is branch
+				    if ( ! (parameterElement.isRevision() && !nextElement.isRevision() && ((IRevision)parameterElement).getLogEntry().isDeletion() ) ) {
+				       drawConnector(nextElement, parameterElement);
+				    }
+					walk(nextElement, showEmptyBranches,alltags);
+				}
 		}
 	}
 }
