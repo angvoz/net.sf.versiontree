@@ -10,6 +10,7 @@
  *******************************************************************************/
 package net.sf.versiontree.ui;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -188,15 +189,18 @@ public class TreeSelectionManager implements ISelectionProvider {
 	 * @return
 	 */
 	public IStructuredSelection getStructuredSelection() {
-		ILogEntry[] logs = new ILogEntry[selection.size()];
+		ArrayList<ILogEntry> logs = new ArrayList<ILogEntry>();
 		Iterator iter = selection.iterator();
 		int idx = 0;
 		while (iter.hasNext()) {
 			IRevision element = (IRevision) iter.next();
-			logs[idx] = element.getLogEntry();
-			idx++;
+			ILogEntry log = element.getLogEntry();
+			if (!log.isDeletion()) {
+				logs.add(log);
+				idx++;
+			}
 		}
-		return new StructuredSelection(logs);
+		return new StructuredSelection(logs.toArray());
 	}
 
 	/**
