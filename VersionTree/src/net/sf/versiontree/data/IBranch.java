@@ -22,7 +22,7 @@ public interface IBranch extends ITreeElement {
 	 * Returns a List of the revisions contained in this branch.
 	 * All revisions are of type IRevision
 	 * */
-	public abstract List getRevisions();
+	public abstract List<IRevision> getRevisions();
 	public abstract String getName();
 	public abstract String getBranchPrefix();
 	public abstract void setName(String string);

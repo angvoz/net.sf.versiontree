@@ -21,6 +21,6 @@ import net.sf.versiontree.layout.drawer.DrawerDispatcher;
 public interface ILayout {
 	public abstract void walk(ITreeElement e, int x, int y);
 	public abstract void walk(BranchTree bt);
-	public abstract void configure(DrawerDispatcher dp, boolean drawEmptyBranches);
+	public abstract void configure(DrawerDispatcher dp, boolean drawEmptyBranches, boolean drawNABranches);
 
 }

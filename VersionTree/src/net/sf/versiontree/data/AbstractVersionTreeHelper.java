@@ -42,30 +42,33 @@ public abstract class AbstractVersionTreeHelper {
 		return null;
 	}
 
-	public static List getBranchesForRevision(IRevision rev,boolean emptyBranches) {
+	public static List getBranchesForRevision(IRevision rev, boolean emptyBranches, boolean naBranches) {
 		ArrayList l = new ArrayList();
 		for (Iterator iter = rev.getChildren().iterator(); iter.hasNext();) {
 			ITreeElement element = (ITreeElement) iter.next();
 			// add branches, depending on option add empty
 			if (!element.isRevision() // is branch
-				&& (emptyBranches
-				|| // add all empty branches if applicable
-			 (
-					!emptyBranches
-						&& !((IBranch) element)
-							.isEmpty())) // add no empty branches if not required
-			)
-				
+				&& ( emptyBranches
+				     || // add all empty branches if applicable
+			         ( !emptyBranches && !((IBranch) element).isEmpty())
+			       ) // add no empty branches if not required
+				&& ( naBranches
+					 || // add all empty branches if applicable
+					 ( !naBranches && !((IBranch) element).getName().equals(BranchTree.N_A_BRANCH))
+				   ) // add no empty branches if not required
+			) {	
 				l.add(element);
+			}
 		}
 		return l;
 	}
 
 	public static List getHeightSortedBranchesForRevision(
 		IRevision rev,
-		boolean emptyBranches) {
+		boolean emptyBranches, 
+		boolean naBranches) {
 		List sortedBranches = new ArrayList();
-		for (Iterator iter = TreeViewHelper.getBranchesForRevision(rev, emptyBranches).iterator();
+		for (Iterator iter = TreeViewHelper.getBranchesForRevision(rev, emptyBranches, naBranches).iterator();
 			iter.hasNext();
 			) {
 			IBranch b = (IBranch) iter.next();
@@ -88,10 +91,12 @@ public abstract class AbstractVersionTreeHelper {
 		return sortedBranches;
 	}
 
-	/** connects branches and revision to parent revisions and parent branches */
+	/** connects branches and revision to parent revisions and parent branches 
+	 * @param showNABranches TODO*/
 	public void walk(
 		ITreeElement parameterElement,
 		boolean showEmptyBranches,
+		boolean showNABranches, 
 		HashMap<String, IRevision> alltags) {
 //		if (parameterElement.isRevision()) {
 //			IRevision revision = (IRevision) parameterElement;
@@ -123,14 +128,25 @@ public abstract class AbstractVersionTreeHelper {
 			) {
 			ITreeElement nextElement = (ITreeElement) iter.next();
 			if (nextElement.isRevision()
-				|| showEmptyBranches
-				|| (!nextElement.isRevision()
-				&& !((IBranch) nextElement).isEmpty())) {
+				|| (
+					 ( showEmptyBranches
+				       || (!nextElement.isRevision()
+				          && ((!((IBranch) nextElement).isEmpty()))
+				       )
+				     ) 
+				     &&
+				     ( showNABranches ||
+				       ( !nextElement.isRevision()
+						 && 
+				    	  (!((IBranch) nextElement).getName().equals(BranchTree.N_A_BRANCH))
+				       )
+				     )
+				   )) {
 				    //case when parent is dead revision and next element is branch
 				    if ( ! (parameterElement.isRevision() && !nextElement.isRevision() && ((IRevision)parameterElement).getLogEntry().isDeletion() ) ) {
 				       drawConnector(nextElement, parameterElement);
 				    }
-					walk(nextElement, showEmptyBranches,alltags);
+					walk(nextElement, showEmptyBranches,showNABranches, alltags);
 				}
 		}
 	}

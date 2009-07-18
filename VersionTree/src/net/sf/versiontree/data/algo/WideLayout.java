@@ -55,7 +55,7 @@ public class WideLayout extends AbstractLayout {
 	private void foreachBranchStepDownAndOptimize(int x, int y, IRevision rev) {
 		int x_tmp = x;
 		// always start drawing the branch with the lowest height
-		List branches = TreeViewHelper.getHeightSortedBranchesForRevision(rev, emptyBranches);
+		List branches = TreeViewHelper.getHeightSortedBranchesForRevision(rev, emptyBranches, naBranches);
 
 		for (Iterator iter = branches.iterator(); iter.hasNext();	)
 			{

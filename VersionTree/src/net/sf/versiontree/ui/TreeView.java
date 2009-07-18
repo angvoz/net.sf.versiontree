@@ -345,7 +345,7 @@ public class TreeView
 			}
 		} else if (e.getSource() instanceof Branch) {
 			Branch selected = (Branch) e.getSource();
-			List revisions = selected.getBranchData().getRevisions();
+			List<IRevision> revisions = selected.getBranchData().getRevisions();
 			if (revisions.size() > 0) {
 				selectionManager.branchSelected(revisions, e.stateMask);
 				redrawAll();

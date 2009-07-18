@@ -11,12 +11,19 @@
  *******************************************************************************/
 package net.sf.versiontree;
 
+import java.net.URL;
+import java.util.Hashtable;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -35,6 +42,8 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	 * The shared instance.
 	 */
 	private static VersionTreePlugin plugin;
+	private Hashtable<String, ImageDescriptor> imageDescriptors = new Hashtable<String, ImageDescriptor>(2);
+
 
 	/**
 	 * This plugin's resource bundle.
@@ -59,6 +68,7 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		initializeImages();
 	}
 
 	/**
@@ -102,6 +112,29 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 		return resourceBundle;
 	}
 
+	/**
+	 * Creates an image and places it in the image registry.
+	 */
+	protected void createImageDescriptor(String id) {
+		URL url = FileLocator.find(plugin.getBundle(), new Path(ICON_PATH + id), null);
+		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+		imageDescriptors.put(id, desc);
+	}
+
+	private void initializeImages() {
+		// objects
+		createImageDescriptor(IMG_BRANCH); 
+		createImageDescriptor(IMG_NA_BRANCH); 
+	}
+
+	/**
+	 * Returns the image descriptor for the given image ID.
+	 * Returns null if there is no such image.
+	 */
+	public ImageDescriptor getImageDescriptor(String id) {
+		return (ImageDescriptor)imageDescriptors.get(id);
+	}
+
 	public IPreferenceStore getPreferenceStore() {
 		IPreferenceStore store = super.getPreferenceStore();
 		store.setDefault(P_DEFAULT_ELEMENT_HEIGHT, 35);
@@ -109,11 +142,12 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 		store.setDefault(P_DEFAULT_HSPACING, 20);
 		store.setDefault(P_DEFAULT_VSPACING, 10);
 		store.setDefault(P_REVISION_BACKGROUNDCOLOR, "192,192,192"); //$NON-NLS-1$
-		store.setDefault(P_BRANCH_BACKGROUNDCOLOR, "128,128,128"); //$NON-NLS-1$
+		store.setDefault(P_BRANCH_BACKGROUNDCOLOR, "192,192,192"); //$NON-NLS-1$
 		store.setDefault(P_DEADREVISION_BACKGROUNDCOLOR, "230,230,230"); //$NON-NLS-1$
 		store.setDefault(P_DEFAULT_ALGORITHM, "0"); //$NON-NLS-1$
 		store.setDefault(P_DEFAULT_DIRECTION, "0"); //$NON-NLS-1$
 		store.setDefault(P_DEFAULT_EMPTY_BRANCHES, false);
+		store.setDefault(P_DEFAULT_NA_BRANCHES, false);
 		store.setDefault(P_DEFAULT_DETAILS_POS, org.eclipse.swt.SWT.HORIZONTAL);
 		store.setDefault(P_HISTORY_VIEW_EDITOR_LINKING, false);
 		return store;
@@ -128,7 +162,11 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	public static final String P_DEADREVISION_BACKGROUNDCOLOR = "DeadRevisionBGColor"; //$NON-NLS-1$
 	public static final String P_DEFAULT_ALGORITHM = "DefAlgorithm"; //$NON-NLS-1$
 	public static final String P_DEFAULT_EMPTY_BRANCHES = "DefEmptyBranches"; //$NON-NLS-1$
+	public static final String P_DEFAULT_NA_BRANCHES = "DefNABranches"; //$NON-NLS-1$
 	public static final String P_DEFAULT_DIRECTION = "DefDirection"; //$NON-NLS-1$
 	public static final String P_DEFAULT_DETAILS_POS = "DefDetailPos"; //$NON-NLS-1$
 	public static final String P_HISTORY_VIEW_EDITOR_LINKING = "DefLinkEditor"; //$NON-NLS-1$
+	public static final String ICON_PATH = "$nl$/icons/"; //$NON-NLS-1$
+	public static final String IMG_BRANCH = "branch.gif"; //$NON-NLS-1$
+	public static final String IMG_NA_BRANCH = "na_branch.gif"; //$NON-NLS-1$
 }

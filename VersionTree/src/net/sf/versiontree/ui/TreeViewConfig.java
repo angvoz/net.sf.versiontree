@@ -29,6 +29,7 @@ public class TreeViewConfig {
 	 * True if empty branches should be displayed.
 	 */
 	private boolean drawEmptyBranches = false;
+	private boolean drawNABranches = false;
 
 	/**
 	 * The selected layout algorithm. Possible values:
@@ -56,6 +57,9 @@ public class TreeViewConfig {
 		drawEmptyBranches =
 			VersionTreePlugin.getDefault().getPreferenceStore().getBoolean(
 				VersionTreePlugin.P_DEFAULT_EMPTY_BRANCHES);
+		drawNABranches =
+			VersionTreePlugin.getDefault().getPreferenceStore().getBoolean(
+				VersionTreePlugin.P_DEFAULT_NA_BRANCHES);
 		direction =
 			VersionTreePlugin.getDefault().getPreferenceStore().getInt(
 				VersionTreePlugin.P_DEFAULT_DIRECTION);
@@ -98,6 +102,22 @@ public class TreeViewConfig {
 	 */
 	public void setDrawEmptyBranches(boolean b) {
 		drawEmptyBranches = b;
+	}
+
+	/**
+	 * Returns true if empty branches should be drawn.
+	 * @return true if empty branches should be drawn.
+	 */
+	public boolean drawNABranches() {
+		return drawNABranches;
+	}
+
+	/**
+	 * Toggles visiblity of empty branches.
+	 * @param b
+	 */
+	public void setDrawNABranches(boolean b) {
+		drawNABranches = b;
 	}
 
 	/**

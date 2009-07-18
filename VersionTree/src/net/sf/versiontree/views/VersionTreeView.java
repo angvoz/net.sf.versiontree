@@ -28,6 +28,7 @@ import net.sf.versiontree.data.algo.ILayout;
 import net.sf.versiontree.layout.drawer.DrawerDispatcher;
 import net.sf.versiontree.layout.drawer.IDrawMethod;
 import net.sf.versiontree.popup.actions.ShowEmptyBranchesAction;
+import net.sf.versiontree.popup.actions.ShowNABranchesAction;
 import net.sf.versiontree.ui.DetailTableProvider;
 import net.sf.versiontree.ui.LogEntrySelectionListener;
 import net.sf.versiontree.ui.TreeView;
@@ -137,6 +138,7 @@ public class VersionTreeView
 	private Action deepLayoutAction;
 	private Action wideLayoutAction;
 	private Action showEmptyBranchesAction;
+	private Action showNABranchesAction;
 	private Action getRevisionAction;
 	private Action getContentsAction;
 	private Action toggleHorVerDisplayAction;
@@ -152,9 +154,12 @@ public class VersionTreeView
 	private ILogEntry[] entries;
 	private ILogEntry currentEntry;
 	private ILogEntry currentSelection;
-	private String[][] tableData = new String[][] { { VersionTreePlugin.getResourceString("VersionTreeView.Revision"), "" }, { //$NON-NLS-1$ //$NON-NLS-2$
-			VersionTreePlugin.getResourceString("VersionTreeView.Date"), "" }, { //$NON-NLS-1$ //$NON-NLS-2$
-			VersionTreePlugin.getResourceString("VersionTreeView.Author"), "" }, }; //$NON-NLS-1$ //$NON-NLS-2$
+	private String[][] tableData = new String[][] { 
+			{ VersionTreePlugin.getResourceString("VersionTreeView.Revision"), "" }, 
+			{ VersionTreePlugin.getResourceString("VersionTreeView.Date"), "" }, 
+			{ VersionTreePlugin.getResourceString("VersionTreeView.Author"), "" }, 
+			{ VersionTreePlugin.getResourceString("VersionTreeView.State"), "" }, 
+		}; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private IFile file;
 	
@@ -431,12 +436,12 @@ public class VersionTreeView
 		// draw connectors
 		AbstractVersionTreeHelper treeHelper = new TreeViewHelper(treeView);
 		ITreeElement head = bt.getHeadBranch();
-		treeHelper.walk(head,treeView.getTreeViewConfig().drawEmptyBranches(),bt.getAlltags());
+		treeHelper.walk(head,treeView.getTreeViewConfig().drawEmptyBranches(),treeView.getTreeViewConfig().drawNABranches(), bt.getAlltags());
 	}
 
 	private ILayout getLayoutAlgorithm(DrawerDispatcher dp) {
 		ILayout layout = treeView.getTreeViewConfig().getLayoutAlgorithm();
-		layout.configure(dp, treeView.getTreeViewConfig().drawEmptyBranches());
+		layout.configure(dp, treeView.getTreeViewConfig().drawEmptyBranches(), treeView.getTreeViewConfig().drawNABranches());
 		return layout;
 	}
 
@@ -449,11 +454,13 @@ public class VersionTreeView
 			tableData[0][1] = ""; //$NON-NLS-1$
 			tableData[1][1] = ""; //$NON-NLS-1$
 			tableData[2][1] = ""; //$NON-NLS-1$
+			tableData[3][1] = ""; //$NON-NLS-1$
 
 		} else {
 			tableData[0][1] = theCurrentEntry.getRevision();
 			tableData[1][1] = dateFormat.format(theCurrentEntry.getDate());
 			tableData[2][1] = theCurrentEntry.getAuthor();
+			tableData[3][1] = theCurrentEntry.getState();
 		}
 	}
 
@@ -493,6 +500,7 @@ public class VersionTreeView
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
+		manager.add(showNABranchesAction);
 		manager.add(showEmptyBranchesAction);
 		manager.add(refreshAction);
 		manager.add(linkWithEditorAction);
@@ -502,6 +510,7 @@ public class VersionTreeView
 		manager.add(deepLayoutAction);
 		manager.add(wideLayoutAction);
 		manager.add(new Separator());
+		manager.add(showNABranchesAction);
 		manager.add(showEmptyBranchesAction);
 		manager.add(toggleHorVerDisplayAction);
 		manager.add(refreshAction);
@@ -514,6 +523,7 @@ public class VersionTreeView
 		manager.add(new Separator());
 		manager.add(deepLayoutAction);
 		manager.add(wideLayoutAction);
+		manager.add(showNABranchesAction);
 		manager.add(showEmptyBranchesAction);
 		manager.add(refreshAction);
 		manager.add(new Separator());
@@ -601,19 +611,20 @@ public class VersionTreeView
 				}
 			}
 		});
-		WorkbenchHelp.setHelp(
-			getRevisionAction,
-			IHelpContextIds.GET_FILE_REVISION_ACTION);
+		WorkbenchHelp.setHelp(getRevisionAction,IHelpContextIds.GET_FILE_REVISION_ACTION);
 
 		// show/hide empty branches action
 		showEmptyBranchesAction = new ShowEmptyBranchesAction(this, treeView);
-		showEmptyBranchesAction.setImageDescriptor(
-			plugin.getImageDescriptor(ICVSUIConstants.IMG_BRANCHES_CATEGORY));
-		showEmptyBranchesAction.setChecked(
-			treeView.getTreeViewConfig().drawEmptyBranches());
+		showEmptyBranchesAction.setImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_BRANCHES_CATEGORY));
+		showEmptyBranchesAction.setChecked(treeView.getTreeViewConfig().drawEmptyBranches());
+
+		// show/hide empty branches action
+		showNABranchesAction = new ShowNABranchesAction(this, treeView);
+		showNABranchesAction.setImageDescriptor(VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_NA_BRANCH));
+		showNABranchesAction.setChecked(treeView.getTreeViewConfig().drawNABranches());
 
 		// deep layout
-			deepLayoutAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.Deep_Layout_Name"), Action.AS_RADIO_BUTTON) {//$NON-NLS-1$
+		deepLayoutAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.Deep_Layout_Name"), Action.AS_RADIO_BUTTON) {//$NON-NLS-1$
 	public void run() {
 				if (isChecked()) {
 					treeView.getTreeViewConfig().setLayoutAlgorithm(

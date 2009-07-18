@@ -21,12 +21,14 @@ import net.sf.versiontree.layout.drawer.DrawerDispatcher;
 public abstract class AbstractLayout implements ILayout {
 
 	protected boolean emptyBranches = false;
+	protected boolean naBranches = false;
 
 	protected DrawerDispatcher m_delegate;
 
-	public void configure(DrawerDispatcher dp, boolean drawEmptyBranches) {
+	public void configure(DrawerDispatcher dp, boolean drawEmptyBranches, boolean drawNABranches) {
 		this.m_delegate = dp;
 		emptyBranches = drawEmptyBranches;
+		naBranches = drawNABranches;
 	}
 
 }

@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 
@@ -108,18 +109,22 @@ public class Revision extends Canvas {
 		int yOffset = INSET;
 		Point extent = gc.stringExtent(getRevisionString());
 		// draw revision string
+		Color rememberColor = gc.getForeground();
+		if (revisionData.getLogEntry().isDeletion()) {
+			gc.setForeground(new Color(Display.getDefault(),128,128,128));
+		}
 		gc.drawString(getRevisionString(), stringXPosition, yOffset);
 		yOffset += STRING_OFFSET + extent.y;
 		// draw author string
 		extent = gc.stringExtent(revisionData.getAuthor());
 		gc.drawString(revisionData.getAuthor(), stringXPosition, yOffset);
-
 		// draw rectangle (or focus border if selected)
 		if (isSelected()) {
 			gc.drawFocus(0, 0, size.width, size.height);
 		} else {
 			gc.drawRectangle(0, 0, size.width - 1, size.height - 1);
 		}
+		gc.setForeground(rememberColor);
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
@@ -144,7 +149,7 @@ public class Revision extends Canvas {
 		if ((revisionData.getState() & IRevision.STATE_CURRENT) > 0)
 			revisionNumber = "*" + revisionNumber; //$NON-NLS-1$
 		if (revisionData.getLogEntry().isDeletion())
-			revisionNumber += "("+revisionData.getLogEntry().getState()+")";
+			revisionNumber += " ("+revisionData.getLogEntry().getState()+")";
 		return revisionNumber;
 	}
 

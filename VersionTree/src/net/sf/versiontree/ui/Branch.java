@@ -10,6 +10,7 @@
  *******************************************************************************/
 package net.sf.versiontree.ui;
 
+
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.IBranch;
 
@@ -20,10 +21,13 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 
 /**
  * @author Jan
@@ -35,6 +39,7 @@ public class Branch extends Canvas {
 
 	private static final int inset = 3;
 	private static final int offsetBetweenStrings = 2;
+	private static final int INSET = 3;
 
 	private IBranch branchData;
 
@@ -43,6 +48,9 @@ public class Branch extends Canvas {
 
 	private Color background;
 
+	private Image versionImage;
+	private int stringXPosition = 0;
+	
 	/**
 	 * Creates a widget representing a branch.
 	 * @param arg0 the parent Component
@@ -50,7 +58,7 @@ public class Branch extends Canvas {
 	 */
 	public Branch(Composite parent, int style) {
 		super(parent, style);
-
+		initializeImages();
 		IPreferenceStore store =
 			VersionTreePlugin.getDefault().getPreferenceStore();
 		height = store.getInt(VersionTreePlugin.P_DEFAULT_ELEMENT_HEIGHT);
@@ -85,13 +93,21 @@ public class Branch extends Canvas {
 	}
 
 	/**
+	 * Initializes the version image.
+	 */
+	private void initializeImages() {
+		VersionTreePlugin plugin = VersionTreePlugin.getDefault();
+		versionImage = plugin.getImageDescriptor(VersionTreePlugin.IMG_BRANCH).createImage();
+	}
+
+	/**
 	 * Paints the control.
 	 * @param e Paint Event
 	 */
 	protected void paintControl(PaintEvent e) {
 		GC gc = e.gc;
 		Rectangle size = getBounds();
-
+		
 		gc.setBackground(background);
 		gc.fillRoundRectangle(0, 0, size.width, size.height, 20, 20);
 
@@ -102,10 +118,12 @@ public class Branch extends Canvas {
 			(size.width / 2) - (extent.x / 2),
 			yOffset);
 		yOffset += offsetBetweenStrings + extent.y;
+		gc.drawImage(versionImage, INSET, yOffset);
 		extent = gc.stringExtent(branchData.getBranchPrefix());
+		stringXPosition  = versionImage.getBounds().width + 2 * INSET;
 		gc.drawString(
 			branchData.getBranchPrefix(),
-			(size.width / 2) - (extent.x / 2),
+			stringXPosition,
 			yOffset);
 
 		gc.drawRoundRectangle(0, 0, size.width - 1, size.height - 1, 20, 20);

@@ -25,13 +25,15 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
  * @author Andre  */
 public class BranchTree {
 
+	public static final String N_A_BRANCH = "<n/a>";
+
 	private int numberOfBranches = 0;
 
 	private IBranch headBranch;
 	private IRevision rootRevision;
 
-	private HashMap branches;
-	private HashMap revisions;
+	private HashMap<String, IBranch> branches;
+	private HashMap<String, IRevision> revisions;
 	private HashMap<String,IRevision> alltags;
 
 	public HashMap<String, IRevision> getAlltags() {
@@ -51,9 +53,9 @@ public class BranchTree {
 			return;
 
 		// basic initializations
-		alltags = new HashMap(logs.length);
-		revisions = new HashMap(logs.length);
-		branches = new HashMap((int) (Math.ceil(logs.length / 20)));
+		alltags = new HashMap<String, IRevision>(logs.length);
+		revisions = new HashMap<String, IRevision>(logs.length);
+		branches = new HashMap<String, IBranch>((int) (Math.ceil(logs.length / 20)));
 
 		// set up branches, revision
 		setUpHashMaps(logs, selectedRevision);
@@ -90,7 +92,7 @@ public class BranchTree {
 		
 		// connect revisions to branches
 		headBranch.addChild(rootRevision);
-		for (Iterator iter = revisions.values().iterator(); iter.hasNext();) {
+		for (Iterator<IRevision> iter = revisions.values().iterator(); iter.hasNext();) {
 			IRevision currentRevision = (IRevision) iter.next();
 			String branchPrefix = currentRevision.getBranchPrefix();
 			BranchData branch = (BranchData) branches.get(branchPrefix);
@@ -99,7 +101,7 @@ public class BranchTree {
 					branch = (BranchData) branches.get(IBranch.HEAD_PREFIX);
 				} else {
 					// no branch tag! create adhoc branch
-					branch = createBranch(branchPrefix, "<n/a>");
+					branch = createBranch(branchPrefix, N_A_BRANCH);
 					String parentPrefix = branchPrefix.substring(0,branchPrefix.lastIndexOf(".",branchPrefix.lastIndexOf(".")-1));
 					IRevision branchParent = (IRevision) revisions.get(parentPrefix);
 					branchParent.addChild(branch);
@@ -134,7 +136,7 @@ public class BranchTree {
 	}
 
 	private void buildCompleteTreeStructure() {
-		for (Iterator iter = branches.values().iterator(); iter.hasNext();) {
+		for (Iterator<IBranch> iter = branches.values().iterator(); iter.hasNext();) {
 			IBranch outerBranch = (IBranch) iter.next();
 
 			// for all revisions of a branch in order
