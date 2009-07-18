@@ -65,14 +65,14 @@ public class TreeSelectionManager implements ISelectionProvider {
 	 * @param revisions
 	 * @param stateMask Modifier keys like Shit and Ctrl.
 	 */
-	public void branchSelected(List revisions, int stateMask) {
+	public void branchSelected(List<IRevision> revisions, int stateMask) {
 		resetSelected();
 
 		// clear selection if CTRL modifier wasn't pressed
 		if (!(stateMask == SWT.CTRL)) {
 			selection.clear();
 		}
-		for (Iterator iter = revisions.iterator(); iter.hasNext();) {
+		for (Iterator<IRevision> iter = revisions.iterator(); iter.hasNext();) {
 			IRevision selected = (IRevision) iter.next();
 			addRevision(selected);
 		}
@@ -127,7 +127,7 @@ public class TreeSelectionManager implements ISelectionProvider {
 		ITreeElement current = source;
 		do {
 			if (current instanceof IRevision)
-				selection.addSelectedElement(current);
+				selection.addSelectedElement((IRevision) current);
 			current = current.getParent();
 		} while (current != target);
 		selection.addSelectedElement(target);
@@ -190,7 +190,7 @@ public class TreeSelectionManager implements ISelectionProvider {
 	 */
 	public IStructuredSelection getStructuredSelection() {
 		ArrayList<ILogEntry> logs = new ArrayList<ILogEntry>();
-		Iterator iter = selection.iterator();
+		Iterator<IRevision> iter = selection.iterator();
 		int idx = 0;
 		while (iter.hasNext()) {
 			IRevision element = (IRevision) iter.next();
@@ -207,7 +207,7 @@ public class TreeSelectionManager implements ISelectionProvider {
 	 * Sets the state of all selected revisions to selected.
 	 */
 	private void setSelected() {
-		Iterator iter = selection.iterator();
+		Iterator<IRevision> iter = selection.iterator();
 		while (iter.hasNext()) {
 			IRevision element = (IRevision) iter.next();
 			element.setSelected(true);
@@ -218,7 +218,7 @@ public class TreeSelectionManager implements ISelectionProvider {
 	 *  Sets the state of all selected revisions to unselected.
 	 */
 	private void resetSelected() {
-		Iterator iter = selection.iterator();
+		Iterator<IRevision> iter = selection.iterator();
 		while (iter.hasNext()) {
 			IRevision element = (IRevision) iter.next();
 			element.setSelected(false);

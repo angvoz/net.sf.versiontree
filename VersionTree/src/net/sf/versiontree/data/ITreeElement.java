@@ -18,11 +18,9 @@ import java.util.List;
 public interface ITreeElement {
 	public static final int STATE_CURRENT = 1;
 	public static final int STATE_SELECTED = 2;
-	
-	public abstract boolean isRevision();
-	
-	public abstract List getSiblings();
-	public abstract List getChildren();
+		
+	public abstract List<ITreeElement> getSiblings();
+	public abstract List<ITreeElement> getChildren();
 	public abstract void addChild(ITreeElement e);
 	
 	/** get predecessing tree element  */

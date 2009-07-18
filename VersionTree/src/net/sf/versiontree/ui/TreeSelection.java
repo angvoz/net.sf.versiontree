@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sf.versiontree.data.IRevision;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
@@ -28,7 +30,7 @@ public class TreeSelection implements IStructuredSelection {
 	/**
 	 * Delegate that holds all selected elements.
 	 */
-	private ArrayList selection;
+	private ArrayList<IRevision> selection;
 
 	/**
 	 * The element that was selected last.
@@ -48,7 +50,7 @@ public class TreeSelection implements IStructuredSelection {
 	 * and sets the last selected element.
 	 * @param element
 	 */
-	public void setSelectedElement(Object element) {
+	public void setSelectedElement(IRevision element) {
 		selection.clear();
 		selection.add(element);
 		lastSelectedElement = element;
@@ -59,12 +61,12 @@ public class TreeSelection implements IStructuredSelection {
 	 * The first element in the list will be set as the last selected element.
 	 * @param element
 	 */
-	public void setSelectedElements(List elements) {
+	public void setSelectedElements(List<IRevision> elements) {
 		selection.clear();
 		if (elements.isEmpty()) {
 			lastSelectedElement = null;
 		} else {
-			selection.add(elements);
+			selection.addAll(elements);
 			lastSelectedElement = elements.get(0);
 		}
 	}
@@ -74,7 +76,7 @@ public class TreeSelection implements IStructuredSelection {
 	 * and sets the last selected element.
 	 * @param element
 	 */
-	public void addSelectedElement(Object element) {
+	public void addSelectedElement(IRevision element) {
 			selection.add(element);
 			lastSelectedElement = element;
 		}
@@ -84,9 +86,9 @@ public class TreeSelection implements IStructuredSelection {
 	 * as the last selected element.
 	 * @param elements
 	 */
-	public void addSelectedElements(List elements) {
+	public void addSelectedElements(List<IRevision> elements) {
 		if (!elements.isEmpty()) {
-			selection.add(elements);
+			selection.addAll(elements);
 			lastSelectedElement = elements.get(0);
 		}
 	}
@@ -134,7 +136,7 @@ public class TreeSelection implements IStructuredSelection {
 	/**
 	 * @see org.eclipse.jface.viewers.IStructuredSelection#iterator()
 	 */
-	public Iterator iterator() {
+	public Iterator<IRevision> iterator() {
 		return selection.iterator();
 	}
 
@@ -155,8 +157,8 @@ public class TreeSelection implements IStructuredSelection {
 	/**
 	 * @see org.eclipse.jface.viewers.IStructuredSelection#toList()
 	 */
-	public List toList() {
-		return (List) selection.clone();
+	public List<IRevision> toList() {
+		return (List<IRevision>) selection.clone();
 	}
 
 	/**

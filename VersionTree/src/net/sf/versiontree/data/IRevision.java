@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
 /** query functions for revisions */
-public interface IRevision extends Comparable, ITreeElement {
+public interface IRevision extends Comparable<IRevision>, ITreeElement {
 	
 	public static final String INITIAL_REVISION = "1.1.1.1";
 	public static final String FIRST_REVISION = "1.1";
@@ -31,8 +31,8 @@ public interface IRevision extends Comparable, ITreeElement {
 	public abstract void setState(int state);
 
 	/** tag list from log entries */
-	public abstract List getTags();
-	public abstract List getBranchTags();
+	public abstract List<String> getTags();
+	public abstract List<String> getBranchTags();
 	/**  Returns true if this revision has any version tags attached.	 */
 	public abstract boolean hasVersionTags();
 	/**  Returns true if this revision has any branch tags attached.	 */

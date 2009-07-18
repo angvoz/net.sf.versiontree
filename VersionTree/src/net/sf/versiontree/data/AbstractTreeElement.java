@@ -25,14 +25,14 @@ public abstract class AbstractTreeElement implements ITreeElement {
 	private int y;
 
 	private ITreeElement parent;
-	private ArrayList children;
+	private ArrayList<ITreeElement> children;
 
 	public AbstractTreeElement() {
-		children = new ArrayList();
+		children = new ArrayList<ITreeElement>();
 	}
 	public AbstractTreeElement(ITreeElement parent) {
 		this.parent = parent;
-		children = new ArrayList();
+		children = new ArrayList<ITreeElement>();
 	}
 	
 	/* (non-Javadoc)
@@ -45,14 +45,14 @@ public abstract class AbstractTreeElement implements ITreeElement {
 	/* (non-Javadoc)
 	 * @see net.sf.versiontree.data.ITreeElement#getSiblings()
 	 */
-	public List getSiblings() {
+	public List<ITreeElement> getSiblings() {
 		return parent.getChildren();
 	}
 
 	/* (non-Javadoc)
 	 * @see net.sf.versiontree.data.ITreeElement#getChildren()
 	 */
-	public List getChildren() {
+	public List<ITreeElement> getChildren() {
 		return children;
 	}
 

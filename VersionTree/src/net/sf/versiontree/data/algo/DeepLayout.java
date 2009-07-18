@@ -30,9 +30,9 @@ import net.sf.versiontree.data.TreeViewHelper;
  */
 public class DeepLayout extends AbstractLayout {
 	
-	private HashMap reservedDepth;
+	private HashMap<Integer, Integer> reservedDepth;
 	public DeepLayout() {
-		reservedDepth  =  new HashMap();
+		reservedDepth  =  new HashMap<Integer, Integer>();
 	}
 
 	/* (non-Javadoc)
@@ -47,11 +47,11 @@ public class DeepLayout extends AbstractLayout {
 		while (rev != null) {
 			y++;
 			// ...and if it has branches
-			List branches = TreeViewHelper.getBranchesForRevision(rev, emptyBranches, naBranches);
+			List<IBranch> branches = TreeViewHelper.getBranchesForRevision(rev, emptyBranches, naBranches);
 			if (!branches.isEmpty()) {
 				int tmp_y = y;
 				int i = 1;
-				for (Iterator iterator = branches.iterator(); iterator.hasNext(); i++ ) {
+				for (Iterator<IBranch> iterator = branches.iterator(); iterator.hasNext(); i++ ) {
 					iterator.next();
 					Integer depth;
 					tmp_y = Math.max( tmp_y,
@@ -65,11 +65,11 @@ public class DeepLayout extends AbstractLayout {
 			reservedDepth.put(new Integer(x), new Integer(y));
 			// now create branches
 			
-			List tmp = new ArrayList(branches);
+			List<IBranch> tmp = new ArrayList<IBranch>(branches);
 			Collections.reverse(tmp);				
 			int i = tmp.size();
-			for (Iterator iterator = tmp.iterator(); iterator.hasNext(); i--) {
-				IBranch element = (IBranch) iterator.next();
+			for (Iterator<IBranch> iterator = tmp.iterator(); iterator.hasNext(); i--) {
+				IBranch element = iterator.next();
 				walk(element, x+i,y);
 			}
 			// get next revision

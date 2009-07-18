@@ -28,7 +28,7 @@ public class SysOutDrawer implements IDrawMethod {
 		}
 		
 		System.out.print("X "+x+" - Y "+y+" ");
-		if (elem.isRevision()) {
+		if (elem instanceof IRevision) {
 			IRevision rev = (IRevision) elem;
 			System.out.println(rev.getRevision());
 		} else {

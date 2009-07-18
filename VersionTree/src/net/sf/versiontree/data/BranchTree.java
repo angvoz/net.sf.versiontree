@@ -25,8 +25,6 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
  * @author Andre  */
 public class BranchTree {
 
-	public static final String N_A_BRANCH = "<n/a>";
-
 	private int numberOfBranches = 0;
 
 	private IBranch headBranch;
@@ -101,7 +99,7 @@ public class BranchTree {
 					branch = (BranchData) branches.get(IBranch.HEAD_PREFIX);
 				} else {
 					// no branch tag! create adhoc branch
-					branch = createBranch(branchPrefix, N_A_BRANCH);
+					branch = createBranch(branchPrefix, IBranch.N_A_BRANCH);
 					String parentPrefix = branchPrefix.substring(0,branchPrefix.lastIndexOf(".",branchPrefix.lastIndexOf(".")-1));
 					IRevision branchParent = (IRevision) revisions.get(parentPrefix);
 					branchParent.addChild(branch);
@@ -140,10 +138,10 @@ public class BranchTree {
 			IBranch outerBranch = (IBranch) iter.next();
 
 			// for all revisions of a branch in order
-			List revs = outerBranch.getRevisions();
+			List<IRevision> revs = outerBranch.getRevisions();
 			Collections.sort(revs);
 
-			Iterator innerIter = revs.iterator();
+			Iterator<IRevision> innerIter = revs.iterator();
 			IRevision prev = null;
 			while (innerIter.hasNext()) {
 				IRevision innerRevision = (IRevision) innerIter.next();
@@ -151,7 +149,7 @@ public class BranchTree {
 				if (prev != null)
 					prev.addChild(innerRevision);
 				// ... all branches are children
-				for (Iterator innerBranches =
+				for (Iterator<IBranch> innerBranches =
 					findBranchesForRevision(innerRevision).iterator();
 					innerBranches.hasNext();
 					) {
@@ -177,10 +175,10 @@ public class BranchTree {
 	 * @param rev
 	 * @return
 	 */
-	public List findBranchesForRevision(IRevision rev) {
-		List sortedBranches = new ArrayList();
-		for (Iterator iter = branches.values().iterator(); iter.hasNext();) {
-			IBranch branch = (IBranch) iter.next();
+	public List<IBranch> findBranchesForRevision(IRevision rev) {
+		List<IBranch> sortedBranches = new ArrayList<IBranch>();
+		for (Iterator<IBranch> iter = branches.values().iterator(); iter.hasNext();) {
+			IBranch branch = iter.next();
 			if (branch.getBranchPrefix().startsWith(rev+".0") || branch.getBranchPrefix().equals(rev+".1")) {
 				sortedBranches.add(branch);
 			}

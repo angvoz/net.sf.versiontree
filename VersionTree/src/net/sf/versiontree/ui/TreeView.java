@@ -128,7 +128,7 @@ public class TreeView
 	 * @see net.sf.versiontree.layout.drawer.IDrawMethod#draw(net.sf.versiontree.data.ITreeElement, int, int)
 	 */
 	public void draw(ITreeElement element, int x, int y) {
-		if (element.isRevision()) {
+		if (element instanceof IRevision) {
 			Revision revision = new Revision(content, 0);
 			revision.setRevisionData((IRevision) element);
 			revision.addMouseListener(this);

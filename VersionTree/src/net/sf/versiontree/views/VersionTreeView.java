@@ -684,9 +684,9 @@ public class VersionTreeView
 			protected ICVSResource[] getSelectedCVSResources() {
 				ICVSResource[] resources = super.getSelectedCVSResources();
 				if (resources == null || resources.length == 0) {
-					ArrayList logEntrieFiles = null;
+					ArrayList<ICVSRemoteFile> logEntrieFiles = null;
 					if (!getSelection().isEmpty()) {
-						logEntrieFiles = new ArrayList();
+						logEntrieFiles = new ArrayList<ICVSRemoteFile>();
 						Iterator elements = getSelection().iterator();
 						while (elements.hasNext()) {
 							Object next = elements.next();

@@ -83,13 +83,13 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 		return parsedRevision;
 	}
 	/** Gets all branch tags */
-	public List getBranchTags() {
+	public List<String> getBranchTags() {
 		return getTags(CVSTag.BRANCH);
 	}
 
 	/** @see net.sf.versiontree.data.IRevision#getTags() */
-	public List getTags(int tagname) {
-		ArrayList tagList = new ArrayList(logEntry.getTags().length);
+	public List<String> getTags(int tagname) {
+		ArrayList<String> tagList = new ArrayList<String>(logEntry.getTags().length);
 		CVSTag[] tags = logEntry.getTags();
 		for (int i = 0; i < tags.length; i++) {
 			if (tagname == tags[i].getType())
@@ -136,7 +136,7 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	 * Revisions are compared based on their revsion date.
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(Object other) {
+	public int compareTo(IRevision other) {
 		if (other instanceof RevisionData) {
 			RevisionData rev = (RevisionData) other;
 			if (this.getRevision().equals(IRevision.INITIAL_REVISION)) return -1;
@@ -170,8 +170,8 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	/**
 	 * @see net.sf.versiontree.data.IRevision#getTags()
 	 */
-	public List getTags() {
-		ArrayList tagList = new ArrayList(logEntry.getTags().length);
+	public List<String> getTags() {
+		ArrayList<String> tagList = new ArrayList<String>(logEntry.getTags().length);
 		CVSTag[] tags = logEntry.getTags();
 		for (int i = 0; i < tags.length; i++) {
 			tagList.add(tags[i].getName());

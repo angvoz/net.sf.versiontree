@@ -15,10 +15,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.eclipse.team.internal.ccvs.core.CVSTag;
 
 /**
  * walk ITreeElement trees and draw connectors (and other stuff in the future)
@@ -33,58 +30,57 @@ public abstract class AbstractVersionTreeHelper {
 		ITreeElement element2);
 
 	/** returns one revision from a list of treelements, to be used on children of a revision */
-	public static IRevision getRevisionFromTreeElements(List elements) {
-		for (Iterator iter = elements.iterator(); iter.hasNext();) {
+	public static IRevision getRevisionFromTreeElements(List<ITreeElement> elements) {
+		for (Iterator<ITreeElement> iter = elements.iterator(); iter.hasNext();) {
 			ITreeElement element = (ITreeElement) iter.next();
-			if (element.isRevision())
-				return (IRevision) element;
+			if (element instanceof IRevision) {
+				IRevision revision = (IRevision) element;
+				return revision;
+			}
 		}
 		return null;
 	}
 
-	public static List getBranchesForRevision(IRevision rev, boolean emptyBranches, boolean naBranches) {
-		ArrayList l = new ArrayList();
-		for (Iterator iter = rev.getChildren().iterator(); iter.hasNext();) {
+	public static List<IBranch> getBranchesForRevision(IRevision rev, boolean emptyBranches, boolean naBranches) {
+		ArrayList<IBranch> l = new ArrayList<IBranch>();
+		for (Iterator<ITreeElement> iter = rev.getChildren().iterator(); iter.hasNext();) {
 			ITreeElement element = (ITreeElement) iter.next();
-			// add branches, depending on option add empty
-			if (!element.isRevision() // is branch
-				&& ( emptyBranches
-				     || // add all empty branches if applicable
-			         ( !emptyBranches && !((IBranch) element).isEmpty())
-			       ) // add no empty branches if not required
-				&& ( naBranches
-					 || // add all empty branches if applicable
-					 ( !naBranches && !((IBranch) element).getName().equals(BranchTree.N_A_BRANCH))
-				   ) // add no empty branches if not required
-			) {	
-				l.add(element);
+			if (element instanceof IBranch) {
+				IBranch branchElem = (IBranch) element;
+			    // add branches, depending on option add empty
+				if ( ( emptyBranches
+					     || // add all empty branches if applicable
+				         ( !emptyBranches && !branchElem.isEmpty())
+				       ) // add no empty branches if not required
+					&& ( naBranches
+						 || // add all empty branches if applicable
+						 ( !naBranches && !branchElem.getName().equals(IBranch.N_A_BRANCH))
+					   ) // add no empty branches if not required
+				) {	
+					l.add(branchElem);
+				}
 			}
 		}
 		return l;
 	}
 
-	public static List getHeightSortedBranchesForRevision(
+	public static List<IBranch> getHeightSortedBranchesForRevision(
 		IRevision rev,
 		boolean emptyBranches, 
 		boolean naBranches) {
-		List sortedBranches = new ArrayList();
-		for (Iterator iter = TreeViewHelper.getBranchesForRevision(rev, emptyBranches, naBranches).iterator();
+		List<IBranch> sortedBranches = new ArrayList<IBranch>();
+		for (Iterator<IBranch> iter = TreeViewHelper.getBranchesForRevision(rev, emptyBranches, naBranches).iterator();
 			iter.hasNext();
 			) {
-			IBranch b = (IBranch) iter.next();
+			IBranch b = iter.next();
 			sortedBranches.add(b);
 		}
 		// sort list by height of branches
-		Collections.sort(sortedBranches, new Comparator(){
-			public int compare(Object arg0, Object arg1) {
-				if (arg0 instanceof IBranch && arg1 instanceof IBranch) {
-					IBranch b1 = (IBranch) arg0;
-					IBranch b2 = (IBranch) arg1;
-					if (b1.getHeight() < b2.getHeight()) return -1;
-					if (b1.getHeight() == b2.getHeight()) return 0;
-					return 1;
-				}
-				return 0;
+		Collections.sort(sortedBranches, new Comparator<IBranch>(){
+			public int compare(IBranch arg0, IBranch arg1) {
+				if (arg0.getHeight() < arg1.getHeight()) return -1;
+				if (arg0.getHeight() == arg1.getHeight()) return 0;
+				return 1;
 			}
 			
 		});
@@ -123,27 +119,27 @@ public abstract class AbstractVersionTreeHelper {
 //			}
 //		}
 
-		for (Iterator iter = parameterElement.getChildren().listIterator();
+		for (Iterator<ITreeElement> iter = parameterElement.getChildren().listIterator();
 			iter.hasNext();
 			) {
 			ITreeElement nextElement = (ITreeElement) iter.next();
-			if (nextElement.isRevision()
+			if (nextElement instanceof IRevision
 				|| (
 					 ( showEmptyBranches
-				       || (!nextElement.isRevision()
+				       || (nextElement instanceof IBranch
 				          && ((!((IBranch) nextElement).isEmpty()))
 				       )
 				     ) 
 				     &&
-				     ( showNABranches ||
-				       ( !nextElement.isRevision()
-						 && 
-				    	  (!((IBranch) nextElement).getName().equals(BranchTree.N_A_BRANCH))
+				     ( showNABranches 
+				       || ( nextElement instanceof IBranch
+						  && 
+				    	  (!((IBranch) nextElement).getName().equals(IBranch.N_A_BRANCH))
 				       )
 				     )
 				   )) {
 				    //case when parent is dead revision and next element is branch
-				    if ( ! (parameterElement.isRevision() && !nextElement.isRevision() && ((IRevision)parameterElement).getLogEntry().isDeletion() ) ) {
+				    if ( ! (parameterElement instanceof IRevision && nextElement instanceof IBranch && ((IRevision)parameterElement).getLogEntry().isDeletion() ) ) {
 				       drawConnector(nextElement, parameterElement);
 				    }
 					walk(nextElement, showEmptyBranches,showNABranches, alltags);

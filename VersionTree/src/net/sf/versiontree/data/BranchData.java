@@ -23,11 +23,11 @@ public class BranchData extends AbstractTreeElement implements IBranch {
 
 
 	public BranchData() {
-		revisions = new ArrayList();
+		revisions = new ArrayList<IRevision>();
 	}
 	
 	public BranchData(String name, String prefix) {
-		revisions = new ArrayList();
+		revisions = new ArrayList<IRevision>();
 		setName(name);
 		setBranchPrefix(prefix);	
 	}
@@ -39,11 +39,11 @@ public class BranchData extends AbstractTreeElement implements IBranch {
 
 
 	/** A list of revisions that belong to this branch. */
-	private List revisions;
+	private List<IRevision> revisions;
 
 	/** Returns an iterator over the revisions contained in this branch.
 	 * @return */
-	public List getRevisions() {
+	public List<IRevision> getRevisions() {
 		return revisions;
 	}
 

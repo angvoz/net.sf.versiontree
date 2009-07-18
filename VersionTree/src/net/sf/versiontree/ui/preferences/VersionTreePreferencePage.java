@@ -14,10 +14,6 @@ import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.ui.TreeViewConfig;
 import net.sf.versiontree.views.VersionTreeView;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -27,9 +23,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * @author Jan
@@ -113,14 +107,8 @@ public class VersionTreePreferencePage
 	public boolean performOk() {
 		// Write the field editor contents out to the preference store
 		boolean ok = super.performOk();
-		IExtensionRegistry registry= Platform.getExtensionRegistry();
-//        class="net.sf.versiontree.views.VersionTreeView"
-//            category="org.eclipse.team.ccvs.ui"
-//            fastViewWidthRatio="0.3"
-//            name="CVS Version Tree"
-//            id="net.sf.versiontree.views.VersionTreeView">
 
-		IWorkbenchPage pages = Workbench.getInstance().getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchPage pages = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IViewReference[] views = pages.getViewReferences();
 		for (int i = 0; i < views.length; i++) {
 			if (views[i].getId().equals("net.sf.versiontree.views.VersionTreeView")){
@@ -128,19 +116,6 @@ public class VersionTreePreferencePage
 				view.renderCurrentVersionTree();
 			}
 		}
-		IViewDescriptor find = Workbench.getInstance().getViewRegistry().find("net.sf.versiontree.views.VersionTreeView");
-		if ( find.isRestorable() ){
-			
-		}
-//		IConfigurationElement[] extensions = registry.getConfigurationElementsFor("org.eclipse.ui","views");
-//		for (IConfigurationElement element : extensions) {
-//			try {
-//				if (view instanceof VersionTreeView) {
-//					VersionTreeView versionTreeView = (VersionTreeView) view;
-//				}
-//			} catch (CoreException e) {
-//			}
-//		}
 
 //		VersionTreePlugin.getreeViewConfig.setDrawNABranches(isChecked());
 //		viewPart.renderCurrentVersionTree();

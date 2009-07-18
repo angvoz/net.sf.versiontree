@@ -29,17 +29,17 @@ import net.sf.versiontree.data.TreeViewHelper;
  */
 public class WideLayout extends AbstractLayout {
 	
-	private HashMap reservedHeight;
+	private HashMap<Integer, Integer> reservedHeight;
 	
 	public WideLayout() {
-		reservedHeight  =  new HashMap();
+		reservedHeight  =  new HashMap<Integer, Integer>();
 	}
 	
 	/* (non-Javadoc)
 	 * @see net.sf.versiontree.data.algo.ILayout#walk(net.sf.versiontree.data.IBranch, int, int)
 	 */
 	public void walk(ITreeElement treeElement, int x, int y) {
-		if (treeElement.isRevision()) {
+		if (treeElement instanceof IRevision) {
 			IRevision succ = TreeViewHelper.getRevisionFromTreeElements(treeElement.getChildren());
 			if (succ != null) {
 				// if is not last revision step down
@@ -55,11 +55,11 @@ public class WideLayout extends AbstractLayout {
 	private void foreachBranchStepDownAndOptimize(int x, int y, IRevision rev) {
 		int x_tmp = x;
 		// always start drawing the branch with the lowest height
-		List branches = TreeViewHelper.getHeightSortedBranchesForRevision(rev, emptyBranches, naBranches);
+		List<IBranch> branches = TreeViewHelper.getHeightSortedBranchesForRevision(rev, emptyBranches, naBranches);
 
-		for (Iterator iter = branches.iterator(); iter.hasNext();	)
+		for (Iterator<IBranch> iter = branches.iterator(); iter.hasNext();	)
 			{
-			IBranch branch = (IBranch) iter.next();
+			IBranch branch = iter.next();
 			int d = 0;
 			do {
 				if (reservedHeight.containsKey(new Integer(x_tmp + 1))) {
