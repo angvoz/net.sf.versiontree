@@ -60,7 +60,7 @@ public class TreeView
 	/**
 	 * Composite that is the content of this scrollable composite.
 	 */
-	public ConnectArrows connectors = null;
+	private ConnectArrows connectors = null;
 
 	/**
 	 * Listener that get notified on selection changes.
@@ -124,6 +124,7 @@ public class TreeView
 		selectionManager.clearSelection();
 		currentRevivion = null;
 		removeAllWidgets();
+		connectors.clearConnectors();
 	}
 
 	/**

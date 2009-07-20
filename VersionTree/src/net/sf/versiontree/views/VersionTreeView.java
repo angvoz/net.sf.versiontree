@@ -443,7 +443,6 @@ public class VersionTreeView
 		
 		// draw connectors
 		ITreeElement head = bt.getHeadBranch();
-		treeView.connectors.clearConnectors();
 		treeView.drawConnectors(head);
 	}
 
