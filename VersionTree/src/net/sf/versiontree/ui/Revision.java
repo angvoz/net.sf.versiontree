@@ -10,8 +10,14 @@
  *******************************************************************************/
 package net.sf.versiontree.ui;
 
+
+import java.util.Iterator;
+import java.util.List;
+
 import net.sf.versiontree.VersionTreePlugin;
+import net.sf.versiontree.data.IBranch;
 import net.sf.versiontree.data.IRevision;
+import net.sf.versiontree.data.MergePoint;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.events.DisposeEvent;
@@ -168,7 +174,25 @@ public class Revision extends Canvas {
 	 */
 	public void setRevisionData(IRevision data) {
 		revisionData = data;
-		setToolTipText(revisionData.getRevision());
+		String tooltip = "";
+		List<MergePoint> mergeFromList = data.getMergeFromRevisions();
+		List<MergePoint> mergeToList = data.getMergeToRevisions();
+		for (Iterator<MergePoint> iterator = mergeFromList.iterator(); iterator.hasNext();) {
+			MergePoint mergeFromPoint = iterator.next();
+			String mergeFromMessage = VersionTreePlugin.getResourceString("VersionTreeView.Merge_From_Message"); //$NON-NLS-1$
+			if ( tooltip.length() > 0 ) tooltip += "\n";
+			tooltip += mergeFromMessage + ": " + mergeFromPoint.getBranchName();
+			tooltip += " (" + mergeFromPoint.getMergeRevision().getRevision() + ")";
+		}
+		for (Iterator<MergePoint> iterator = mergeToList.iterator(); iterator.hasNext();) {
+			MergePoint mergeToPoint = iterator.next();
+			String mergeToMessage = VersionTreePlugin.getResourceString("VersionTreeView.Merge_To_Message"); //$NON-NLS-1$
+			if ( tooltip.length() > 0 ) tooltip += "\n";
+			tooltip += mergeToMessage + ": " + mergeToPoint.getBranchName();
+			tooltip += " (" + mergeToPoint.getMergeRevision().getRevision() + ")";
+		}
+		
+		setToolTipText(tooltip);
 		// Parse background color
 		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
 		String color = store.getString(VersionTreePlugin.P_REVISION_BACKGROUNDCOLOR);

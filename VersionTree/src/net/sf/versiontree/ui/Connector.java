@@ -13,6 +13,7 @@ package net.sf.versiontree.ui;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -58,23 +59,23 @@ public class Connector extends Canvas {
 		Rectangle bounds = this.getBounds();
 		int arrowLen = 3;
 		if (drawMode == VERTICAL) {
-			gc.drawLine(bounds.width / 2, 0, bounds.width / 2, bounds.height);
-			if (direction == RIGHT ) {
-				gc.drawLine(bounds.width / 2 - arrowLen, bounds.height - arrowLen, bounds.width / 2, bounds.height);
-				gc.drawLine(bounds.width / 2 + arrowLen, bounds.height - arrowLen, bounds.width / 2, bounds.height);
-			} else {
-				gc.drawLine(bounds.width / 2 - arrowLen, 0 + arrowLen, bounds.width / 2, 0);
-				gc.drawLine(bounds.width / 2 + arrowLen, 0 + arrowLen, bounds.width / 2, 0);
-			}
+			gc.drawLine(0, 0, bounds.width , bounds.height );
+//			if (direction == RIGHT ) {
+//				gc.drawLine(bounds.width / 2 - arrowLen, bounds.height - arrowLen, bounds.width / 2, bounds.height);
+//				gc.drawLine(bounds.width / 2 + arrowLen, bounds.height - arrowLen, bounds.width / 2, bounds.height);
+//			} else {
+//				gc.drawLine(bounds.width / 2 - arrowLen, 0 + arrowLen, bounds.width / 2, 0);
+//				gc.drawLine(bounds.width / 2 + arrowLen, 0 + arrowLen, bounds.width / 2, 0);
+//			}
 		} else {
-			gc.drawLine(0, bounds.height / 2, bounds.width, bounds.height / 2);
-			if ( direction == RIGHT ) {
-				gc.drawLine(bounds.width - arrowLen, bounds.height / 2 - arrowLen, bounds.width, bounds.height / 2);
-				gc.drawLine(bounds.width - arrowLen, bounds.height / 2 + arrowLen, bounds.width, bounds.height / 2);
-			} else {
-				gc.drawLine(0 + arrowLen, bounds.height / 2 - arrowLen, 0, bounds.height / 2);
-				gc.drawLine(0 + arrowLen, bounds.height / 2 + arrowLen, 0, bounds.height / 2);
-			}
+			gc.drawLine(0, 0, bounds.width, bounds.height);
+//			if ( direction == RIGHT ) {
+//				gc.drawLine(bounds.width - arrowLen, bounds.height / 2 - arrowLen, bounds.width, bounds.height / 2);
+//				gc.drawLine(bounds.width - arrowLen, bounds.height / 2 + arrowLen, bounds.width, bounds.height / 2);
+//			} else {
+//				gc.drawLine(0 + arrowLen, bounds.height / 2 - arrowLen, 0, bounds.height / 2);
+//				gc.drawLine(0 + arrowLen, bounds.height / 2 + arrowLen, 0, bounds.height / 2);
+//			}
 		}
 	}
 

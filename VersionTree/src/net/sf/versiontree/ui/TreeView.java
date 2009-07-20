@@ -11,12 +11,14 @@
  *******************************************************************************/
 package net.sf.versiontree.ui;
 
+import java.util.Iterator;
 import java.util.List;
 
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.IBranch;
 import net.sf.versiontree.data.IRevision;
 import net.sf.versiontree.data.ITreeElement;
+import net.sf.versiontree.data.MergePoint;
 import net.sf.versiontree.layout.drawer.IDrawMethod;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -26,8 +28,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -56,7 +60,7 @@ public class TreeView
 	/**
 	 * Composite that is the content of this scrollable composite.
 	 */
-	public Composite content = null;
+	public ConnectArrows connectors = null;
 
 	/**
 	 * Listener that get notified on selection changes.
@@ -99,16 +103,16 @@ public class TreeView
 	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
 	 */
 	public void setMenu(Menu menu) {
-		content.setMenu(menu);
+		connectors.setMenu(menu);
 		super.setMenu(menu);
 	}
 	/**
 	 * Initializes the TreeView widget.
 	 */
 	public void initViewer() {
-		content = new Composite(this, SWT.NONE);
-		content.setLayout(null);
-		this.setContent(content);
+		connectors = new ConnectArrows(this, SWT.NONE);
+		connectors.setLayout(null);
+		this.setContent(connectors);
 		this.getVerticalBar().setIncrement(width);
 		this.getHorizontalBar().setIncrement(height);
 	}
@@ -129,13 +133,11 @@ public class TreeView
 	 */
 	public void draw(ITreeElement element, int x, int y) {
 		if (element instanceof IRevision) {
-			Revision revision = new Revision(content, 0);
+			Revision revision = new Revision(connectors, 0);
 			revision.setRevisionData((IRevision) element);
 			revision.addMouseListener(this);
 			revision.setMenu(this.getMenu());
-			revision.setLocation(
-				BORDER + x * (width + hspacing),
-				BORDER + y * (height + vspacing));
+			revision.setLocation(BORDER + x * (width + hspacing), BORDER + y * (height + vspacing));
 			revision.setSize(revision.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 			// check if this is the current revision
 			if ((revision.getRevisionData().getState()
@@ -149,22 +151,67 @@ public class TreeView
 					currentRevivion.getRevisionData().getLogEntry());
 			}
 		} else {
-			Branch branch = new Branch(content, 0);
+			Branch branch = new Branch(connectors, 0);
 			branch.setBranchData(((IBranch) element));
 			branch.addMouseListener(this);
-			branch.setLocation(
-				BORDER + x * (width + hspacing),
-				BORDER + y * (height + vspacing));
+			branch.setLocation(BORDER + x * (width + hspacing), BORDER + y * (height + vspacing));
 			branch.setSize(branch.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		}
 	}
 
-	public void drawConnector(int x1, int y1, int x2, int y2) {
-		Point position = new Point(0, 0);
-		Point size = new Point(0, 0);
-		setBoundsAndMode(x1, y1, x2, y2, position, size);
+	public void addConnector(ITreeElement from, ITreeElement to) {
+		createConnector(from,to,MergePoint.INITIAL);
+		
+		if (to instanceof IRevision) {
+			IRevision revision = (IRevision) to;
+			List<MergePoint> mergeToList = revision.getMergeToRevisions();
+			for (Iterator<MergePoint> iterator = mergeToList.iterator(); iterator.hasNext();) {
+				MergePoint mergeToPoint = iterator.next();
+				createConnector(to, mergeToPoint.getMergeRevision(), MergePoint.MERGE);
+			}
+		}
 	}
 
+	private void createConnector(ITreeElement from, ITreeElement to, int connectorType) {
+		int xPos1 = from.getX();
+		int yPos1 = from.getY();
+		int xPos2 = to.getX();
+		int yPos2 = to.getY();
+		Point begin = new Point(0, 0);
+		Point end = new Point(0, 0);
+		int mode = Connector.HORIZONTAL;
+		int direction = Connector.LEFT;
+		int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+		// connect horizontal if x offset is equal
+		int sy1 = height/2, sy2 = height/2;
+		if (yPos2 > yPos1) {
+			sy1 = height;
+			sy2 = 0;
+		} else if (yPos2 < yPos1){
+			sy1 = 0;
+			sy2 = height;			
+		}
+		int sx1 = width/2, sx2 = width/2;
+		if (xPos2 > xPos1) {
+			sx1 = width;
+			sx2 = 0;
+		} if (xPos2 < xPos1) {
+			sx1 = 0;
+			sx2 = width;			
+		}
+		begin.x = BORDER + xPos1 * (hspacing + width) + sx1;
+		begin.y = BORDER + yPos1 * (vspacing + height) + sy1;
+		end.x = BORDER + xPos2 * (hspacing + width) + sx2;
+		end.y = BORDER + yPos2 * (vspacing + height) + sy2;
+		if ( mode == Connector.RIGHT) {
+			ConnectArrow arrow = new ConnectArrow(begin, end);		
+			connectors.addConnectArrow(arrow);
+		} else {
+			ConnectArrow arrow = new ConnectArrow(end,begin);		
+			connectors.addConnectArrow(arrow);			
+		}
+	}
+	
 	/**
 	 * Calculates the size, position and mode for a Connector
 	 * given the abstract positions.
@@ -176,74 +223,60 @@ public class TreeView
 	 * @param size
 	 * @return Connector mode (HORIZONTAL or VERTICAL)
 	 */
-	private void setBoundsAndMode(
-		int xPos1,
-		int yPos1,
-		int xPos2,
-		int yPos2,
-		Point position,
-		Point size) {
+	private void createConnector2(ITreeElement elementTo, ITreeElement elementFrom, int connectorType) {
+
+		int xPos1 = elementTo.getX();
+		int yPos1 = elementTo.getY();
+		int xPos2 = elementFrom.getX();
+		int yPos2 = elementFrom.getY();
+		
+		Point position = new Point(0, 0);
+		Point size = new Point(0, 0);
 		int mode = Connector.HORIZONTAL;
 		int direction = Connector.LEFT;
 		int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 		// connect horizontal if x offset is equal
 		if (xPos1 == xPos2) {
 			mode = Connector.VERTICAL;
-			if (yPos2 > yPos1) {
-				x1 = xPos1;
-				y1 = yPos1;
-				x2 = xPos2;
-				y2 = yPos2;
-			} else {
-				x1 = xPos2;
-				y1 = yPos2;
-				x2 = xPos1;
-				y2 = yPos1;
-				direction = Connector.RIGHT;
-			}
-		} else if (yPos1 == yPos2) {
-			mode = Connector.HORIZONTAL;
-			if (xPos2 > xPos1) {
-				x1 = xPos1;
-				y1 = yPos1;
-				x2 = xPos2;
-				y2 = yPos2;
-			} else {
-				x1 = xPos2;
-				y1 = yPos2;
-				x2 = xPos1;
-				y2 = yPos1;
-				direction = Connector.RIGHT;
-			}
+		}
+		if (yPos2 > yPos1) {
+			y1 = yPos1;
+			y2 = yPos2;
 		} else {
-			System.out.println("Error: cannot draw diagonal connectors!");
-			System.out.println(
-				" draw Connector: ("
-					+ xPos1
-					+ ","
-					+ yPos1
-					+ ") ("
-					+ xPos2
-					+ ","
-					+ yPos2
-					+ ")");
+			y1 = yPos2;
+			y2 = yPos1;
+			direction = Connector.RIGHT;
+		}
+		if (xPos1 > xPos2) {
+			x1 = xPos2;
+			x2 = xPos1;
+		} else {
+			x1 = xPos1;
+			x2 = xPos2;
 		}
 		if (mode == Connector.HORIZONTAL) {
-			position.x = BORDER + width + x1 * (hspacing + width);
-			position.y = BORDER + y1 * (vspacing + height);
-			size.x = (x2 - x1) * hspacing + (x2 - x1 - 1) * width;
-			size.y = height;
+			position.x = BORDER + x1 * (hspacing + width) + width;
+			position.y = BORDER + y1 * (vspacing + height) + height/2;
+			size.x = (x2 - x1) * hspacing + (x2 - x1) * width+1;
+			size.y = (y2 - y1) * vspacing + (y2 - y1) * height+1;
 		} else {
-			position.x = BORDER + x1 * (hspacing + width);
-			position.y = BORDER + height + y1 * (vspacing + height);
-			size.x = width;
-			size.y = (y2 - y1) * vspacing + (y2 - y1 - 1) * height;
+			position.x = BORDER + x1 * (hspacing + width) + width/2;
+			position.y = BORDER + y1 * (vspacing + height) + height;
+			size.x = (x2 - x1) * hspacing + (x2 - x1) * width+1;
+			size.y = (y2 - y1) * vspacing + (y2 - y1) * height+1;
 		}
-		Connector connect = new Connector(content, 0, mode);
-		connect.setLocation(position);
-		connect.setSize(size);
+		Connector connect = new Connector(connectors, 0, mode);
+		if (connectorType == MergePoint.MERGE) {
+			connect.setForeground(new Color(null,255,0,0));
+		}
+		connect.setBounds(position.x, position.y, size.x, size.y);
+//		connect.setLocation(position);
+//		connect.setSize(size);
 		connect.setDirection(direction);
 		connect.setMenu(this.getMenu());
+		
+		
+//		connectors.addConnectArrow(arrow);
 	}
 
 	/**
@@ -252,10 +285,10 @@ public class TreeView
 	 */
 	public void show() {
 		// resize content widget
-		Point size = content.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point size = connectors.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		size.x += BORDER;
 		size.y += BORDER;
-		content.setSize(size);
+		connectors.setSize(size);
 		// scroll to current revision
 		if (currentRevivion != null)
 			scrollToRevision(currentRevivion);
@@ -282,7 +315,7 @@ public class TreeView
 	 * Removes all widgets from the content pane.
 	 */
 	private void removeAllWidgets() {
-		Control[] childs = content.getChildren();
+		Control[] childs = connectors.getChildren();
 		for (int i = 0; i < childs.length; i++) {
 			Control control = childs[i];
 			control.setMenu(null);
@@ -357,7 +390,7 @@ public class TreeView
 	 * Redraws all childs.
 	 */
 	private void redrawAll() {
-		Control[] childs = content.getChildren();
+		Control[] childs = connectors.getChildren();
 		for (int i = 0; i < childs.length; i++) {
 			childs[i].redraw();
 		}
@@ -379,6 +412,37 @@ public class TreeView
 	 */
 	public TreeViewConfig getTreeViewConfig() {
 		return treeViewConfig;
+	}
+
+	public void drawConnectors(ITreeElement parameterElement) {
+		// TODO Auto-generated method stub
+		for (Iterator<ITreeElement> iter = parameterElement.getChildren().listIterator();
+		iter.hasNext();
+		) {
+		ITreeElement nextElement = (ITreeElement) iter.next();
+		if (nextElement instanceof IRevision
+			|| (
+				 ( this.getTreeViewConfig().drawEmptyBranches()
+			       || (nextElement instanceof IBranch
+			          && ((!((IBranch) nextElement).isEmpty()))
+			       )
+			     ) 
+			     &&
+			     ( this.getTreeViewConfig().drawNABranches() 
+			       || ( nextElement instanceof IBranch
+					  && 
+			    	  (!((IBranch) nextElement).getName().equals(IBranch.N_A_BRANCH))
+			       )
+			     )
+			   )) {
+			    //case when parent is dead revision and next element is branch
+			    if ( ! (parameterElement instanceof IRevision && nextElement instanceof IBranch && ((IRevision)parameterElement).getLogEntry().isDeletion() ) ) {
+			       addConnector(parameterElement,nextElement);
+			    }
+				drawConnectors(nextElement);
+			}
+	}
+
 	}
 
 }

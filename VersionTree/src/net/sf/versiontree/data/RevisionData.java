@@ -18,6 +18,8 @@ import java.util.StringTokenizer;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
 /**
  * @author Jan
  * @author Andre
@@ -30,6 +32,8 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	private int state = 0;
 	private ILogEntry logEntry = null;
 	private int[] parsedRevision = null;
+	private List<MergePoint> mergeFromRevision = new ArrayList<MergePoint>();
+	private List<MergePoint> mergeToRevision = new ArrayList<MergePoint>();
 
 	public RevisionData(ILogEntry logEntry) {
 		this.logEntry = logEntry;
@@ -218,6 +222,22 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	
 	public String toString() {
 		return logEntry.getRevision();
+	}
+
+	public List<MergePoint> getMergeFromRevisions() {
+		return mergeFromRevision;
+	}
+
+	public List<MergePoint> getMergeToRevisions() {
+		return mergeToRevision;
+	}
+
+	public void addMergeFromRevision(MergePoint mergePoint) {
+		this.mergeFromRevision.add(mergePoint);
+	}
+
+	public void addMergeToRevision(MergePoint mergePoint) {
+		this.mergeToRevision.add(mergePoint);
 	}
 
 }

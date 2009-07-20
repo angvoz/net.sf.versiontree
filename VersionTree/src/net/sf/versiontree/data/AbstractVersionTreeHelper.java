@@ -15,19 +15,16 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 
 /**
  * walk ITreeElement trees and draw connectors (and other stuff in the future)
  * @author Andre */
 public abstract class AbstractVersionTreeHelper {
-
-	String mergeExpression = "tag_(.*)_MERGE-TO_(.*)"; 
-    Pattern pattern = Pattern.compile(mergeExpression);
 	
-	public abstract void drawConnector(
-		ITreeElement element,
-		ITreeElement element2);
 
 	/** returns one revision from a list of treelements, to be used on children of a revision */
 	public static IRevision getRevisionFromTreeElements(List<ITreeElement> elements) {
@@ -87,63 +84,4 @@ public abstract class AbstractVersionTreeHelper {
 		return sortedBranches;
 	}
 
-	/** connects branches and revision to parent revisions and parent branches 
-	 * @param showNABranches TODO*/
-	public void walk(
-		ITreeElement parameterElement,
-		boolean showEmptyBranches,
-		boolean showNABranches, 
-		HashMap<String, IRevision> alltags) {
-//		if (parameterElement.isRevision()) {
-//			IRevision revision = (IRevision) parameterElement;
-//			CVSTag[] tags = revision.getLogEntry().getTags();
-//			for (int i = 0; i < tags.length; i++) {
-//				CVSTag tag = tags[i];
-//			    Matcher matcher = pattern.matcher(tag.getName());
-//			    while ( matcher.find() ) {
-//			    	String branchFrom = matcher.group(1);
-//			    	String branchTo = matcher.group(2);
-//			    	String mergeFromTag = "tag_"+branchTo+"_MERGE-FROM_"+branchFrom;
-//			    	IRevision revisionFrom = alltags.get(mergeFromTag);
-//			    	if ( revisionFrom != null &&
-//			    			revisionFrom != parameterElement )
-//			    	{
-//			    		if (revision.getRevision().length() < revisionFrom.getRevision().length()) {
-//			    			drawConnector(revision,revisionFrom);
-//			    		}
-//			    		if (revision.getRevision().length() > revisionFrom.getRevision().length()) {
-//			    			drawConnector(revisionFrom, revision);
-//			    		}
-//			    	}
-//			    }
-//			}
-//		}
-
-		for (Iterator<ITreeElement> iter = parameterElement.getChildren().listIterator();
-			iter.hasNext();
-			) {
-			ITreeElement nextElement = (ITreeElement) iter.next();
-			if (nextElement instanceof IRevision
-				|| (
-					 ( showEmptyBranches
-				       || (nextElement instanceof IBranch
-				          && ((!((IBranch) nextElement).isEmpty()))
-				       )
-				     ) 
-				     &&
-				     ( showNABranches 
-				       || ( nextElement instanceof IBranch
-						  && 
-				    	  (!((IBranch) nextElement).getName().equals(IBranch.N_A_BRANCH))
-				       )
-				     )
-				   )) {
-				    //case when parent is dead revision and next element is branch
-				    if ( ! (parameterElement instanceof IRevision && nextElement instanceof IBranch && ((IRevision)parameterElement).getLogEntry().isDeletion() ) ) {
-				       drawConnector(nextElement, parameterElement);
-				    }
-					walk(nextElement, showEmptyBranches,showNABranches, alltags);
-				}
-		}
-	}
 }

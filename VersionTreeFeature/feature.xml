@@ -2,7 +2,7 @@
 <feature
       id="net.sf.versiontree"
       label="CVS VersionTree Plug-in"
-      version="1.6.7"
+      version="1.6.8"
       provider-name="net.sf.versiontree"
       plugin="net.sf.versiontree">
 
@@ -235,7 +235,7 @@ litigation.
          id="net.sf.versiontree"
          download-size="0"
          install-size="0"
-         version="1.6.7"
+         version="1.6.8"
          unpack="false"/>
 
 </feature>

@@ -49,5 +49,10 @@ public interface IRevision extends Comparable<IRevision>, ITreeElement {
 	/** Returns the revision suffix from the revision number.
 	 * (e.g. revision number "1.2.4.8" --> returns "8") */
 	public abstract String getRevisionSuffix();
-	
+
+	public abstract List<MergePoint> getMergeFromRevisions();
+	public abstract List<MergePoint> getMergeToRevisions();
+	public abstract void addMergeFromRevision(MergePoint mergePointFrom);
+	public abstract void addMergeToRevision(MergePoint mergePointTo);
+
 }

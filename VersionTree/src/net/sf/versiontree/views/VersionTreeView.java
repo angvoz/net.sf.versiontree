@@ -17,12 +17,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.AbstractVersionTreeHelper;
 import net.sf.versiontree.data.BranchTree;
+import net.sf.versiontree.data.IBranch;
+import net.sf.versiontree.data.IRevision;
 import net.sf.versiontree.data.ITreeElement;
+import net.sf.versiontree.data.MergePoint;
 import net.sf.versiontree.data.TreeViewHelper;
 import net.sf.versiontree.data.algo.ILayout;
 import net.sf.versiontree.layout.drawer.DrawerDispatcher;
@@ -175,6 +181,7 @@ public class VersionTreeView
 	private FetchLogEntriesJob fetchLogEntriesJob;
 
 	private IPreferenceStore settings;
+
 
 	/**
 	 * Content provider for the table in the detail view 
@@ -426,6 +433,7 @@ public class VersionTreeView
 		// id[2] = new SysOutDrawer(); // textual output
 
 		//int direction = treeView.getTreeViewConfig().getDirection();
+		
 		int direction =
 			VersionTreePlugin.getDefault().getPreferenceStore().getInt(
 				VersionTreePlugin.P_DEFAULT_DIRECTION);
@@ -434,11 +442,12 @@ public class VersionTreeView
 		treeView.show();
 		
 		// draw connectors
-		AbstractVersionTreeHelper treeHelper = new TreeViewHelper(treeView);
 		ITreeElement head = bt.getHeadBranch();
-		treeHelper.walk(head,treeView.getTreeViewConfig().drawEmptyBranches(),treeView.getTreeViewConfig().drawNABranches(), bt.getAlltags());
+		treeView.connectors.clearConnectors();
+		treeView.drawConnectors(head);
 	}
 
+	
 	private ILayout getLayoutAlgorithm(DrawerDispatcher dp) {
 		ILayout layout = treeView.getTreeViewConfig().getLayoutAlgorithm();
 		layout.configure(dp, treeView.getTreeViewConfig().drawEmptyBranches(), treeView.getTreeViewConfig().drawNABranches());

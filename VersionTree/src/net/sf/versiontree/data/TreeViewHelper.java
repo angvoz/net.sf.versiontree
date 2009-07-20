@@ -10,6 +10,9 @@
  *******************************************************************************/
 package net.sf.versiontree.data;
 
+import java.util.Iterator;
+import java.util.List;
+
 import net.sf.versiontree.ui.TreeView;
 
 /**
@@ -18,20 +21,8 @@ import net.sf.versiontree.ui.TreeView;
  *
  */
 public class TreeViewHelper extends AbstractVersionTreeHelper {
-	private TreeView m_delegate;
-	public TreeViewHelper(TreeView t) {
-		setDelegate(t);
-	}
-	public void setDelegate(TreeView t) {
-		this.m_delegate = t;
-	}
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.data.tree.AbstractTreeHelper#drawConnector(net.sf.versiontree.data.ITreeElement, net.sf.versiontree.data.ITreeElement)
-	 */
-	public void drawConnector(ITreeElement element, ITreeElement element2) {
-		m_delegate.drawConnector(
-			element.getX(), element.getY(), element2.getX(), element2.getY());
 
+	public TreeViewHelper(TreeView t) {
 	}
 
 }

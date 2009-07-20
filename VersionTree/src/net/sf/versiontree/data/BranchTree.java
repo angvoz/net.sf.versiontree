@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -33,6 +35,9 @@ public class BranchTree {
 	private HashMap<String, IBranch> branches;
 	private HashMap<String, IRevision> revisions;
 	private HashMap<String,IRevision> alltags;
+
+	private String mergeExpression = "tag_(.*)_MERGE-TO_(.*)"; 
+    private Pattern pattern = Pattern.compile(mergeExpression);
 
 	public HashMap<String, IRevision> getAlltags() {
 		return alltags;
@@ -57,10 +62,51 @@ public class BranchTree {
 
 		// set up branches, revision
 		setUpHashMaps(logs, selectedRevision);
+		ITreeElement head = getHeadBranch();
 		// build complete tree structure
 		buildCompleteTreeStructure();
+		walk(head);
+		
 	}
 	
+	/** 
+	 * Fill merge points information 
+	 */
+	public void walk(
+		ITreeElement parameterElement) {
+		if (parameterElement instanceof IRevision) {
+			IRevision revision = (IRevision) parameterElement;
+			CVSTag[] tags = revision.getLogEntry().getTags();
+			for (int i = 0; i < tags.length; i++) {
+				CVSTag tag = tags[i];
+			    Matcher matcher = pattern.matcher(tag.getName());
+			    while ( matcher.find() ) {
+			    	String branchFrom = matcher.group(1);
+			    	String branchTo = matcher.group(2);
+			    	String mergeFromTag = "tag_"+branchTo+"_MERGE-FROM_"+branchFrom;
+			    	IRevision revisionTo = alltags.get(mergeFromTag);
+			    	if ( revisionTo != null &&
+			    			revisionTo != parameterElement )
+			    	{
+			    		if (revision.getRevision().length() > revisionTo.getRevision().length()) {
+			    			MergePoint mergePointTo = new MergePoint(branchTo, revisionTo);
+			    			MergePoint mergePointFrom = new MergePoint(branchFrom, revision);
+				    		revision.addMergeToRevision(mergePointTo);
+				    		revisionTo.addMergeFromRevision(mergePointFrom);
+			    		}
+			    	}
+			    }
+			}
+		}
+
+		for (Iterator<ITreeElement> iter = parameterElement.getChildren().listIterator();
+			iter.hasNext();
+			) {
+			ITreeElement nextElement = (ITreeElement) iter.next();
+			walk(nextElement);
+		}
+	}
+
 	private void addRevision(String name, IRevision revision) {
 		revisions.put(name, revision);
 		CVSTag[] tags = revision.getLogEntry().getTags();
