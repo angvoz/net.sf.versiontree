@@ -107,16 +107,16 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	public String getComment() {
 		return logEntry.getComment();
 	}
+	
 	/**
 	 * Returns the branch prefix from the revision number.
-	 * (e.g. revision number "1.2.4.1" --> returns "1.2.4")
+	 * (e.g. revision number "1.2.4.1" --> returns "1.2.0.4")
 	 * We need to handle one special case for the initial revision 1.1.1.1 --> 1!
 	 * @return 
 	 */
 	public String getBranchPrefix() {
 		String revision = logEntry.getRevision();
 		if (revision.length() == 0 || revision.lastIndexOf(".")==-1) throw new RuntimeException("Revision malformed: "+revision);
-		if (revision.equals(IRevision.INITIAL_REVISION)) return IBranch.VENDOR_PREFIX;
 		String branchNumber = revision.substring(0, revision.lastIndexOf("."));
 		if (branchNumber.lastIndexOf(".") == -1 || branchNumber.equals(IBranch.VENDOR_PREFIX)) {
 			return branchNumber;
