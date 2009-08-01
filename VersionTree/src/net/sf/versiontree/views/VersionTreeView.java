@@ -159,8 +159,10 @@ public class VersionTreeView
 
 	private ILogEntry[] entries;
 	private ILogEntry currentEntry;
+
 	private ILogEntry currentSelection;
 	private String[][] tableData = new String[][] { 
+			{ VersionTreePlugin.getResourceString("VersionTreeView.File"), "" }, 
 			{ VersionTreePlugin.getResourceString("VersionTreeView.Revision"), "" }, 
 			{ VersionTreePlugin.getResourceString("VersionTreeView.Date"), "" }, 
 			{ VersionTreePlugin.getResourceString("VersionTreeView.Author"), "" }, 
@@ -261,7 +263,10 @@ public class VersionTreeView
 				} else {
 					resource = (IResource) Utils.getAdapter(firstElement , IResource.class);
 				}
-				if (resource != null && !resource.equals(file)) {
+				if (firstElement instanceof ICVSRemoteFile) {
+					ICVSRemoteFile remoteFile = (ICVSRemoteFile) firstElement;
+					showVersionTree(remoteFile);
+				} else {
 					showVersionTree(resource);
 				}
 			}
@@ -287,19 +292,16 @@ public class VersionTreeView
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							if(entries != null && treeView != null && ! treeView.isDisposed()) {
+								// Create and show tree
+								branchTree = new BranchTree(entries, revisionId);
 								// set current revision
 								for (int i = 0; i < entries.length; i++) {
 									ILogEntry entry = entries[i];
-									if (entry.getRevision().equals(revisionId))
-										currentEntry = entry;
+									if (entry.getRevision().equals(revisionId)) {
+										setCurrentEntry(entry);
+									}
 								}
-								// Create and show tree
-								branchTree = new BranchTree(entries, revisionId);
 								renderVersionTree(branchTree);
-								// update the table view
-								updateTableData(currentEntry);
-								tableViewer.setInput(tableData);
-								tagViewer.setInput(currentEntry.getTags());
 							}
 						}
 					});
@@ -364,37 +366,23 @@ public class VersionTreeView
 	 */
 	public void showVersionTree(IResource resource) {
 		if (resource != null && resource instanceof IFile) {
-			this.file = (IFile) resource;
+			IFile file = (IFile)resource;
+			setFile(file);
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject(), CVSProviderPlugin.getTypeId());
 			if (teamProvider != null) {
 				try {
-					treeView.clear();
-					tableViewer.setInput(null);
-					tagViewer.setInput(null);
-					
 					// for a file this will return the base
 					ICVSRemoteFile remoteFile = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(file);
-					if (remoteFile != null) {
-						getLogEntries(remoteFile);
-					}
-					if (currentEntry != null) {
-						commentViewer.setDocument(new Document(currentEntry.getComment()));
-					}
-					else {
-						commentViewer.setDocument(new Document("")); //$NON-NLS-1$
-					}
+					showVersionTree(remoteFile);
 				} catch (TeamException e) {
 					CVSUIPlugin.openError(getViewSite().getShell(), null, null,	e);
 				}
 			}
 		}
 		else {
-			this.file = null;
-			this.currentEntry = null;
-			updateTableData(currentEntry);
+			setFile(null);
+			this.setCurrentEntry(null);
 			treeView.clear();
-			tagViewer.setInput(null);
-			commentViewer.setDocument(new Document("")); //$NON-NLS-1$
 		}
 	}
 	
@@ -402,17 +390,9 @@ public class VersionTreeView
 	 * Shows the version tree for the given ICVSRemoteFile in the view.
 	 */
 	public void showVersionTree(ICVSRemoteFile remoteFile) {
-		treeView.clear();
-		tableViewer.setInput(null);
-		tagViewer.setInput(null);
 
 		if (remoteFile != null) {
 			getLogEntries(remoteFile);
-		}
-		if (currentEntry != null) {
-			commentViewer.setDocument(new Document(currentEntry.getComment()));
-		} else {
-			commentViewer.setDocument(new Document("")); //$NON-NLS-1$
 		}
 	}
 
@@ -463,13 +443,17 @@ public class VersionTreeView
 			tableData[1][1] = ""; //$NON-NLS-1$
 			tableData[2][1] = ""; //$NON-NLS-1$
 			tableData[3][1] = ""; //$NON-NLS-1$
+			tableData[4][1] = ""; //$NON-NLS-1$
 
 		} else {
-			tableData[0][1] = theCurrentEntry.getRevision();
-			tableData[1][1] = dateFormat.format(theCurrentEntry.getDate());
-			tableData[2][1] = theCurrentEntry.getAuthor();
-			tableData[3][1] = theCurrentEntry.getState();
+			tableData[0][1] = theCurrentEntry.getRemoteFile().getName();
+			tableData[1][1] = theCurrentEntry.getRevision();
+			tableData[2][1] = dateFormat.format(theCurrentEntry.getDate());
+			tableData[3][1] = theCurrentEntry.getAuthor();
+			tableData[4][1] = theCurrentEntry.getState();
 		}
+		tableViewer.setInput(tableData);
+
 	}
 
 	private void getLogEntries(final ICVSRemoteFile remoteFile) {
@@ -566,7 +550,7 @@ public class VersionTreeView
 						InputStream in =
 							remoteFile.getContents(
 								new SubProgressMonitor(monitor, 50));
-						file.setContents(
+						getFile().setContents(
 							in,
 							false,
 							true,
@@ -600,7 +584,7 @@ public class VersionTreeView
 						if (CVSAction
 							.checkForMixingTags(
 								getSite().getShell(),
-								new IResource[] { file },
+								new IResource[] { getFile() },
 								revisionTag)) {
 							//TODO update no longer available
 //							provider
@@ -722,7 +706,7 @@ public class VersionTreeView
 		
 		tagWithExistingAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.TagWithExisting")) { //$NON-NLS-1$
 			public void run() {
-				if (file == null)
+				if (getFile() == null)
 					return;
 				ISelection selection = treeView.getSelection();
 				if (!(selection instanceof IStructuredSelection))
@@ -948,9 +932,7 @@ public class VersionTreeView
 		IEditorInput input = editor.getEditorInput();
         IFile file = ResourceUtil.getFile(input);
         
-        if (file != null && !file.equals(this.file)) {
-        	showVersionTree(file);
-        }
+        showVersionTree(file);
 	}
 	
 	private boolean checkIfPageIsVisible() {
@@ -961,7 +943,7 @@ public class VersionTreeView
 	 * Refresh the view by refetching the log entries for the remote file
 	 */
 	private void refresh() {
-		showVersionTree(file);
+		showVersionTree(getFile());
 	}
 
 	/**
@@ -970,17 +952,10 @@ public class VersionTreeView
 	 */
 	public void logEntrySelected(ILogEntry log) {
 		// return if file is already selected
-		if (currentEntry.getRevision().equals(log.getRevision()))
+		if (getCurrentEntry().getRevision().equals(log.getRevision()))
 			return;
 		// update display
-		currentEntry = log;
-		updateTableData(currentEntry);
-		tableViewer.setInput(tableData);
-		tagViewer.setInput(currentEntry.getTags());
-		if (currentEntry != null)
-			commentViewer.setDocument(new Document(currentEntry.getComment()));
-		else
-			commentViewer.setDocument(new Document("")); //$NON-NLS-1$
+		setCurrentEntry(log);
 
 	}
 
@@ -1000,7 +975,7 @@ public class VersionTreeView
 
 			public void run() {
 				try {
-					if (file == null)
+					if (getFile() == null)
 						return;
 					ISelection selection = treeView.getSelection();
 					if (!(selection instanceof IStructuredSelection))
@@ -1046,7 +1021,8 @@ public class VersionTreeView
 	}
 
 	private boolean confirmOverwrite() {
-		if (file != null && file.exists()) {
+		IFile file = getFile(); 
+		if ( file != null && file.exists()) {
 			ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
 			try {
 				if (cvsFile.isModified(null)) {
@@ -1082,6 +1058,34 @@ public class VersionTreeView
 			}
 		}
 		return true;
+	}
+
+	protected ILogEntry getCurrentEntry() {
+		return this.currentEntry;
+	}
+
+	protected void setCurrentEntry(ILogEntry currentEntry) {
+		if ( this.currentEntry != currentEntry ) {
+			this.currentEntry = currentEntry;
+			updateTableData(currentEntry);
+//			tableViewer.setInput(tableData);
+			if (currentEntry != null) {
+				tagViewer.setInput(currentEntry.getTags());
+				commentViewer.setDocument(new Document(currentEntry.getComment()));
+			}
+			else {
+				tagViewer.setInput(null);
+				commentViewer.setDocument(new Document("")); //$NON-NLS-1$
+			}
+		}
+	}
+
+	protected IFile getFile() {
+		return file;
+	}
+
+	protected void setFile(IFile file) {
+		this.file = file;
 	}
 
 }

@@ -125,6 +125,7 @@ public class TreeView
 		currentRevivion = null;
 		removeAllWidgets();
 		connectors.clearConnectors();
+		connectors.redraw();
 	}
 
 	/**
