@@ -136,7 +136,7 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	public IPreferenceStore getPreferenceStore() {
 		IPreferenceStore store = super.getPreferenceStore();
 		store.setDefault(P_DEFAULT_ELEMENT_HEIGHT, 35);
-		store.setDefault(P_DEFAULT_ELEMENT_WIDTH, 70);
+		store.setDefault(P_DEFAULT_ELEMENT_WIDTH, 120);
 		store.setDefault(P_DEFAULT_HSPACING, 20);
 		store.setDefault(P_DEFAULT_VSPACING, 10);
 		store.setDefault(P_REVISION_BACKGROUNDCOLOR, "192,192,192"); //$NON-NLS-1$
