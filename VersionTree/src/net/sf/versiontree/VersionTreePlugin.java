@@ -140,14 +140,14 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 		store.setDefault(P_DEFAULT_HSPACING, 20);
 		store.setDefault(P_DEFAULT_VSPACING, 10);
 		store.setDefault(P_REVISION_BACKGROUNDCOLOR, "192,192,192"); //$NON-NLS-1$
-		store.setDefault(P_BRANCH_BACKGROUNDCOLOR, "192,192,192"); //$NON-NLS-1$
+		store.setDefault(P_BRANCH_BACKGROUNDCOLOR, "255,255,255"); //$NON-NLS-1$
 		store.setDefault(P_DEADREVISION_BACKGROUNDCOLOR, "230,230,230"); //$NON-NLS-1$
 		store.setDefault(P_DEFAULT_ALGORITHM, "0"); //$NON-NLS-1$
-		store.setDefault(P_DEFAULT_DIRECTION, "0"); //$NON-NLS-1$
+		store.setDefault(P_DEFAULT_DIRECTION, "1"); //$NON-NLS-1$
 		store.setDefault(P_DEFAULT_EMPTY_BRANCHES, false);
 		store.setDefault(P_DEFAULT_NA_BRANCHES, false);
 		store.setDefault(P_DEFAULT_DETAILS_POS, org.eclipse.swt.SWT.HORIZONTAL);
-		store.setDefault(P_HISTORY_VIEW_EDITOR_LINKING, false);
+		store.setDefault(P_HISTORY_VIEW_EDITOR_LINKING, true);
 		return store;
 	}
 
