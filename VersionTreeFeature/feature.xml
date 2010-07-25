@@ -2,7 +2,7 @@
 <feature
       id="net.sf.versiontree"
       label="CVS VersionTree Plug-in"
-      version="1.6.10"
+      version="1.6.11"
       provider-name="net.sf.versiontree"
       plugin="net.sf.versiontree">
 

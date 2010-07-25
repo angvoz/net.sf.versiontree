@@ -22,13 +22,15 @@ public abstract class AbstractLayout implements ILayout {
 
 	protected boolean emptyBranches = false;
 	protected boolean naBranches = false;
+	protected String branchFilter = "";
 
 	protected DrawerDispatcher m_delegate;
 
-	public void configure(DrawerDispatcher dp, boolean drawEmptyBranches, boolean drawNABranches) {
+	public void configure(DrawerDispatcher dp, boolean drawEmptyBranches, boolean drawNABranches, String filter) {
 		this.m_delegate = dp;
 		emptyBranches = drawEmptyBranches;
 		naBranches = drawNABranches;
+		branchFilter = filter;
 	}
 
 }

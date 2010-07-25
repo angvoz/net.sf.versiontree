@@ -436,7 +436,11 @@ public class TreeView
 			    	  (!((IBranch) nextElement).getName().equals(IBranch.N_A_BRANCH))
 			       )
 			     )
-			   )) {
+			     && ( ( nextElement instanceof IBranch && 
+			    		( this.getTreeViewConfig().getBranchFilter().equals("") || 
+				         ((IBranch) nextElement).getName().contains(this.getTreeViewConfig().getBranchFilter())
+				        )
+			   )))) {
 			    //case when parent is dead revision and next element is branch
 			    if ( ! (parameterElement instanceof IRevision && nextElement instanceof IBranch && ((IRevision)parameterElement).getLogEntry().isDeletion() ) ) {
 			       addConnector(parameterElement,nextElement);

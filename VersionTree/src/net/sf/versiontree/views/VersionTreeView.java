@@ -78,12 +78,15 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -94,6 +97,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
@@ -138,6 +142,7 @@ public class VersionTreeView
 	private TableViewer tableViewer;
 	private DetailTableProvider detailProvider;
 	private TextViewer commentViewer;
+	private Text searchField;
 	private TableViewer tagViewer;
 
 	private Action refreshAction;
@@ -342,9 +347,17 @@ public class VersionTreeView
 		tableViewer = createTableViewer(innerSashForm);
 		tagViewer = createTagViewer(innerSashForm);
 		commentViewer = createTextViewer(innerSashForm);
+		searchField = new Text(innerSashForm,SWT.SEARCH);
+		searchField.setMessage(VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Branch_Filter"));
+		searchField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				treeView.getTreeViewConfig().setBranchFilter(searchField.getText());
+				renderCurrentVersionTree();
+			}
+		});
 
 		sashForm.setWeights(new int[] { 65, 35 });
-		innerSashForm.setWeights(new int[] { 40, 30, 30 });
+		innerSashForm.setWeights(new int[] { 30, 30, 30, 10 });
 
 		makeActions();
 		hookContextMenu();
@@ -429,7 +442,7 @@ public class VersionTreeView
 	
 	private ILayout getLayoutAlgorithm(DrawerDispatcher dp) {
 		ILayout layout = treeView.getTreeViewConfig().getLayoutAlgorithm();
-		layout.configure(dp, treeView.getTreeViewConfig().drawEmptyBranches(), treeView.getTreeViewConfig().drawNABranches());
+		layout.configure(dp, treeView.getTreeViewConfig().drawEmptyBranches(), treeView.getTreeViewConfig().drawNABranches(),treeView.getTreeViewConfig().getBranchFilter());
 		return layout;
 	}
 

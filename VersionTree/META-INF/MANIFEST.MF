@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CVS VersionTree Plug-in
 Bundle-SymbolicName: net.sf.versiontree;singleton:=true
-Bundle-Version: 1.6.10
+Bundle-Version: 1.6.11
 Bundle-Activator: net.sf.versiontree.VersionTreePlugin
 Bundle-Vendor: net.sf.versiontree
 Bundle-Localization: plugin

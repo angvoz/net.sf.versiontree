@@ -47,7 +47,7 @@ public class DeepLayout extends AbstractLayout {
 		while (rev != null) {
 			y++;
 			// ...and if it has branches
-			List<IBranch> branches = TreeViewHelper.getBranchesForRevision(rev, emptyBranches, naBranches);
+			List<IBranch> branches = TreeViewHelper.getBranchesForRevision(rev, emptyBranches, naBranches, branchFilter);
 			if (!branches.isEmpty()) {
 				int tmp_y = y;
 				int i = 1;

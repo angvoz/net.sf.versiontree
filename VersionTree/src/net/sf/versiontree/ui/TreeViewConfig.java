@@ -30,6 +30,7 @@ public class TreeViewConfig {
 	 */
 	private boolean drawEmptyBranches = false;
 	private boolean drawNABranches = false;
+	private String branchFilter = "";
 
 	/**
 	 * The selected layout algorithm. Possible values:
@@ -108,6 +109,14 @@ public class TreeViewConfig {
 	 * Returns true if empty branches should be drawn.
 	 * @return true if empty branches should be drawn.
 	 */
+	public String getBranchFilter() {
+		return branchFilter;
+	}
+
+	public void setBranchFilter(String b) {
+		branchFilter = b;
+	}
+
 	public boolean drawNABranches() {
 		return drawNABranches;
 	}

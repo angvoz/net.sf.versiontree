@@ -38,7 +38,7 @@ public abstract class AbstractVersionTreeHelper {
 		return null;
 	}
 
-	public static List<IBranch> getBranchesForRevision(IRevision rev, boolean emptyBranches, boolean naBranches) {
+	public static List<IBranch> getBranchesForRevision(IRevision rev, boolean emptyBranches, boolean naBranches, String branchFilter) {
 		ArrayList<IBranch> l = new ArrayList<IBranch>();
 		for (Iterator<ITreeElement> iter = rev.getChildren().iterator(); iter.hasNext();) {
 			ITreeElement element = (ITreeElement) iter.next();
@@ -53,6 +53,10 @@ public abstract class AbstractVersionTreeHelper {
 						 || // add all empty branches if applicable
 						 ( !naBranches && !branchElem.getName().equals(IBranch.N_A_BRANCH))
 					   ) // add no empty branches if not required
+					&& ( branchFilter.equals("")
+						 || //add
+						 ( branchElem.getName().contains(branchFilter) )
+					   )
 				) {	
 					l.add(branchElem);
 				}
@@ -64,9 +68,10 @@ public abstract class AbstractVersionTreeHelper {
 	public static List<IBranch> getHeightSortedBranchesForRevision(
 		IRevision rev,
 		boolean emptyBranches, 
-		boolean naBranches) {
+		boolean naBranches,
+		String branchFilter) {
 		List<IBranch> sortedBranches = new ArrayList<IBranch>();
-		for (Iterator<IBranch> iter = TreeViewHelper.getBranchesForRevision(rev, emptyBranches, naBranches).iterator();
+		for (Iterator<IBranch> iter = TreeViewHelper.getBranchesForRevision(rev, emptyBranches, naBranches, branchFilter).iterator();
 			iter.hasNext();
 			) {
 			IBranch b = iter.next();
