@@ -2,19 +2,44 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CVS VersionTree Plug-in
 Bundle-SymbolicName: net.sf.versiontree; singleton:=true
-Bundle-Version: 1.6.0
+Bundle-Version: 1.6.1
 Bundle-ClassPath: VersionTree.jar
 Bundle-Activator: net.sf.versiontree.VersionTreePlugin
 Bundle-Vendor: versiontree.sf.net
 Bundle-Localization: plugin
-Export-Package: net.sf.versiontree,
- net.sf.versiontree.data,
- net.sf.versiontree.data.algo,
- net.sf.versiontree.layout.drawer,
- net.sf.versiontree.popup.actions,
- net.sf.versiontree.ui,
- net.sf.versiontree.ui.preferences,
- net.sf.versiontree.views
+Export-Package: net.sf.versiontree;
+  uses:="org.eclipse.jface.preference,
+   org.eclipse.core.resources,
+   org.eclipse.ui.plugin,
+   org.osgi.framework",
+ net.sf.versiontree.data;uses:="org.eclipse.team.internal.ccvs.core,net.sf.versiontree.ui",
+ net.sf.versiontree.data.algo;uses:="net.sf.versiontree.layout.drawer,net.sf.versiontree.data",
+ net.sf.versiontree.layout.drawer;uses:="net.sf.versiontree.data",
+ net.sf.versiontree.popup.actions;
+  uses:="org.eclipse.jface.action,
+   net.sf.versiontree.views,
+   org.eclipse.team.internal.ccvs.ui.actions,
+   org.eclipse.team.internal.ccvs.core,
+   net.sf.versiontree.ui",
+ net.sf.versiontree.ui;
+  uses:="org.eclipse.swt.events,
+   org.eclipse.swt.custom,
+   net.sf.versiontree.data.algo,
+   org.eclipse.swt.graphics,
+   org.eclipse.jface.viewers,
+   org.eclipse.swt.widgets,
+   net.sf.versiontree.layout.drawer,
+   net.sf.versiontree.data,
+   org.eclipse.team.internal.ccvs.core",
+ net.sf.versiontree.ui.preferences;uses:="org.eclipse.jface.preference,org.eclipse.ui",
+ net.sf.versiontree.views;
+  uses:="org.eclipse.ui,
+   org.eclipse.core.resources,
+   org.eclipse.jface.viewers,
+   org.eclipse.ui.part,
+   org.eclipse.swt.widgets,
+   net.sf.versiontree.ui,
+   org.eclipse.team.internal.ccvs.core"
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.core.runtime,
@@ -27,3 +52,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.compare
 Eclipse-AutoStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
