@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="VersionTree"
+      id="net.sf.versiontree"
       label="CVS VersionTree Plug-in"
-      version="1.6.0"
+      version="1.6.1"
       provider-name="versiontree.sf.net"
-      nl="en">
+      plugin="net.sf.versiontree">
 
    <description url="http://versiontree.sourceforge.net/">
       Displays a graphical revision history for files under CVS control.
@@ -218,28 +218,29 @@ litigation.
    </license>
 
    <url>
-      <update label="VersionTree Update Site" url="http://versiontree.sf.net/updatesite"/>
-      <discovery label="VersionTree Homepage" url="http://versiontree.sourceforge.net/"/>
+      <update label="CVS Version Tree Update Site" url="http://versiontree.sf.net/updates"/>
+      <discovery label="CVS Version Tree Homepage" url="http://versiontree.sourceforge.net/"/>
    </url>
 
    <requires>
+      <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.team.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.team.ui"/>
+      <import plugin="org.eclipse.team.cvs.ui"/>
+      <import plugin="org.eclipse.team.cvs.core"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.team.cvs.core"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.compare"/>
-      <import plugin="org.eclipse.team.cvs.ui"/>
    </requires>
 
    <plugin
          id="net.sf.versiontree"
          download-size="121"
          install-size="0"
-         version="1.6.0"/>
+         version="1.6.1"
+         unpack="false"/>
 
 </feature>
