@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/net.sf.versiontree_1.6.1.jar" id="net.sf.versiontree" version="1.6.1">
+      <category name="Team/CVS"/>
+   </feature>
+   <category-def name="Team/CVS" label="Team/CVS"/>
+</site>
