@@ -165,8 +165,7 @@ public class BranchTree {
 		CVSTag[] tags = logEntry.getTags();
 		for (int j = tags.length - 1; j >= 0; j--) {
 			if (tags[j].getType() == CVSTag.BRANCH) {
-				String branchNumber = tags[j].getBranchNumber();
-				createBranch(logEntry.getRevision() + "." + branchNumber, tags[j].getName());
+				createBranch(tags[j].getBranchRevision(), tags[j].getName());
 			}
 		}
 	}
