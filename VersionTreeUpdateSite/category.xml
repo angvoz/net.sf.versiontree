@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/net.sf.versiontree.feature_0.0.0.qualifier.jar" id="net.sf.versiontree" version="0.0.0">
+      <category name="net.sf.versiontree.category"/>
+   </feature>
+   <category-def name="net.sf.versiontree.category" label="Version Tree">
+      <description>
+         CVS VersionTree Eclipse Plug-in
+      </description>
+   </category-def>
+</site>
