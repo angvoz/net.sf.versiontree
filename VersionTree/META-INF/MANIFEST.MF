@@ -2,10 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CVS VersionTree Plug-in
 Bundle-SymbolicName: net.sf.versiontree;singleton:=true
-Bundle-Version: 1.6.12.qualifier
+Bundle-Version: 1.7.0.qualifier
 Bundle-Activator: net.sf.versiontree.VersionTreePlugin
 Bundle-Vendor: net.sf.versiontree
-Bundle-Localization: plugin
 Export-Package: net.sf.versiontree,
  net.sf.versiontree.data,
  net.sf.versiontree.data.algo,
@@ -25,5 +24,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.compare
-Eclipse-AutoStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

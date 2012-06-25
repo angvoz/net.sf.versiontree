@@ -18,8 +18,6 @@ import java.util.StringTokenizer;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
 /**
  * @author Jan
  * @author Andre
