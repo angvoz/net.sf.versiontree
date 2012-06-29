@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sf.versiontree.VersionTreePlugin;
-import net.sf.versiontree.data.IBranch;
 import net.sf.versiontree.data.IRevision;
 import net.sf.versiontree.data.MergePoint;
 
@@ -42,7 +41,6 @@ import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
  * graph.
  */
 public class Revision extends Canvas {
-
 	private static final int STRING_OFFSET = 2;
 	private static final int INSET = 3;
 	
@@ -56,6 +54,12 @@ public class Revision extends Canvas {
 	private Color background;
 
 	private Image versionImage;
+	private Image lockedImage;
+	private Image beingMergedImage;
+	private Image mergedImage;
+	private Image propagatedImage;
+	private Image closedImage;
+	private Image completedImage;
 
 	/**
 	 * Creates a new revision widget.
@@ -83,6 +87,12 @@ public class Revision extends Canvas {
 			public void widgetDisposed(DisposeEvent e) {
 				background.dispose();
 				versionImage.dispose();
+				lockedImage.dispose();
+				beingMergedImage.dispose();
+				mergedImage.dispose();
+				propagatedImage.dispose();
+				closedImage.dispose();
+				completedImage.dispose();
 			}
 		});
 	}
@@ -92,10 +102,14 @@ public class Revision extends Canvas {
 	 */
 	private void initializeImages() {
 		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
-		versionImage =
-			plugin
-				.getImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION)
-				.createImage();
+		versionImage = plugin.getImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION).createImage();
+		lockedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_LOCKED).createImage();
+		beingMergedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_BEING_MERGED).createImage();
+		mergedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_MERGED).createImage();
+		propagatedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_PROPAGATED).createImage();
+		closedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_CLOSED).createImage();
+		completedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_COMPLETED).createImage();
+
 		stringXPosition = versionImage.getBounds().width + 2 * INSET;
 	}
 
@@ -107,9 +121,49 @@ public class Revision extends Canvas {
 		GC gc = e.gc;
 		Rectangle size = getBounds();
 
-		// draw version tag icon if revison is tagged
+		// draw version tag icon if revision is tagged
 		if (revisionData.hasVersionTags()) {
-			gc.drawImage(versionImage, INSET, INSET);
+			boolean isHeadRevision = revisionData.getRevision().matches("\\d*\\.\\d*");
+			boolean isLocked = false;
+			boolean isMerged = false;
+			boolean isBeingMerged = false;
+			boolean isPropagated = false;
+			boolean isClosed = false;
+			List<String> tags = revisionData.getTags();
+			for (String tag : tags) {
+				if (tag.matches(VersionTreePlugin.TAG_REGEX_LOCKED)) {
+					isLocked = true;
+					// "locked" has preference over other icons
+					break;
+				}
+				if (tag.matches(VersionTreePlugin.TAG_REGEX_BEING_MERGED)) {
+					isBeingMerged = true;
+				}
+				if (tag.matches(VersionTreePlugin.TAG_REGEX_CLOSED)) {
+					isClosed = true;
+				}
+				if (tag.matches(VersionTreePlugin.TAG_REGEX_MERGE_TO)) {
+					isMerged = true;
+				}
+				if (tag.matches(VersionTreePlugin.TAG_REGEX_MERGE_FROM)) {
+					isPropagated = true;
+				}
+			}
+			Image image = versionImage;
+			if (isLocked) {
+				image = lockedImage;
+			} else if (isBeingMerged) {
+				image = beingMergedImage;
+			} else if (isClosed && isMerged && !isHeadRevision) {
+				image = completedImage;
+			} else if (isClosed && !isHeadRevision) {
+				image = closedImage;
+			} else if (isMerged && !isHeadRevision) {
+				image = mergedImage;
+			} else if (isPropagated && !isHeadRevision) {
+				image = propagatedImage;
+			}
+			gc.drawImage(image, INSET, INSET);
 		}
 
 		int yOffset = INSET;

@@ -123,6 +123,12 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 		// objects
 		createImageDescriptor(IMG_BRANCH); 
 		createImageDescriptor(IMG_NA_BRANCH); 
+		createImageDescriptor(IMG_LOCKED);
+		createImageDescriptor(IMG_BEING_MERGED);
+		createImageDescriptor(IMG_MERGED);
+		createImageDescriptor(IMG_PROPAGATED);
+		createImageDescriptor(IMG_CLOSED);
+		createImageDescriptor(IMG_COMPLETED);
 	}
 
 	/**
@@ -167,4 +173,17 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	public static final String ICON_PATH = "$nl$/icons/"; //$NON-NLS-1$
 	public static final String IMG_BRANCH = "branch.gif"; //$NON-NLS-1$
 	public static final String IMG_NA_BRANCH = "na_branch.gif"; //$NON-NLS-1$
+	public static final String IMG_BEING_MERGED = "tag_being_merged.gif"; //$NON-NLS-1$
+	public static final String IMG_LOCKED = "tag_locked.gif"; //$NON-NLS-1$
+	public static final String IMG_MERGED = "tag_merged.gif"; //$NON-NLS-1$
+	public static final String IMG_PROPAGATED = "tag_propagated.gif"; //$NON-NLS-1$
+	public static final String IMG_CLOSED = "tag_closed.gif"; //$NON-NLS-1$
+	public static final String IMG_COMPLETED = "tag_completed.gif"; //$NON-NLS-1$
+	
+//	public static final String TAG_REGEX_LOCKED = "tag_(.*)_LOCKED_.*";
+	public static final String TAG_REGEX_LOCKED = "tag_(.*)-000-UAT";
+	public static final String TAG_REGEX_BEING_MERGED = "tag_(.*)_REQUEST_.*";
+	public static final String TAG_REGEX_MERGE_TO = "tag_(.*)_MERGE-TO_(.*)";
+	public static final String TAG_REGEX_MERGE_FROM = "tag_(.*)_MERGE-FROM_(.*)";
+	public static final String TAG_REGEX_CLOSED = "tag_(.*)_CLOSED";
 }

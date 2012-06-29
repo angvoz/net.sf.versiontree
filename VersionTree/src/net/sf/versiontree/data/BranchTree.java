@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.versiontree.VersionTreePlugin;
+
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
@@ -26,7 +28,6 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
  * Data structure for walking version trees 
  * @author Andre  */
 public class BranchTree {
-
 	private int numberOfBranches = 0;
 
 	private IBranch headBranch;
@@ -36,8 +37,7 @@ public class BranchTree {
 	private HashMap<String, IRevision> revisions;
 	private HashMap<String,IRevision> alltags;
 
-	private String mergeExpression = "tag_(.*)_MERGE-TO_(.*)"; 
-    private Pattern pattern = Pattern.compile(mergeExpression);
+	private static final Pattern PATTERN_MERGE_TO = Pattern.compile(VersionTreePlugin.TAG_REGEX_MERGE_TO);
 
 	public HashMap<String, IRevision> getAlltags() {
 		return alltags;
@@ -79,7 +79,7 @@ public class BranchTree {
 			CVSTag[] tags = revision.getLogEntry().getTags();
 			for (int i = 0; i < tags.length; i++) {
 				CVSTag tag = tags[i];
-			    Matcher matcher = pattern.matcher(tag.getName());
+			    Matcher matcher = PATTERN_MERGE_TO.matcher(tag.getName());
 			    while ( matcher.find() ) {
 			    	String branchFrom = matcher.group(1);
 			    	String branchTo = matcher.group(2);

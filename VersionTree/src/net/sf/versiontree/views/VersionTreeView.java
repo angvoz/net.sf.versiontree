@@ -161,6 +161,12 @@ public class VersionTreeView
 
 	private Image branchImage;
 	private Image versionImage;
+	
+	private Image lockedImage;
+	private Image beingMergedImage;
+	private Image mergedImage;
+	private Image propagatedImage;
+	private Image closedImage;
 
 	private ILogEntry[] entries;
 	private ILogEntry currentEntry;
@@ -798,12 +804,13 @@ public class VersionTreeView
 
 	private void initializeImages() {
 		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
-		versionImage =
-			plugin
-				.getImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION)
-				.createImage();
-		branchImage =
-			plugin.getImageDescriptor(ICVSUIConstants.IMG_TAG).createImage();
+		versionImage = plugin.getImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION).createImage();
+		branchImage = plugin.getImageDescriptor(ICVSUIConstants.IMG_TAG).createImage();
+		lockedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_LOCKED).createImage();
+		beingMergedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_BEING_MERGED).createImage();
+		mergedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_MERGED).createImage();
+		propagatedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_PROPAGATED).createImage();
+		closedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_CLOSED).createImage();
 	}
 
 	/**
@@ -858,6 +865,21 @@ public class VersionTreeView
 					case CVSTag.HEAD :
 						return branchImage;
 					case CVSTag.VERSION :
+						if (tag.getName().matches(VersionTreePlugin.TAG_REGEX_LOCKED)) {
+							return lockedImage;
+						}
+						if (tag.getName().matches(VersionTreePlugin.TAG_REGEX_BEING_MERGED)) {
+							return beingMergedImage;
+						}
+						if (tag.getName().matches(VersionTreePlugin.TAG_REGEX_CLOSED)) {
+							return closedImage;
+						}
+						if (tag.getName().matches(VersionTreePlugin.TAG_REGEX_MERGE_TO)) {
+							return mergedImage;
+						}
+						if (tag.getName().matches(VersionTreePlugin.TAG_REGEX_MERGE_FROM)) {
+							return propagatedImage;
+						}
 						return versionImage;
 				}
 				return null;
@@ -903,6 +925,26 @@ public class VersionTreeView
 		if (versionImage != null) {
 			versionImage.dispose();
 			versionImage = null;
+		}
+		if (lockedImage != null) {
+			lockedImage.dispose();
+			lockedImage = null;
+		}
+		if (beingMergedImage != null) {
+			beingMergedImage.dispose();
+			beingMergedImage = null;
+		}
+		if (mergedImage != null) {
+			mergedImage.dispose();
+			mergedImage = null;
+		}
+		if (propagatedImage != null) {
+			propagatedImage.dispose();
+			propagatedImage = null;
+		}
+		if (closedImage != null) {
+			closedImage.dispose();
+			closedImage = null;
 		}
 		getSite().getPage().removePartListener(partListener);
 		getSite().getPage().removePartListener(partListener2);
