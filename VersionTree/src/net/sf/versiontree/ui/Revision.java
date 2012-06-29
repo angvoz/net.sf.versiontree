@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Karstens <jan.karstens@web.de> - initial implementation
  *******************************************************************************/
@@ -14,6 +14,7 @@ package net.sf.versiontree.ui;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sf.versiontree.VersionTreeImages;
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.IRevision;
 import net.sf.versiontree.data.MergePoint;
@@ -36,14 +37,14 @@ import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 
 /**
  * @author Jan
- * 
+ *
  * Custom made widget that represent a revision in the revision
  * graph.
  */
 public class Revision extends Canvas {
 	private static final int STRING_OFFSET = 2;
 	private static final int INSET = 3;
-	
+
 	private int stringXPosition = 0;
 
 	private IRevision revisionData;
@@ -87,12 +88,6 @@ public class Revision extends Canvas {
 			public void widgetDisposed(DisposeEvent e) {
 				background.dispose();
 				versionImage.dispose();
-				lockedImage.dispose();
-				beingMergedImage.dispose();
-				mergedImage.dispose();
-				propagatedImage.dispose();
-				closedImage.dispose();
-				completedImage.dispose();
 			}
 		});
 	}
@@ -103,12 +98,13 @@ public class Revision extends Canvas {
 	private void initializeImages() {
 		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
 		versionImage = plugin.getImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION).createImage();
-		lockedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_LOCKED).createImage();
-		beingMergedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_BEING_MERGED).createImage();
-		mergedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_MERGED).createImage();
-		propagatedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_PROPAGATED).createImage();
-		closedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_CLOSED).createImage();
-		completedImage = VersionTreePlugin.getDefault().getImageDescriptor(VersionTreePlugin.IMG_COMPLETED).createImage();
+
+		lockedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED);
+		beingMergedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_BEING_MERGED);
+		mergedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_MERGED);
+		propagatedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_PROPAGATED);
+		closedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_CLOSED);
+		completedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_COMPLETED);
 
 		stringXPosition = versionImage.getBounds().width + 2 * INSET;
 	}
@@ -187,6 +183,7 @@ public class Revision extends Canvas {
 		gc.setForeground(rememberColor);
 	}
 
+	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		return new Point(width, height);
 	}
@@ -245,7 +242,7 @@ public class Revision extends Canvas {
 			tooltip += mergeToMessage + ": " + mergeToPoint.getBranchName();
 			tooltip += " (" + mergeToPoint.getMergeRevision().getRevision() + ")";
 		}
-		
+
 		setToolTipText(tooltip);
 		// Parse background color
 		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();

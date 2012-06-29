@@ -1,46 +1,65 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Karstens <jan.karstens@web.de> - initial implementation
  *     André Langhorst <andre@masse.de> - extensions
  *******************************************************************************/
 package net.sf.versiontree;
 
-import java.net.URL;
-import java.util.Hashtable;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
 
 /**
  * TODO Algorithm ideas: CenterFanoutLayout, LinedBranchesLayout (revision in order), mixed deep/wide algorithm
  * TODO Filter: filtering, hiding, selection hiding
  * TODO Birdview: add window for, hide text + icons for birdview, w + w/o branchnames
- * TODO Dynamic Tree Element size: 
+ * TODO Dynamic Tree Element size:
  * widen branches of a x layer until name fits, save added x value
  * TODO TreeViewConfig: class should notify listeners if configuration changes.
- * 
+ *
  * The main plugin class to be used in a perspective.
  */
 public class VersionTreePlugin extends AbstractUIPlugin {
+	public static final String PLUGIN_ID = "net.sf.versiontree";
+
+	public static final String P_DEFAULT_ELEMENT_HEIGHT = "DefBranchHeight"; //$NON-NLS-1$
+	public static final String P_DEFAULT_ELEMENT_WIDTH = "DefBranchWidth"; //$NON-NLS-1$
+	public static final String P_DEFAULT_HSPACING = "DefHSpacing"; //$NON-NLS-1$
+	public static final String P_DEFAULT_VSPACING = "DefVSpacing"; //$NON-NLS-1$
+	public static final String P_REVISION_BACKGROUNDCOLOR = "RevisionBGColor"; //$NON-NLS-1$
+	public static final String P_BRANCH_BACKGROUNDCOLOR = "BranchBGColor"; //$NON-NLS-1$
+	public static final String P_DEADREVISION_BACKGROUNDCOLOR = "DeadRevisionBGColor"; //$NON-NLS-1$
+	public static final String P_DEFAULT_ALGORITHM = "DefAlgorithm"; //$NON-NLS-1$
+	public static final String P_DEFAULT_EMPTY_BRANCHES = "DefEmptyBranches"; //$NON-NLS-1$
+	public static final String P_DEFAULT_NA_BRANCHES = "DefNABranches"; //$NON-NLS-1$
+	public static final String P_DEFAULT_DIRECTION = "DefDirection"; //$NON-NLS-1$
+	public static final String P_DEFAULT_DETAILS_POS = "DefDetailPos"; //$NON-NLS-1$
+	public static final String P_HISTORY_VIEW_EDITOR_LINKING = "DefLinkEditor"; //$NON-NLS-1$
+
+//	public static final String TAG_REGEX_LOCKED = "tag_(.*)_LOCKED_.*";
+	public static final String TAG_REGEX_LOCKED = "tag_(.*)-000-UAT";
+	public static final String TAG_REGEX_BEING_MERGED = "tag_(.*)_REQUEST_.*";
+	public static final String TAG_REGEX_MERGE_TO = "tag_(.*)_MERGE-TO_(.*)";
+	public static final String TAG_REGEX_MERGE_FROM = "tag_(.*)_MERGE-FROM_(.*)";
+	public static final String TAG_REGEX_CLOSED = "tag_(.*)_CLOSED";
+
+
 	/**
 	 * The shared instance.
 	 */
 	private static VersionTreePlugin plugin;
-	private Hashtable<String, ImageDescriptor> imageDescriptors = new Hashtable<String, ImageDescriptor>(2);
 
 
 	/**
@@ -60,21 +79,7 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 			resourceBundle = null;
 		}
 	}
-	
-	/**
-	 * This method is called upon plug-in activation
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		initializeImages();
-	}
 
-	/**
-	 * This method is called when the plug-in is stopped
-	 */
-	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-	}
 	/**
 	 * Returns the shared instance.
 	 */
@@ -110,35 +115,7 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 		return resourceBundle;
 	}
 
-	/**
-	 * Creates an image and places it in the image registry.
-	 */
-	protected void createImageDescriptor(String id) {
-		URL url = FileLocator.find(plugin.getBundle(), new Path(ICON_PATH + id), null);
-		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-		imageDescriptors.put(id, desc);
-	}
-
-	private void initializeImages() {
-		// objects
-		createImageDescriptor(IMG_BRANCH); 
-		createImageDescriptor(IMG_NA_BRANCH); 
-		createImageDescriptor(IMG_LOCKED);
-		createImageDescriptor(IMG_BEING_MERGED);
-		createImageDescriptor(IMG_MERGED);
-		createImageDescriptor(IMG_PROPAGATED);
-		createImageDescriptor(IMG_CLOSED);
-		createImageDescriptor(IMG_COMPLETED);
-	}
-
-	/**
-	 * Returns the image descriptor for the given image ID.
-	 * Returns null if there is no such image.
-	 */
-	public ImageDescriptor getImageDescriptor(String id) {
-		return (ImageDescriptor)imageDescriptors.get(id);
-	}
-
+	@Override
 	public IPreferenceStore getPreferenceStore() {
 		IPreferenceStore store = super.getPreferenceStore();
 		store.setDefault(P_DEFAULT_ELEMENT_HEIGHT, 35);
@@ -157,33 +134,15 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 		return store;
 	}
 
-	public static final String P_DEFAULT_ELEMENT_HEIGHT = "DefBranchHeight"; //$NON-NLS-1$
-	public static final String P_DEFAULT_ELEMENT_WIDTH = "DefBranchWidth"; //$NON-NLS-1$
-	public static final String P_DEFAULT_HSPACING = "DefHSpacing"; //$NON-NLS-1$
-	public static final String P_DEFAULT_VSPACING = "DefVSpacing"; //$NON-NLS-1$
-	public static final String P_REVISION_BACKGROUNDCOLOR = "RevisionBGColor"; //$NON-NLS-1$
-	public static final String P_BRANCH_BACKGROUNDCOLOR = "BranchBGColor"; //$NON-NLS-1$
-	public static final String P_DEADREVISION_BACKGROUNDCOLOR = "DeadRevisionBGColor"; //$NON-NLS-1$
-	public static final String P_DEFAULT_ALGORITHM = "DefAlgorithm"; //$NON-NLS-1$
-	public static final String P_DEFAULT_EMPTY_BRANCHES = "DefEmptyBranches"; //$NON-NLS-1$
-	public static final String P_DEFAULT_NA_BRANCHES = "DefNABranches"; //$NON-NLS-1$
-	public static final String P_DEFAULT_DIRECTION = "DefDirection"; //$NON-NLS-1$
-	public static final String P_DEFAULT_DETAILS_POS = "DefDetailPos"; //$NON-NLS-1$
-	public static final String P_HISTORY_VIEW_EDITOR_LINKING = "DefLinkEditor"; //$NON-NLS-1$
-	public static final String ICON_PATH = "$nl$/icons/"; //$NON-NLS-1$
-	public static final String IMG_BRANCH = "branch.gif"; //$NON-NLS-1$
-	public static final String IMG_NA_BRANCH = "na_branch.gif"; //$NON-NLS-1$
-	public static final String IMG_BEING_MERGED = "tag_being_merged.gif"; //$NON-NLS-1$
-	public static final String IMG_LOCKED = "tag_locked.gif"; //$NON-NLS-1$
-	public static final String IMG_MERGED = "tag_merged.gif"; //$NON-NLS-1$
-	public static final String IMG_PROPAGATED = "tag_propagated.gif"; //$NON-NLS-1$
-	public static final String IMG_CLOSED = "tag_closed.gif"; //$NON-NLS-1$
-	public static final String IMG_COMPLETED = "tag_completed.gif"; //$NON-NLS-1$
-	
-//	public static final String TAG_REGEX_LOCKED = "tag_(.*)_LOCKED_.*";
-	public static final String TAG_REGEX_LOCKED = "tag_(.*)-000-UAT";
-	public static final String TAG_REGEX_BEING_MERGED = "tag_(.*)_REQUEST_.*";
-	public static final String TAG_REGEX_MERGE_TO = "tag_(.*)_MERGE-TO_(.*)";
-	public static final String TAG_REGEX_MERGE_FROM = "tag_(.*)_MERGE-FROM_(.*)";
-	public static final String TAG_REGEX_CLOSED = "tag_(.*)_CLOSED";
+	public static void log(int severity, String message, Throwable e) {
+		log(new Status(severity, PLUGIN_ID, 0, message, e));
+	}
+
+	public static void log(int severity, String msg) {
+		log(new Status(severity, PLUGIN_ID, 0, msg, new Exception(msg)));
+	}
+
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
 }

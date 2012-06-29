@@ -1,16 +1,17 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Karstens <jan.karstens@web.de> - initial implementation
  *******************************************************************************/
 package net.sf.versiontree.ui;
 
 
+import net.sf.versiontree.VersionTreeImages;
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.IBranch;
 
@@ -48,7 +49,7 @@ public class Branch extends Canvas {
 
 	private Image versionImage;
 	private int stringXPosition = 0;
-	
+
 	/**
 	 * Creates a widget representing a branch.
 	 * @param arg0 the parent Component
@@ -94,8 +95,7 @@ public class Branch extends Canvas {
 	 * Initializes the version image.
 	 */
 	private void initializeImages() {
-		VersionTreePlugin plugin = VersionTreePlugin.getDefault();
-		versionImage = plugin.getImageDescriptor(VersionTreePlugin.IMG_BRANCH).createImage();
+		versionImage = VersionTreeImages.getImage(VersionTreeImages.IMG_BRANCH);
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class Branch extends Canvas {
 	protected void paintControl(PaintEvent e) {
 		GC gc = e.gc;
 		Rectangle size = getBounds();
-		
+
 		gc.setBackground(background);
 		gc.fillRoundRectangle(0, 0, size.width, size.height, 20, 20);
 
@@ -127,6 +127,7 @@ public class Branch extends Canvas {
 		gc.drawRoundRectangle(0, 0, size.width - 1, size.height - 1, 20, 20);
 	}
 
+	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		return new Point(width, height);
 	}
