@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Karstens <jan.karstens@web.de> - initial implementation
  *     André Langhorst <andre@masse.de> - extensions
@@ -31,7 +31,6 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -39,7 +38,7 @@ import org.eclipse.swt.widgets.Menu;
 /**
  * @author Jan
  *
- * This class is a scrollable composite that displays the branches and 
+ * This class is a scrollable composite that displays the branches and
  * revisions. The Branches and Revisions to draw are delivered via a
  * callback function.
  */
@@ -48,7 +47,7 @@ public class TreeView
 	implements MouseListener, IDrawMethod {
 
 	/**
-	 * The display configuration for this view 
+	 * The display configuration for this view
 	 */
 	private TreeViewConfig treeViewConfig;
 
@@ -102,6 +101,7 @@ public class TreeView
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
 	 */
+	@Override
 	public void setMenu(Menu menu) {
 		connectors.setMenu(menu);
 		super.setMenu(menu);
@@ -143,7 +143,7 @@ public class TreeView
 			revision.setSize(revision.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 			// check if this is the current revision
 			if ((revision.getRevisionData().getState()
-				& IRevision.STATE_CURRENT)
+				& ITreeElement.STATE_CURRENT)
 				!= 0) {
 				currentRevivion = revision;
 				selectionManager.revisionSelected(
@@ -163,7 +163,7 @@ public class TreeView
 
 	public void addConnector(ITreeElement from, ITreeElement to) {
 		createConnector(from,to,MergePoint.INITIAL);
-		
+
 		if (to instanceof IRevision) {
 			IRevision revision = (IRevision) to;
 			List<MergePoint> mergeToList = revision.getMergeToRevisions();
@@ -191,7 +191,7 @@ public class TreeView
 			sy2 = 0;
 		} else if (yPos2 < yPos1){
 			sy1 = 0;
-			sy2 = height;			
+			sy2 = height;
 		}
 		int sx1 = width/2, sx2 = width/2;
 		if (xPos2 > xPos1) {
@@ -199,21 +199,21 @@ public class TreeView
 			sx2 = 0;
 		} if (xPos2 < xPos1) {
 			sx1 = 0;
-			sx2 = width;			
+			sx2 = width;
 		}
 		begin.x = BORDER + xPos1 * (hspacing + width) + sx1;
 		begin.y = BORDER + yPos1 * (vspacing + height) + sy1;
 		end.x = BORDER + xPos2 * (hspacing + width) + sx2;
 		end.y = BORDER + yPos2 * (vspacing + height) + sy2;
 		if ( mode == Connector.RIGHT) {
-			ConnectArrow arrow = new ConnectArrow(begin, end);		
+			ConnectArrow arrow = new ConnectArrow(begin, end);
 			connectors.addConnectArrow(arrow);
 		} else {
-			ConnectArrow arrow = new ConnectArrow(end,begin);		
-			connectors.addConnectArrow(arrow);			
+			ConnectArrow arrow = new ConnectArrow(end,begin);
+			connectors.addConnectArrow(arrow);
 		}
 	}
-	
+
 	/**
 	 * Calculates the size, position and mode for a Connector
 	 * given the abstract positions.
@@ -231,7 +231,7 @@ public class TreeView
 		int yPos1 = elementTo.getY();
 		int xPos2 = elementFrom.getX();
 		int yPos2 = elementFrom.getY();
-		
+
 		Point position = new Point(0, 0);
 		Point size = new Point(0, 0);
 		int mode = Connector.HORIZONTAL;
@@ -276,8 +276,8 @@ public class TreeView
 //		connect.setSize(size);
 		connect.setDirection(direction);
 		connect.setMenu(this.getMenu());
-		
-		
+
+
 //		connectors.addConnectArrow(arrow);
 	}
 
@@ -297,7 +297,7 @@ public class TreeView
 	}
 
 	/**
-	 * Scrolls the content so that the given revision is visible. 
+	 * Scrolls the content so that the given revision is visible.
 	 * @param revision the revision to scroll the client area to.
 	 */
 	private void scrollToRevision(Revision revision) {
@@ -329,11 +329,9 @@ public class TreeView
 	/**
 	 * Reloads some layout relevant preferences from the PreferenceStore
 	 * to include any preference changes made in between.
-	 *
 	 */
 	private void reloadPrefrences() {
-		IPreferenceStore store =
-			VersionTreePlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
 		hspacing = store.getInt(VersionTreePlugin.PREF_HSPACING);
 		vspacing = store.getInt(VersionTreePlugin.PREF_VSPACING);
 		height = store.getInt(VersionTreePlugin.PREF_ELEMENT_HEIGHT);
@@ -359,7 +357,7 @@ public class TreeView
 	}
 
 	/**
-	 * Listener for all components on the view. Checks for left clicks 
+	 * Listener for all components on the view. Checks for left clicks
 	 * on Revsisons, changes the selection and notifies the LogEntrySelectionListener.
 	 */
 	public void mouseDown(MouseEvent e) {
@@ -421,23 +419,23 @@ public class TreeView
 		for (Iterator<ITreeElement> iter = parameterElement.getChildren().listIterator();
 		iter.hasNext();
 		) {
-		ITreeElement nextElement = (ITreeElement) iter.next();
+		ITreeElement nextElement = iter.next();
 		if (nextElement instanceof IRevision
 			|| (
 				 ( this.getTreeViewConfig().drawEmptyBranches()
 			       || (nextElement instanceof IBranch
 			          && ((!((IBranch) nextElement).isEmpty()))
 			       )
-			     ) 
+			     )
 			     &&
-			     ( this.getTreeViewConfig().drawNABranches() 
+			     ( this.getTreeViewConfig().drawNABranches()
 			       || ( nextElement instanceof IBranch
-					  && 
+					  &&
 			    	  (!((IBranch) nextElement).getName().equals(IBranch.N_A_BRANCH))
 			       )
 			     )
-			     && ( ( nextElement instanceof IBranch && 
-			    		( this.getTreeViewConfig().getBranchFilter().equals("") || 
+			     && ( ( nextElement instanceof IBranch &&
+			    		( this.getTreeViewConfig().getBranchFilter().equals("") ||
 				         ((IBranch) nextElement).getName().contains(this.getTreeViewConfig().getBranchFilter())
 				        )
 			   )))) {

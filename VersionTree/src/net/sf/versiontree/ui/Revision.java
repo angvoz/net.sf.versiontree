@@ -16,6 +16,7 @@ import java.util.List;
 
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.IRevision;
+import net.sf.versiontree.data.ITreeElement;
 import net.sf.versiontree.data.MergePoint;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -118,6 +119,8 @@ public class Revision extends Canvas {
 
 		// draw version tag icon if revision is tagged
 		if (revisionData.hasVersionTags()) {
+			IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
+
 			boolean isHeadRevision = revisionData.getRevision().matches("\\d*\\.\\d*");
 			boolean isLocked = false;
 			boolean isMerged = false;
@@ -126,21 +129,21 @@ public class Revision extends Canvas {
 			boolean isClosed = false;
 			List<String> tags = revisionData.getTags();
 			for (String tag : tags) {
-				if (tag.matches(VersionTreePlugin.TAG_DEFAULT_REGEX_LOCKED)) {
+				if (tag.matches(store.getString(VersionTreePlugin.PREF_REGEX_LOCKED))) {
 					isLocked = true;
 					// "locked" has preference over other icons
 					break;
 				}
-				if (tag.matches(VersionTreePlugin.TAG_DEFAULT_REGEX_REQUEST)) {
+				if (tag.matches(store.getString(VersionTreePlugin.PREF_REGEX_REQUEST))) {
 					isBeingMerged = true;
 				}
-				if (tag.matches(VersionTreePlugin.TAG_DEFAULT_REGEX_CLOSED)) {
+				if (tag.matches(store.getString(VersionTreePlugin.PREF_REGEX_CLOSED))) {
 					isClosed = true;
 				}
-				if (tag.matches(VersionTreePlugin.TAG_DEFAULT_REGEX_MERGE_TO)) {
+				if (tag.matches(store.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO))) {
 					isMerged = true;
 				}
-				if (tag.matches(VersionTreePlugin.TAG_DEFAULT_REGEX_MERGE_FROM)) {
+				if (tag.matches(store.getString(VersionTreePlugin.PREF_REGEX_MERGE_FROM))) {
 					isPropagated = true;
 				}
 			}
@@ -202,7 +205,7 @@ public class Revision extends Canvas {
 	 */
 	private String getRevisionString() {
 		String revisionNumber = revisionData.getRevision();
-		if ((revisionData.getState() & IRevision.STATE_CURRENT) > 0)
+		if ((revisionData.getState() & ITreeElement.STATE_CURRENT) > 0)
 			revisionNumber = "*" + revisionNumber; //$NON-NLS-1$
 		if (revisionData.getLogEntry().isDeletion())
 			revisionNumber += " ("+revisionData.getLogEntry().getState()+")";

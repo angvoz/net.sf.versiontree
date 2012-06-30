@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, Andr Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Andr Langhorst <andre@masse.de> - initial implementation
  *     Jan Karstens <jan.karstens@web.de> - extensions
@@ -21,11 +21,12 @@ import java.util.regex.Pattern;
 
 import net.sf.versiontree.VersionTreePlugin;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
 /**
- * Data structure for walking version trees 
+ * Data structure for walking version trees
  * @author Andre  */
 public class BranchTree {
 	private int numberOfBranches = 0;
@@ -37,8 +38,6 @@ public class BranchTree {
 	private HashMap<String, IRevision> revisions;
 	private HashMap<String,IRevision> alltags;
 
-	private static final Pattern PATTERN_MERGE_TO = Pattern.compile(VersionTreePlugin.TAG_DEFAULT_REGEX_MERGE_TO);
-
 	public HashMap<String, IRevision> getAlltags() {
 		return alltags;
 	}
@@ -46,9 +45,9 @@ public class BranchTree {
 	public boolean isEmpty() {
 		return numberOfBranches == 0;
 	}
-	
+
 	/**
-	 * Sets up all data structures from CVS Logs 
+	 * Sets up all data structures from CVS Logs
 	 */
 	public BranchTree(ILogEntry[] logs, String selectedRevision) {
 		// no logs, empty tree
@@ -66,43 +65,41 @@ public class BranchTree {
 		// build complete tree structure
 		buildCompleteTreeStructure();
 		walk(head);
-		
+
 	}
-	
-	/** 
-	 * Fill merge points information 
+
+	/**
+	 * Fill merge points information
 	 */
-	public void walk(
-		ITreeElement parameterElement) {
+	public void walk(ITreeElement parameterElement) {
 		if (parameterElement instanceof IRevision) {
+			IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
+			Pattern patternMergeTo = Pattern.compile(store.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO));
+
 			IRevision revision = (IRevision) parameterElement;
 			CVSTag[] tags = revision.getLogEntry().getTags();
 			for (int i = 0; i < tags.length; i++) {
 				CVSTag tag = tags[i];
-			    Matcher matcher = PATTERN_MERGE_TO.matcher(tag.getName());
-			    while ( matcher.find() ) {
-			    	String branchFrom = matcher.group(1);
-			    	String branchTo = matcher.group(2);
-			    	String mergeFromTag = "tag_"+branchTo+"_MERGE-FROM_"+branchFrom;
-			    	IRevision revisionTo = alltags.get(mergeFromTag);
-			    	if ( revisionTo != null &&
-			    			revisionTo != parameterElement )
-			    	{
-			    		if (revision.getRevision().length() > revisionTo.getRevision().length()) {
-			    			MergePoint mergePointTo = new MergePoint(branchTo, revisionTo);
-			    			MergePoint mergePointFrom = new MergePoint(branchFrom, revision);
-				    		revision.addMergeToRevision(mergePointTo);
-				    		revisionTo.addMergeFromRevision(mergePointFrom);
-			    		}
-			    	}
-			    }
+				Matcher matcher = patternMergeTo.matcher(tag.getName());
+				while (matcher.find()) {
+					String branchFrom = matcher.group(1);
+					String branchTo = matcher.group(2);
+					String mergeFromTag = "tag_"+branchTo+"_MERGE-FROM_"+branchFrom;
+					IRevision revisionTo = alltags.get(mergeFromTag);
+					if (revisionTo != null && revisionTo != parameterElement) {
+						if (revision.getRevision().length() > revisionTo.getRevision().length()) {
+							MergePoint mergePointTo = new MergePoint(branchTo, revisionTo);
+							MergePoint mergePointFrom = new MergePoint(branchFrom, revision);
+							revision.addMergeToRevision(mergePointTo);
+							revisionTo.addMergeFromRevision(mergePointFrom);
+						}
+					}
+				}
 			}
 		}
 
-		for (Iterator<ITreeElement> iter = parameterElement.getChildren().listIterator();
-			iter.hasNext();
-			) {
-			ITreeElement nextElement = (ITreeElement) iter.next();
+		for (Iterator<ITreeElement> iter = parameterElement.getChildren().listIterator(); iter.hasNext();) {
+			ITreeElement nextElement = iter.next();
 			walk(nextElement);
 		}
 	}
@@ -133,11 +130,11 @@ public class BranchTree {
 				currentRevision);
 			createBranches(logEntry);
 		}
-		
+
 		// connect revisions to branches
 		headBranch.addChild(rootRevision);
 		for (Iterator<IRevision> iter = revisions.values().iterator(); iter.hasNext();) {
-			IRevision currentRevision = (IRevision) iter.next();
+			IRevision currentRevision = iter.next();
 			String branchPrefix = currentRevision.getBranchPrefix();
 			BranchData branch = (BranchData) branches.get(branchPrefix);
 			if (branch == null) {
@@ -147,7 +144,7 @@ public class BranchTree {
 					// no branch tag! create adhoc branch
 					branch = createBranch(branchPrefix, IBranch.N_A_BRANCH);
 					String parentPrefix = branchPrefix.substring(0,branchPrefix.lastIndexOf(".",branchPrefix.lastIndexOf(".")-1));
-					IRevision branchParent = (IRevision) revisions.get(parentPrefix);
+					IRevision branchParent = revisions.get(parentPrefix);
 					branchParent.addChild(branch);
 				}
 			}
@@ -155,7 +152,7 @@ public class BranchTree {
 			branch.addRevisionData(currentRevision);
 		}
 	}
-	
+
 	/**
 	 * Creates all branches for the given log entry (including
 	 * empty branches).
@@ -169,7 +166,7 @@ public class BranchTree {
 			}
 		}
 	}
-	
+
 	private BranchData createBranch(String branchPrefix, String name) {
 		BranchData branch = new BranchData();
 		branch.setBranchPrefix(branchPrefix);
@@ -180,7 +177,7 @@ public class BranchTree {
 
 	private void buildCompleteTreeStructure() {
 		for (Iterator<IBranch> iter = branches.values().iterator(); iter.hasNext();) {
-			IBranch outerBranch = (IBranch) iter.next();
+			IBranch outerBranch = iter.next();
 
 			// for all revisions of a branch in order
 			List<IRevision> revs = outerBranch.getRevisions();
@@ -189,7 +186,7 @@ public class BranchTree {
 			Iterator<IRevision> innerIter = revs.iterator();
 			IRevision prev = null;
 			while (innerIter.hasNext()) {
-				IRevision innerRevision = (IRevision) innerIter.next();
+				IRevision innerRevision = innerIter.next();
 				// ... the next revision is a child
 				if (prev != null)
 					prev.addChild(innerRevision);
@@ -198,7 +195,7 @@ public class BranchTree {
 					findBranchesForRevision(innerRevision).iterator();
 					innerBranches.hasNext();
 					) {
-					IBranch branchChild = (IBranch) innerBranches.next();
+					IBranch branchChild = innerBranches.next();
 					innerRevision.addChild(branchChild);
 					branchChild.setParent(innerRevision);
 				}
@@ -216,7 +213,7 @@ public class BranchTree {
 
 	/**
 	 * TODO: wrong algorithm because branch can be removed.
-	 * 
+	 *
 	 * @param rev
 	 * @return
 	 */
@@ -231,17 +228,17 @@ public class BranchTree {
 		return sortedBranches;
 	}
 
-	/** 
+	/**
 	 * the active revision currently has a "*" currently displayed
 	 */
 	private void ifIsActiveRevisionInIDErememberIt(
 		String selectedRevision,
 		IRevision currentRevision) {
 		if (currentRevision.getRevision().equals(selectedRevision))
-			currentRevision.setState(IRevision.STATE_CURRENT);
+			currentRevision.setState(ITreeElement.STATE_CURRENT);
 	}
-	
-	/** 
+
+	/**
 	 * the root revision is recognized by its revision number
 	 */
 	private void ifIsRootSetRoot(
@@ -258,8 +255,8 @@ public class BranchTree {
 		}
 	}
 
-	/** 
-	 * gets head Branch for decension 
+	/**
+	 * gets head Branch for decension
 	 */
 	public IBranch getHeadBranch() {
 		return headBranch;

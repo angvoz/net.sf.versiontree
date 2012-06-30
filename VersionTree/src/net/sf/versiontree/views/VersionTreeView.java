@@ -868,25 +868,27 @@ public class VersionTreeView
 			public Image getImage(Object element) {
 				if (element == null)
 					return null;
+
+				IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
 				CVSTag tag = (CVSTag) element;
 				switch (tag.getType()) {
 					case CVSTag.BRANCH :
 					case CVSTag.HEAD :
 						return branchImage;
 					case CVSTag.VERSION :
-						if (tag.getName().matches(VersionTreePlugin.TAG_DEFAULT_REGEX_LOCKED)) {
+						if (tag.getName().matches(store.getString(VersionTreePlugin.PREF_REGEX_LOCKED))) {
 							return lockedImage;
 						}
-						if (tag.getName().matches(VersionTreePlugin.TAG_DEFAULT_REGEX_REQUEST)) {
+						if (tag.getName().matches(store.getString(VersionTreePlugin.PREF_REGEX_REQUEST))) {
 							return requestImage;
 						}
-						if (tag.getName().matches(VersionTreePlugin.TAG_DEFAULT_REGEX_CLOSED)) {
+						if (tag.getName().matches(store.getString(VersionTreePlugin.PREF_REGEX_CLOSED))) {
 							return closedImage;
 						}
-						if (tag.getName().matches(VersionTreePlugin.TAG_DEFAULT_REGEX_MERGE_TO)) {
+						if (tag.getName().matches(store.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO))) {
 							return mergeToImage;
 						}
-						if (tag.getName().matches(VersionTreePlugin.TAG_DEFAULT_REGEX_MERGE_FROM)) {
+						if (tag.getName().matches(store.getString(VersionTreePlugin.PREF_REGEX_MERGE_FROM))) {
 							return mergeFromImage;
 						}
 						return versionImage;
