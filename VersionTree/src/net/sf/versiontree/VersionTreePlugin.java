@@ -34,25 +34,25 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class VersionTreePlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "net.sf.versiontree";
 
-	public static final String P_DEFAULT_ELEMENT_HEIGHT = "DefBranchHeight"; //$NON-NLS-1$
-	public static final String P_DEFAULT_ELEMENT_WIDTH = "DefBranchWidth"; //$NON-NLS-1$
-	public static final String P_DEFAULT_HSPACING = "DefHSpacing"; //$NON-NLS-1$
-	public static final String P_DEFAULT_VSPACING = "DefVSpacing"; //$NON-NLS-1$
-	public static final String P_REVISION_BACKGROUNDCOLOR = "RevisionBGColor"; //$NON-NLS-1$
-	public static final String P_BRANCH_BACKGROUNDCOLOR = "BranchBGColor"; //$NON-NLS-1$
-	public static final String P_DEADREVISION_BACKGROUNDCOLOR = "DeadRevisionBGColor"; //$NON-NLS-1$
-	public static final String P_DEFAULT_ALGORITHM = "DefAlgorithm"; //$NON-NLS-1$
-	public static final String P_DEFAULT_EMPTY_BRANCHES = "DefEmptyBranches"; //$NON-NLS-1$
-	public static final String P_DEFAULT_NA_BRANCHES = "DefNABranches"; //$NON-NLS-1$
-	public static final String P_DEFAULT_DIRECTION = "DefDirection"; //$NON-NLS-1$
-	public static final String P_DEFAULT_DETAILS_POS = "DefDetailPos"; //$NON-NLS-1$
-	public static final String P_HISTORY_VIEW_EDITOR_LINKING = "DefLinkEditor"; //$NON-NLS-1$
+	public static final String PREF_ELEMENT_HEIGHT = "DefBranchHeight"; //$NON-NLS-1$
+	public static final String PREF_ELEMENT_WIDTH = "DefBranchWidth"; //$NON-NLS-1$
+	public static final String PREF_HSPACING = "DefHSpacing"; //$NON-NLS-1$
+	public static final String PREF_VSPACING = "DefVSpacing"; //$NON-NLS-1$
+	public static final String PREF_REVISION_BACKGROUNDCOLOR = "RevisionBGColor"; //$NON-NLS-1$
+	public static final String PREF_BRANCH_BACKGROUNDCOLOR = "BranchBGColor"; //$NON-NLS-1$
+	public static final String PREF_DEADREVISION_BACKGROUNDCOLOR = "DeadRevisionBGColor"; //$NON-NLS-1$
+	public static final String PREF_ALGORITHM = "DefAlgorithm"; //$NON-NLS-1$
+	public static final String PREF_EMPTY_BRANCHES = "DefEmptyBranches"; //$NON-NLS-1$
+	public static final String PREF_NA_BRANCHES = "DefNABranches"; //$NON-NLS-1$
+	public static final String PREF_DIRECTION = "DefDirection"; //$NON-NLS-1$
+	public static final String PREF_DETAILS_POS = "DefDetailPos"; //$NON-NLS-1$
+	public static final String PREF_HISTORY_VIEW_EDITOR_LINKING = "DefLinkEditor"; //$NON-NLS-1$
 
-	public static final String P_DEFAULT_REGEX_LOCKED = "RegexLocked"; //$NON-NLS-1$
-	public static final String P_DEFAULT_REGEX_REQUEST = "RegexRequest"; //$NON-NLS-1$
-	public static final String P_DEFAULT_REGEX_MERGE_TO = "RegexMergeTo"; //$NON-NLS-1$
-	public static final String P_DEFAULT_REGEX_MERGE_FROM = "RegexMergeFrom"; //$NON-NLS-1$
-	public static final String P_DEFAULT_REGEX_CLOSED = "RegexClosed"; //$NON-NLS-1$
+	public static final String PREF_REGEX_LOCKED = "RegexLocked"; //$NON-NLS-1$
+	public static final String PREF_REGEX_REQUEST = "RegexRequest"; //$NON-NLS-1$
+	public static final String PREF_REGEX_MERGE_TO = "RegexMergeTo"; //$NON-NLS-1$
+	public static final String PREF_REGEX_MERGE_FROM = "RegexMergeFrom"; //$NON-NLS-1$
+	public static final String PREF_REGEX_CLOSED = "RegexClosed"; //$NON-NLS-1$
 
 	public static final String TAG_DEFAULT_REGEX_LOCKED = "tag_(.*)_LOCKED_.*";
 	public static final String TAG_DEFAULT_REGEX_REQUEST = "tag_(.*)_REQUEST_.*";
@@ -123,25 +123,25 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	@Override
 	public IPreferenceStore getPreferenceStore() {
 		IPreferenceStore store = super.getPreferenceStore();
-		store.setDefault(P_DEFAULT_ELEMENT_HEIGHT, 35);
-		store.setDefault(P_DEFAULT_ELEMENT_WIDTH, 120);
-		store.setDefault(P_DEFAULT_HSPACING, 20);
-		store.setDefault(P_DEFAULT_VSPACING, 10);
-		store.setDefault(P_REVISION_BACKGROUNDCOLOR, "192,192,192"); //$NON-NLS-1$
-		store.setDefault(P_BRANCH_BACKGROUNDCOLOR, "255,255,255"); //$NON-NLS-1$
-		store.setDefault(P_DEADREVISION_BACKGROUNDCOLOR, "230,230,230"); //$NON-NLS-1$
-		store.setDefault(P_DEFAULT_ALGORITHM, "1"); //$NON-NLS-1$
-		store.setDefault(P_DEFAULT_DIRECTION, "0"); //$NON-NLS-1$
-		store.setDefault(P_DEFAULT_EMPTY_BRANCHES, false);
-		store.setDefault(P_DEFAULT_NA_BRANCHES, false);
-		store.setDefault(P_DEFAULT_DETAILS_POS, org.eclipse.swt.SWT.HORIZONTAL);
-		store.setDefault(P_HISTORY_VIEW_EDITOR_LINKING, true);
+		store.setDefault(PREF_ELEMENT_HEIGHT, 35);
+		store.setDefault(PREF_ELEMENT_WIDTH, 120);
+		store.setDefault(PREF_HSPACING, 20);
+		store.setDefault(PREF_VSPACING, 10);
+		store.setDefault(PREF_REVISION_BACKGROUNDCOLOR, "192,192,192"); //$NON-NLS-1$
+		store.setDefault(PREF_BRANCH_BACKGROUNDCOLOR, "255,255,255"); //$NON-NLS-1$
+		store.setDefault(PREF_DEADREVISION_BACKGROUNDCOLOR, "230,230,230"); //$NON-NLS-1$
+		store.setDefault(PREF_ALGORITHM, "1"); //$NON-NLS-1$
+		store.setDefault(PREF_DIRECTION, "0"); //$NON-NLS-1$
+		store.setDefault(PREF_EMPTY_BRANCHES, false);
+		store.setDefault(PREF_NA_BRANCHES, false);
+		store.setDefault(PREF_DETAILS_POS, org.eclipse.swt.SWT.HORIZONTAL);
+		store.setDefault(PREF_HISTORY_VIEW_EDITOR_LINKING, true);
 
-		store.setDefault(P_DEFAULT_REGEX_LOCKED, TAG_DEFAULT_REGEX_LOCKED);
-		store.setDefault(P_DEFAULT_REGEX_REQUEST, TAG_DEFAULT_REGEX_REQUEST);
-		store.setDefault(P_DEFAULT_REGEX_MERGE_TO, TAG_DEFAULT_REGEX_MERGE_TO);
-		store.setDefault(P_DEFAULT_REGEX_MERGE_FROM, TAG_DEFAULT_REGEX_MERGE_FROM);
-		store.setDefault(P_DEFAULT_REGEX_CLOSED, TAG_DEFAULT_REGEX_CLOSED);
+		store.setDefault(PREF_REGEX_LOCKED, TAG_DEFAULT_REGEX_LOCKED);
+		store.setDefault(PREF_REGEX_REQUEST, TAG_DEFAULT_REGEX_REQUEST);
+		store.setDefault(PREF_REGEX_MERGE_TO, TAG_DEFAULT_REGEX_MERGE_TO);
+		store.setDefault(PREF_REGEX_MERGE_FROM, TAG_DEFAULT_REGEX_MERGE_FROM);
+		store.setDefault(PREF_REGEX_CLOSED, TAG_DEFAULT_REGEX_CLOSED);
 		return store;
 	}
 

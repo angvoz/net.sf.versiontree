@@ -50,15 +50,15 @@ public class VersionTreePreferencePage extends FieldEditorPreferencePage impleme
 
 	@Override
 	public void createFieldEditors() {
-		addField(new IntegerFieldEditor(VersionTreePlugin.P_DEFAULT_ELEMENT_WIDTH, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Element_Width"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new IntegerFieldEditor(VersionTreePlugin.P_DEFAULT_ELEMENT_HEIGHT, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Element_Height"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new IntegerFieldEditor(VersionTreePlugin.P_DEFAULT_HSPACING, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Element_HSpacing"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new IntegerFieldEditor(VersionTreePlugin.P_DEFAULT_VSPACING, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Element_VSpacing"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new ColorFieldEditor(VersionTreePlugin.P_REVISION_BACKGROUNDCOLOR, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Revision_Color"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new ColorFieldEditor(VersionTreePlugin.P_BRANCH_BACKGROUNDCOLOR, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Branch_Color"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new ColorFieldEditor(VersionTreePlugin.P_DEADREVISION_BACKGROUNDCOLOR, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Dead_Revision_Color"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new IntegerFieldEditor(VersionTreePlugin.PREF_ELEMENT_WIDTH, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Element_Width"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new IntegerFieldEditor(VersionTreePlugin.PREF_ELEMENT_HEIGHT, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Element_Height"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new IntegerFieldEditor(VersionTreePlugin.PREF_HSPACING, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Element_HSpacing"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new IntegerFieldEditor(VersionTreePlugin.PREF_VSPACING, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Element_VSpacing"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new ColorFieldEditor(VersionTreePlugin.PREF_REVISION_BACKGROUNDCOLOR, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Revision_Color"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new ColorFieldEditor(VersionTreePlugin.PREF_BRANCH_BACKGROUNDCOLOR, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Branch_Color"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new ColorFieldEditor(VersionTreePlugin.PREF_DEADREVISION_BACKGROUNDCOLOR, VersionTreePlugin.getResourceString("VersionTreePreferencePage.Dead_Revision_Color"), getFieldEditorParent())); //$NON-NLS-1$
 		addField(new RadioGroupFieldEditor(
-				VersionTreePlugin.P_DEFAULT_ALGORITHM,
+				VersionTreePlugin.PREF_ALGORITHM,
 				VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Algorithm"), //$NON-NLS-1$
 				1,
 				new String[][] {
@@ -67,7 +67,7 @@ public class VersionTreePreferencePage extends FieldEditorPreferencePage impleme
 				}, getFieldEditorParent())
 		);
 		addField(new RadioGroupFieldEditor(
-				VersionTreePlugin.P_DEFAULT_DIRECTION,
+				VersionTreePlugin.PREF_DIRECTION,
 				VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Default_Direction"), //$NON-NLS-1$
 				1,
 				new String[][] {
@@ -76,19 +76,19 @@ public class VersionTreePreferencePage extends FieldEditorPreferencePage impleme
 				},
 				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(
-				VersionTreePlugin.P_DEFAULT_EMPTY_BRANCHES,
+				VersionTreePlugin.PREF_EMPTY_BRANCHES,
 				VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Empty_Branches"), //$NON-NLS-1$
 				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(
-				VersionTreePlugin.P_DEFAULT_NA_BRANCHES,
+				VersionTreePlugin.PREF_NA_BRANCHES,
 				VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_NA_Branches"), //$NON-NLS-1$
 				getFieldEditorParent()));
 
-		addField(new DecoratedStringFieldEditor(VersionTreePlugin.P_DEFAULT_REGEX_LOCKED, VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED), VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Regex_Locked"), getFieldEditorParent()));
-		addField(new DecoratedStringFieldEditor(VersionTreePlugin.P_DEFAULT_REGEX_REQUEST, VersionTreeImages.getImage(VersionTreeImages.IMG_REQUEST), VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Regex_Request"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new DecoratedStringFieldEditor(VersionTreePlugin.P_DEFAULT_REGEX_MERGE_TO, VersionTreeImages.getImage(VersionTreeImages.IMG_MERGE_TO), VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Regex_Merge_To"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new DecoratedStringFieldEditor(VersionTreePlugin.P_DEFAULT_REGEX_MERGE_FROM, VersionTreeImages.getImage(VersionTreeImages.IMG_MERGE_FROM), VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Regex_Merge_From"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new DecoratedStringFieldEditor(VersionTreePlugin.P_DEFAULT_REGEX_CLOSED, VersionTreeImages.getImage(VersionTreeImages.IMG_CLOSED), VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Regex_Closed"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new DecoratedStringFieldEditor(VersionTreePlugin.PREF_REGEX_LOCKED, VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED), VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Regex_Locked"), getFieldEditorParent()));
+		addField(new DecoratedStringFieldEditor(VersionTreePlugin.PREF_REGEX_REQUEST, VersionTreeImages.getImage(VersionTreeImages.IMG_REQUEST), VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Regex_Request"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new DecoratedStringFieldEditor(VersionTreePlugin.PREF_REGEX_MERGE_TO, VersionTreeImages.getImage(VersionTreeImages.IMG_MERGE_TO), VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Regex_Merge_To"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new DecoratedStringFieldEditor(VersionTreePlugin.PREF_REGEX_MERGE_FROM, VersionTreeImages.getImage(VersionTreeImages.IMG_MERGE_FROM), VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Regex_Merge_From"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new DecoratedStringFieldEditor(VersionTreePlugin.PREF_REGEX_CLOSED, VersionTreeImages.getImage(VersionTreeImages.IMG_CLOSED), VersionTreePlugin.getResourceString("VersionTreePreferencePage.Default_Regex_Closed"), getFieldEditorParent())); //$NON-NLS-1$
 	}
 
 	public void init(IWorkbench workbench) {

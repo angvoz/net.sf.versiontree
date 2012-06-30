@@ -54,16 +54,16 @@ public class TreeViewConfig {
 	public void loadDefaults() {
 		selectedLayout =
 			VersionTreePlugin.getDefault().getPreferenceStore().getInt(
-				VersionTreePlugin.P_DEFAULT_ALGORITHM);
+				VersionTreePlugin.PREF_ALGORITHM);
 		drawEmptyBranches =
 			VersionTreePlugin.getDefault().getPreferenceStore().getBoolean(
-				VersionTreePlugin.P_DEFAULT_EMPTY_BRANCHES);
+				VersionTreePlugin.PREF_EMPTY_BRANCHES);
 		drawNABranches =
 			VersionTreePlugin.getDefault().getPreferenceStore().getBoolean(
-				VersionTreePlugin.P_DEFAULT_NA_BRANCHES);
+				VersionTreePlugin.PREF_NA_BRANCHES);
 		direction =
 			VersionTreePlugin.getDefault().getPreferenceStore().getInt(
-				VersionTreePlugin.P_DEFAULT_DIRECTION);
+				VersionTreePlugin.PREF_DIRECTION);
 	}
 
 	/**

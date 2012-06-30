@@ -72,8 +72,8 @@ public class Revision extends Canvas {
 		initializeImages();
 
 		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
-		height = store.getInt(VersionTreePlugin.P_DEFAULT_ELEMENT_HEIGHT);
-		width = store.getInt(VersionTreePlugin.P_DEFAULT_ELEMENT_WIDTH);
+		height = store.getInt(VersionTreePlugin.PREF_ELEMENT_HEIGHT);
+		width = store.getInt(VersionTreePlugin.PREF_ELEMENT_WIDTH);
 
 
 		// add paint listener
@@ -245,9 +245,9 @@ public class Revision extends Canvas {
 		setToolTipText(tooltip);
 		// Parse background color
 		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
-		String color = store.getString(VersionTreePlugin.P_REVISION_BACKGROUNDCOLOR);
+		String color = store.getString(VersionTreePlugin.PREF_REVISION_BACKGROUNDCOLOR);
 		if (revisionData.getLogEntry().isDeletion()) {
-			color = store.getString(VersionTreePlugin.P_DEADREVISION_BACKGROUNDCOLOR);
+			color = store.getString(VersionTreePlugin.PREF_DEADREVISION_BACKGROUNDCOLOR);
 		}
 		int temp1 = color.indexOf(',');
 		int temp2 = color.indexOf(',', temp1 + 1);

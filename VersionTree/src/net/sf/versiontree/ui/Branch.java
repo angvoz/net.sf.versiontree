@@ -59,12 +59,12 @@ public class Branch extends Canvas {
 		initializeImages();
 		IPreferenceStore store =
 			VersionTreePlugin.getDefault().getPreferenceStore();
-		height = store.getInt(VersionTreePlugin.P_DEFAULT_ELEMENT_HEIGHT);
-		width = store.getInt(VersionTreePlugin.P_DEFAULT_ELEMENT_WIDTH);
+		height = store.getInt(VersionTreePlugin.PREF_ELEMENT_HEIGHT);
+		width = store.getInt(VersionTreePlugin.PREF_ELEMENT_WIDTH);
 
 		// Parse background color
 		String color =
-			store.getString(VersionTreePlugin.P_BRANCH_BACKGROUNDCOLOR);
+			store.getString(VersionTreePlugin.PREF_BRANCH_BACKGROUNDCOLOR);
 		int temp1 = color.indexOf(',');
 		int temp2 = color.indexOf(',', temp1 + 1);
 		background =

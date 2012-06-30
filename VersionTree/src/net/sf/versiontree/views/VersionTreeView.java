@@ -331,11 +331,11 @@ public class VersionTreeView
 	@Override
 	public void createPartControl(Composite parent) {
 		settings = VersionTreePlugin.getDefault().getPreferenceStore();
-		linkingEnabled = settings.getBoolean(VersionTreePlugin.P_HISTORY_VIEW_EDITOR_LINKING);
+		linkingEnabled = settings.getBoolean(VersionTreePlugin.PREF_HISTORY_VIEW_EDITOR_LINKING);
 
 		initializeImages();
 
-		sashForm = new SashForm(parent, settings.getInt(VersionTreePlugin.P_DEFAULT_DETAILS_POS));
+		sashForm = new SashForm(parent, settings.getInt(VersionTreePlugin.PREF_DETAILS_POS));
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		treeView =
 			new TreeView(
@@ -432,7 +432,7 @@ public class VersionTreeView
 
 		int direction =
 			VersionTreePlugin.getDefault().getPreferenceStore().getInt(
-				VersionTreePlugin.P_DEFAULT_DIRECTION);
+				VersionTreePlugin.PREF_DIRECTION);
 		ILayout il = getLayoutAlgorithm(new DrawerDispatcher(id, direction));
 		il.walk(bt);
 		treeView.show();
@@ -553,7 +553,7 @@ public class VersionTreeView
 				} else {
 					sashForm.setOrientation(SWT.HORIZONTAL);
 				}
-				settings.setValue(VersionTreePlugin.P_DEFAULT_DETAILS_POS, sashForm.getOrientation());
+				settings.setValue(VersionTreePlugin.PREF_DETAILS_POS, sashForm.getOrientation());
 			}
 		};
 
@@ -949,7 +949,7 @@ public class VersionTreeView
 	public void setLinkingEnabled(boolean enabled) {
 		linkingEnabled = enabled;
 		// remember the last setting in the dialog settings
-		settings.setValue(VersionTreePlugin.P_HISTORY_VIEW_EDITOR_LINKING, enabled);
+		settings.setValue(VersionTreePlugin.PREF_HISTORY_VIEW_EDITOR_LINKING, enabled);
 		// if turning linking on, update the selection to correspond to the active editor
 		if (enabled) {
 			editorActivated(getSite().getPage().getActiveEditor());

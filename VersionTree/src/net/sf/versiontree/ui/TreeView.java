@@ -334,10 +334,10 @@ public class TreeView
 	private void reloadPrefrences() {
 		IPreferenceStore store =
 			VersionTreePlugin.getDefault().getPreferenceStore();
-		hspacing = store.getInt(VersionTreePlugin.P_DEFAULT_HSPACING);
-		vspacing = store.getInt(VersionTreePlugin.P_DEFAULT_VSPACING);
-		height = store.getInt(VersionTreePlugin.P_DEFAULT_ELEMENT_HEIGHT);
-		width = store.getInt(VersionTreePlugin.P_DEFAULT_ELEMENT_WIDTH);
+		hspacing = store.getInt(VersionTreePlugin.PREF_HSPACING);
+		vspacing = store.getInt(VersionTreePlugin.PREF_VSPACING);
+		height = store.getInt(VersionTreePlugin.PREF_ELEMENT_HEIGHT);
+		width = store.getInt(VersionTreePlugin.PREF_ELEMENT_WIDTH);
 	}
 
 	/**
