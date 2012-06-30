@@ -14,7 +14,6 @@ package net.sf.versiontree.ui;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.versiontree.VersionTreeImages;
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.IRevision;
 import net.sf.versiontree.data.MergePoint;

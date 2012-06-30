@@ -10,9 +10,9 @@
  *******************************************************************************/
 package net.sf.versiontree.ui.preferences;
 
-import net.sf.versiontree.VersionTreeImages;
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.ui.TreeViewConfig;
+import net.sf.versiontree.ui.VersionTreeImages;
 import net.sf.versiontree.views.VersionTreeView;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;

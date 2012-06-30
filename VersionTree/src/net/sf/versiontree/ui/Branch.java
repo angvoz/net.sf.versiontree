@@ -11,7 +11,6 @@
 package net.sf.versiontree.ui;
 
 
-import net.sf.versiontree.VersionTreeImages;
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.IBranch;
 

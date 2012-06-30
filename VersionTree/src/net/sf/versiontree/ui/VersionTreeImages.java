@@ -8,11 +8,13 @@
  * Contributors:
  *     Andrew Gvozdev <angvoz.dev@gmail.com> - initial revision
  *******************************************************************************/
-package net.sf.versiontree;
+package net.sf.versiontree.ui;
 
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.sf.versiontree.VersionTreePlugin;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;

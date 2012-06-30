@@ -19,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import net.sf.versiontree.VersionTreeImages;
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.BranchTree;
 import net.sf.versiontree.data.ITreeElement;
@@ -32,6 +31,7 @@ import net.sf.versiontree.ui.DetailTableProvider;
 import net.sf.versiontree.ui.LogEntrySelectionListener;
 import net.sf.versiontree.ui.TreeView;
 import net.sf.versiontree.ui.TreeViewConfig;
+import net.sf.versiontree.ui.VersionTreeImages;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
