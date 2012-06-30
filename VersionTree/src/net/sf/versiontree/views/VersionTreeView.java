@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -155,9 +156,9 @@ public class VersionTreeView
 	private Image versionImage;
 
 	private Image lockedImage;
-	private Image beingMergedImage;
-	private Image mergedImage;
-	private Image propagatedImage;
+	private Image requestImage;
+	private Image mergeToImage;
+	private Image mergeFromImage;
 	private Image closedImage;
 
 	private ILogEntry[] entries;
@@ -414,7 +415,9 @@ public class VersionTreeView
 	 * server.
 	 */
 	public void renderCurrentVersionTree() {
-		renderVersionTree(branchTree);
+		if (branchTree != null) {
+			renderVersionTree(branchTree);
+		}
 	}
 
 	private void renderVersionTree(BranchTree bt) {
@@ -630,7 +633,7 @@ public class VersionTreeView
 		showNABranchesAction.setChecked(treeView.getTreeViewConfig().drawNABranches());
 
 		// deep layout
-		deepLayoutAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.Deep_Layout_Name"), Action.AS_RADIO_BUTTON) {//$NON-NLS-1$
+		deepLayoutAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.Deep_Layout_Name"), IAction.AS_RADIO_BUTTON) {//$NON-NLS-1$
 	@Override
 	public void run() {
 				if (isChecked()) {
@@ -648,7 +651,7 @@ public class VersionTreeView
 			deepLayoutAction.setChecked(true);
 
 		// wide layout
-			wideLayoutAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.Wide_Layout_Name"), Action.AS_RADIO_BUTTON) {//$NON-NLS-1$
+			wideLayoutAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.Wide_Layout_Name"), IAction.AS_RADIO_BUTTON) {//$NON-NLS-1$
 	@Override
 	public void run() {
 				if (isChecked()) {
@@ -811,9 +814,9 @@ public class VersionTreeView
 		branchImage = plugin.getImageDescriptor(ICVSUIConstants.IMG_TAG).createImage();
 
 		lockedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED);
-		beingMergedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_BEING_MERGED);
-		mergedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_MERGED);
-		propagatedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_PROPAGATED);
+		requestImage = VersionTreeImages.getImage(VersionTreeImages.IMG_REQUEST);
+		mergeToImage = VersionTreeImages.getImage(VersionTreeImages.IMG_MERGE_TO);
+		mergeFromImage = VersionTreeImages.getImage(VersionTreeImages.IMG_MERGE_FROM);
 		closedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_CLOSED);
 	}
 
@@ -871,20 +874,20 @@ public class VersionTreeView
 					case CVSTag.HEAD :
 						return branchImage;
 					case CVSTag.VERSION :
-						if (tag.getName().matches(VersionTreePlugin.TAG_REGEX_LOCKED)) {
+						if (tag.getName().matches(VersionTreePlugin.TAG_DEFAULT_REGEX_LOCKED)) {
 							return lockedImage;
 						}
-						if (tag.getName().matches(VersionTreePlugin.TAG_REGEX_BEING_MERGED)) {
-							return beingMergedImage;
+						if (tag.getName().matches(VersionTreePlugin.TAG_DEFAULT_REGEX_REQUEST)) {
+							return requestImage;
 						}
-						if (tag.getName().matches(VersionTreePlugin.TAG_REGEX_CLOSED)) {
+						if (tag.getName().matches(VersionTreePlugin.TAG_DEFAULT_REGEX_CLOSED)) {
 							return closedImage;
 						}
-						if (tag.getName().matches(VersionTreePlugin.TAG_REGEX_MERGE_TO)) {
-							return mergedImage;
+						if (tag.getName().matches(VersionTreePlugin.TAG_DEFAULT_REGEX_MERGE_TO)) {
+							return mergeToImage;
 						}
-						if (tag.getName().matches(VersionTreePlugin.TAG_REGEX_MERGE_FROM)) {
-							return propagatedImage;
+						if (tag.getName().matches(VersionTreePlugin.TAG_DEFAULT_REGEX_MERGE_FROM)) {
+							return mergeFromImage;
 						}
 						return versionImage;
 				}

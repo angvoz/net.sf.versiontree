@@ -56,9 +56,9 @@ public class Revision extends Canvas {
 
 	private Image versionImage;
 	private Image lockedImage;
-	private Image beingMergedImage;
-	private Image mergedImage;
-	private Image propagatedImage;
+	private Image requestImage;
+	private Image mergedToImage;
+	private Image mergedFromImage;
 	private Image closedImage;
 	private Image completedImage;
 
@@ -100,9 +100,9 @@ public class Revision extends Canvas {
 		versionImage = plugin.getImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION).createImage();
 
 		lockedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED);
-		beingMergedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_BEING_MERGED);
-		mergedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_MERGED);
-		propagatedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_PROPAGATED);
+		requestImage = VersionTreeImages.getImage(VersionTreeImages.IMG_REQUEST);
+		mergedToImage = VersionTreeImages.getImage(VersionTreeImages.IMG_MERGE_TO);
+		mergedFromImage = VersionTreeImages.getImage(VersionTreeImages.IMG_MERGE_FROM);
 		closedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_CLOSED);
 		completedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_COMPLETED);
 
@@ -127,21 +127,21 @@ public class Revision extends Canvas {
 			boolean isClosed = false;
 			List<String> tags = revisionData.getTags();
 			for (String tag : tags) {
-				if (tag.matches(VersionTreePlugin.TAG_REGEX_LOCKED)) {
+				if (tag.matches(VersionTreePlugin.TAG_DEFAULT_REGEX_LOCKED)) {
 					isLocked = true;
 					// "locked" has preference over other icons
 					break;
 				}
-				if (tag.matches(VersionTreePlugin.TAG_REGEX_BEING_MERGED)) {
+				if (tag.matches(VersionTreePlugin.TAG_DEFAULT_REGEX_REQUEST)) {
 					isBeingMerged = true;
 				}
-				if (tag.matches(VersionTreePlugin.TAG_REGEX_CLOSED)) {
+				if (tag.matches(VersionTreePlugin.TAG_DEFAULT_REGEX_CLOSED)) {
 					isClosed = true;
 				}
-				if (tag.matches(VersionTreePlugin.TAG_REGEX_MERGE_TO)) {
+				if (tag.matches(VersionTreePlugin.TAG_DEFAULT_REGEX_MERGE_TO)) {
 					isMerged = true;
 				}
-				if (tag.matches(VersionTreePlugin.TAG_REGEX_MERGE_FROM)) {
+				if (tag.matches(VersionTreePlugin.TAG_DEFAULT_REGEX_MERGE_FROM)) {
 					isPropagated = true;
 				}
 			}
@@ -149,15 +149,15 @@ public class Revision extends Canvas {
 			if (isLocked) {
 				image = lockedImage;
 			} else if (isBeingMerged) {
-				image = beingMergedImage;
+				image = requestImage;
 			} else if (isClosed && isMerged && !isHeadRevision) {
 				image = completedImage;
 			} else if (isClosed && !isHeadRevision) {
 				image = closedImage;
 			} else if (isMerged && !isHeadRevision) {
-				image = mergedImage;
+				image = mergedToImage;
 			} else if (isPropagated && !isHeadRevision) {
-				image = propagatedImage;
+				image = mergedFromImage;
 			}
 			gc.drawImage(image, INSET, INSET);
 		}

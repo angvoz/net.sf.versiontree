@@ -48,12 +48,17 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	public static final String P_DEFAULT_DETAILS_POS = "DefDetailPos"; //$NON-NLS-1$
 	public static final String P_HISTORY_VIEW_EDITOR_LINKING = "DefLinkEditor"; //$NON-NLS-1$
 
-//	public static final String TAG_REGEX_LOCKED = "tag_(.*)_LOCKED_.*";
-	public static final String TAG_REGEX_LOCKED = "tag_(.*)-000-UAT";
-	public static final String TAG_REGEX_BEING_MERGED = "tag_(.*)_REQUEST_.*";
-	public static final String TAG_REGEX_MERGE_TO = "tag_(.*)_MERGE-TO_(.*)";
-	public static final String TAG_REGEX_MERGE_FROM = "tag_(.*)_MERGE-FROM_(.*)";
-	public static final String TAG_REGEX_CLOSED = "tag_(.*)_CLOSED";
+	public static final String P_DEFAULT_REGEX_LOCKED = "RegexLocked"; //$NON-NLS-1$
+	public static final String P_DEFAULT_REGEX_REQUEST = "RegexRequest"; //$NON-NLS-1$
+	public static final String P_DEFAULT_REGEX_MERGE_TO = "RegexMergeTo"; //$NON-NLS-1$
+	public static final String P_DEFAULT_REGEX_MERGE_FROM = "RegexMergeFrom"; //$NON-NLS-1$
+	public static final String P_DEFAULT_REGEX_CLOSED = "RegexClosed"; //$NON-NLS-1$
+
+	public static final String TAG_DEFAULT_REGEX_LOCKED = "tag_(.*)_LOCKED_.*";
+	public static final String TAG_DEFAULT_REGEX_REQUEST = "tag_(.*)_REQUEST_.*";
+	public static final String TAG_DEFAULT_REGEX_MERGE_TO = "tag_(.*)_MERGE-TO_(.*)";
+	public static final String TAG_DEFAULT_REGEX_MERGE_FROM = "tag_(.*)_MERGE-FROM_(.*)";
+	public static final String TAG_DEFAULT_REGEX_CLOSED = "tag_(.*)_CLOSED";
 
 
 	/**
@@ -131,6 +136,12 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 		store.setDefault(P_DEFAULT_NA_BRANCHES, false);
 		store.setDefault(P_DEFAULT_DETAILS_POS, org.eclipse.swt.SWT.HORIZONTAL);
 		store.setDefault(P_HISTORY_VIEW_EDITOR_LINKING, true);
+
+		store.setDefault(P_DEFAULT_REGEX_LOCKED, TAG_DEFAULT_REGEX_LOCKED);
+		store.setDefault(P_DEFAULT_REGEX_REQUEST, TAG_DEFAULT_REGEX_REQUEST);
+		store.setDefault(P_DEFAULT_REGEX_MERGE_TO, TAG_DEFAULT_REGEX_MERGE_TO);
+		store.setDefault(P_DEFAULT_REGEX_MERGE_FROM, TAG_DEFAULT_REGEX_MERGE_FROM);
+		store.setDefault(P_DEFAULT_REGEX_CLOSED, TAG_DEFAULT_REGEX_CLOSED);
 		return store;
 	}
 

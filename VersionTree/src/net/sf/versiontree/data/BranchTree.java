@@ -37,7 +37,7 @@ public class BranchTree {
 	private HashMap<String, IRevision> revisions;
 	private HashMap<String,IRevision> alltags;
 
-	private static final Pattern PATTERN_MERGE_TO = Pattern.compile(VersionTreePlugin.TAG_REGEX_MERGE_TO);
+	private static final Pattern PATTERN_MERGE_TO = Pattern.compile(VersionTreePlugin.TAG_DEFAULT_REGEX_MERGE_TO);
 
 	public HashMap<String, IRevision> getAlltags() {
 		return alltags;

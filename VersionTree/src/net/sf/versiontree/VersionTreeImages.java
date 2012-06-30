@@ -49,10 +49,10 @@ public class VersionTreeImages {
 	// icons
 	public static final String IMG_BRANCH = "icons/branch.gif";
 	public static final String IMG_NA_BRANCH = "icons/na_branch.gif";
-	public static final String IMG_BEING_MERGED = "icons/tag_being_merged.gif";
+	public static final String IMG_REQUEST = "icons/tag_request.gif";
 	public static final String IMG_LOCKED = "icons/tag_locked.gif";
-	public static final String IMG_MERGED = "icons/tag_merged.gif";
-	public static final String IMG_PROPAGATED = "icons/tag_propagated.gif";
+	public static final String IMG_MERGE_TO = "icons/tag_merge_to.gif";
+	public static final String IMG_MERGE_FROM = "icons/tag_merge_from.gif";
 	public static final String IMG_CLOSED = "icons/tag_closed.gif";
 	public static final String IMG_COMPLETED = "icons/tag_completed.gif";
 
