@@ -1,0 +1,105 @@
+= Version Tree Plugin for CVS =
+== Download ==
+=== Update Sites ===
+Eclipse 3.7/3.8/4.2 (Indigo/Juno), Version Tree 1.7.0: Coming soon
+
+Eclipse 3.6 (Helios), Version Tree 1.6.1: http://versiontree.sourceforge.net/updates
+
+=== Archived ===
+{|
+|Eclipse 3.7/3.8/4.2 (Indigo/Juno): || Version Tree 1.7.0 (coming soon)<br/>
+|-
+|Eclipse 3.6 (Helios):              || [http://sourceforge.net/projects/versiontree/files/versiontree%20(Eclipse%203.6)/versiontree%201.6.1/ Version Tree 1.6.1]<br/>
+|-
+|Eclipse 3.4 (Ganymede):            || [http://sourceforge.net/project/showfiles.php?group_id=76701&package_id=297896&release_id=638331 Version Tree 1.6.0]<br/>
+|-
+|Eclipse 3.2/3.3 (Callisto/Europa): || [http://sourceforge.net/project/showfiles.php?group_id=76701&package_id=195441&release_id=428128 Version Tree 1.5.0]<br/>
+|-
+|Eclipse 3.1:                       || [http://sourceforge.net/project/showfiles.php?group_id=76701&package_id=153314&release_id=329980 Version Tree 1.4.0]<br/>
+|}
+
+For older plugin versions please see [http://sourceforge.net/project/showfiles.php?group_id=76701 All Packages]
+
+== Documentation ==
+=== Description ===
+The Eclipse Version Tree Plugin is an extension for the Eclipse IDE that presents graphical history tree for files under CVS Source Control.
+
+=== Short manual ===
+Right-click on a file under CVS resource in the package explorer and select "Team -> Show in Version Tree" from the popup menu to display a version tree for a CVS resource.
+<br/>Click on a revision in the version tree to display the details in the detail view on the right.
+<br/>Double click a revision in the version tree to open an editor with the contents of that revision.
+<br/>Open context menu on a revision to open or compare revisions.
+<br/>Use context menu or plugin tool bar to choose layout.
+<br/>Configure default layout, colors, sizes and icons: "Windows -> Preferences: Team / CVS / Version Tree".
+
+CVS Version Tree will connect with arrows merged versions provided they are tagged accordingly. By default, CVS Version Tree recognizes the revision from which merge was done by tag "tag_branch-to_MERGE-FROM_branch-from" and the revision to which merge was done by tag "tag_branch-from_MERGE-TO_branch-to". Refer to the Preferences page to configure the tags.
+
+
+=== Screenshots ===
+[[Image:net.sf.versiontree/raw/master/net.sf.versiontree.doc/images/MergePoints.png]]
+<br/>Arrows Connecting Merged Revisions
+<br/><br/>
+
+[[Image:net.sf.versiontree/raw/master/net.sf.versiontree.doc/images/Preferences.png]]
+<br/>Preferences and Custom Tag Decorators
+<br/><br/>
+
+[[Image:net.sf.versiontree/raw/master/net.sf.versiontree.doc/images/DeepLayout.jpg]]
+<br/>Mozilla Source Checkout w Deep Layout, Detail pane right
+<br/><br/>
+
+[[Image:net.sf.versiontree/raw/master/net.sf.versiontree.doc/images/WideLayout.jpg]]
+<br/>Mozilla Source Checkout w Wide Layout, Detail pane on bottom
+<br/><br/>
+
+[[Image:net.sf.versiontree/raw/master/net.sf.versiontree.doc/images/CompareRevisions.jpg]]
+<br/>Two revisions selected for comparison, editor-link enabled
+<br/><br/>
+
+[[Image:net.sf.versiontree/raw/master/net.sf.versiontree.doc/images/LongComments.jpg]]
+<br/>Access from CVS perspective, simple tree,long comments,JSP
+<br/><br/>
+
+== What's new ==
+=== New features in release 1.7.0 ===
+* Merge arrows between revisions based on information extracted from tags
+* Configurable decorators for tags
+* Display full revision for files and branches
+* Display vendor branch
+* Show dead revisions and <nowiki><n/a></nowiki> (unnamed) branches
+* Filtering of branches in the Version Tree view
+
+=== New features in release 1.6.1 ===
+* Plugin was compiled with JDK 1.4
+* Update site was created
+* Was submitted to eclipse marketplace: cvs-version-tree
+
+=== New features in release 1.6.0 ===
+* Migration to Eclipse 3.4 (Ganymede)
+
+=== New features in release 1.5.0 ===
+* Migration to Eclipse 3.2
+
+=== New features in release 1.4.0 ===
+* Migration to Eclipse 3.1 M7
+
+=== New features in release 1.3.0 ===
+* Workaround that should fix the NullPointerExceptions reported by some users
+* Fix of tree display for files that have revisions 1.1 and 1.1.1.1 in the repository
+* Fix for tree display: some branches were not displayed in all cases
+* Plugin fails for some users on some files. An Exception is thrown and no branch is displayed.
+
+=== New features in release 1.2.0 ===
+* Version tree is fetched in background task
+* Link with editor option (same as CVS Resource History)
+* Version Tree Context menu now works on background
+* Position of the comment region can be set via local drop down menu ('Toggle Detail View')
+* 'Show in Version Tree' now in CVS Repository Browsing context menu
+
+=== New features in release 1.1.0 ===
+* Eclipse 3.0 support (For Eclipse 2.x download 1.0.0).
+* Details view can be displayed at right or bottom of view.
+
+=== New features in release 1.0.0 ===
+* Layout and layout options are configurable.
+* Context menu with most of the features like Revision History.
