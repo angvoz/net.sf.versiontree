@@ -37,15 +37,9 @@
 	</licenses>
 
 	<modules>
-	<!--
-		<module>releng/org.eclipse.cdt</module>
-		<module>net.sf.versiontree</module>
-		<module>net.sf.versiontree-feature</module>
-		<module>net.sf.versiontree.repo</module>
-	 -->
 		<module>VersionTree</module>
-		<module>VersionTreeFeature</module>
-		<module>VersionTreeUpdateSite</module>
+		<module>net.sf.versiontree.feature</module>
+		<module>net.sf.versiontree.update-site</module>
 	</modules>
 
 	<repositories>
