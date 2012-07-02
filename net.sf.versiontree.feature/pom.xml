@@ -14,4 +14,7 @@
 	<groupId>net.sf.versiontree.features</groupId>
 	<artifactId>net.sf.versiontree</artifactId>
 	<packaging>eclipse-feature</packaging>
+	<name>CVS VersionTree Plugin Feature</name>
+	<url>https://github.com/angvoz/net.sf.versiontree</url>
+	<description>The CVS Version Tree Plugin is an extension for the Eclipse IDE that presents graphical history tree for files under CVS Source Control.</description>
 </project>

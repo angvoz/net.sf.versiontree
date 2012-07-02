@@ -1,13 +1,15 @@
 = Version Tree Plugin for CVS =
 == Download ==
 === Update Sites ===
-Eclipse 3.7/3.8/4.2 (Indigo/Juno), Version Tree 1.7.0: Coming soon
+Eclipse 3.7/3.8/4.2 (Indigo/Juno), Version Tree 1.7.0: <b><nowiki>http://versiontree.sourceforge.net/updates</nowiki></b>
 
-Eclipse 3.6 (Helios), Version Tree 1.6.1: http://versiontree.sourceforge.net/updates
+Eclipse 3.6 (Helios), Version Tree 1.6.1: <b><nowiki>http://versiontree.sourceforge.net/update-site.1.6.1</nowiki></b>
+
+To install a plugin in Eclipse using update site follow Help->Install New Software wizard.
 
 === Archived ===
 {|
-|Eclipse 3.7/3.8/4.2 (Indigo/Juno): || Version Tree 1.7.0 (coming soon)<br/>
+|Eclipse 3.7/3.8/4.2 (Indigo/Juno): || [https://sourceforge.net/projects/versiontree/files/versiontree%20%28Eclipse%203.7%29/ Version Tree 1.7.0]<br/>
 |-
 |Eclipse 3.6 (Helios):              || [http://sourceforge.net/projects/versiontree/files/versiontree%20(Eclipse%203.6)/versiontree%201.6.1/ Version Tree 1.6.1]<br/>
 |-

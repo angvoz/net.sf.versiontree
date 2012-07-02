@@ -12,7 +12,7 @@
 	<artifactId>net.sf.versiontree.parent</artifactId>
 	<version>1.7.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>CVS VersionTree Plug-in</name>
+	<name>CVS VersionTree Plugin Master</name>
 
 	<properties>
 		<tycho-version>0.13.0-SNAPSHOT</tycho-version>
@@ -234,4 +234,6 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	<url>https://github.com/angvoz/net.sf.versiontree</url>
+	<description>The CVS Version Tree Plugin is an extension for the Eclipse IDE that presents graphical history tree for files under CVS Source Control.</description>
 </project>
