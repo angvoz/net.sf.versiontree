@@ -137,6 +137,10 @@ public class BranchTree {
 			IRevision currentRevision = iter.next();
 			String branchPrefix = currentRevision.getBranchPrefix();
 			BranchData branch = (BranchData) branches.get(branchPrefix);
+			if (branch == null && !branchPrefix.contains(".")) {
+				// advanced major number (i.e. revision 2.1) will continue HEAD
+				branch = (BranchData) headBranch;
+			}
 			if (branch == null) {
 				if (currentRevision.getRevision() == IRevision.INITIAL_REVISION) {
 					branch = (BranchData) branches.get(IBranch.HEAD_PREFIX);
