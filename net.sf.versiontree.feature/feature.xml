@@ -225,10 +225,11 @@ litigation.
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.team.ui"/>
       <import plugin="org.eclipse.team.cvs.ui"/>
+      <import plugin="org.eclipse.team.cvs.core"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.compare"/>
-      <import plugin="org.eclipse.team.cvs.core" version="3.3.400" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.platform" version="3.7.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

@@ -19,12 +19,8 @@
 		<platform-version>3.8</platform-version>
 		<platform-version-name>juno</platform-version-name>
 		<platform-site>http://download.eclipse.org/releases/${platform-version-name}</platform-site>
-		<cdt-version>8.1.0</cdt-version>
-		<cdt-site>http://download.eclipse.org/tools/cdt/updates/${platform-version-name}</cdt-site>
 		<orbit-version>R20110523182458</orbit-version>
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/${orbit-version}/repository</orbit-site>
-		<tm-version>3.3</tm-version>
-		<tm-site>http://download.eclipse.org/tm/updates/${tm-version}</tm-site>
 	</properties>
 
 	<licenses>
@@ -51,16 +47,6 @@
 		<repository>
 			<id>orbit-${orbit-version}</id>
 			<url>${orbit-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>cdt</id>
-			<url>${cdt-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>tm-${tm-version}</id>
-			<url>${tm-site}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
