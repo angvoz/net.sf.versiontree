@@ -21,6 +21,7 @@ import net.sf.versiontree.data.ITreeElement;
 import net.sf.versiontree.data.MergePoint;
 import net.sf.versiontree.layout.drawer.IDrawMethod;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -182,8 +183,6 @@ public class TreeView
 		Point begin = new Point(0, 0);
 		Point end = new Point(0, 0);
 		int mode = Connector.HORIZONTAL;
-		int direction = Connector.LEFT;
-		int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 		// connect horizontal if x offset is equal
 		int sy1 = height/2, sy2 = height/2;
 		if (yPos2 > yPos1) {
@@ -205,12 +204,21 @@ public class TreeView
 		begin.y = BORDER + yPos1 * (vspacing + height) + sy1;
 		end.x = BORDER + xPos2 * (hspacing + width) + sx2;
 		end.y = BORDER + yPos2 * (vspacing + height) + sy2;
-		if ( mode == Connector.RIGHT) {
-			ConnectArrow arrow = new ConnectArrow(begin, end);
-			connectors.addConnectArrow(arrow);
+
+		int dX = end.x - begin.x;
+		int dY = end.y - begin.y;
+		int arrowLength = (int) Math.sqrt((dX * dX) + (dY * dY));
+		if (arrowLength > 0) {
+			if ( mode == Connector.RIGHT) {
+				ConnectArrow arrow = new ConnectArrow(begin, end);
+				connectors.addConnectArrow(arrow);
+			} else {
+				ConnectArrow arrow = new ConnectArrow(end,begin);
+				connectors.addConnectArrow(arrow);
+			}
 		} else {
-			ConnectArrow arrow = new ConnectArrow(end,begin);
-			connectors.addConnectArrow(arrow);
+			VersionTreePlugin.log(IStatus.ERROR, "Attempt to draw a line between the same begin and end points.");
+			return;
 		}
 	}
 
