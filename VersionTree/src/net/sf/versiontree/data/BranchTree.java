@@ -14,7 +14,6 @@ package net.sf.versiontree.data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,8 +50,9 @@ public class BranchTree {
 	 */
 	public BranchTree(ILogEntry[] logs, String selectedRevision) {
 		// no logs, empty tree
-		if (logs.length <= 0)
+		if (logs.length <= 0) {
 			return;
+		}
 
 		// basic initializations
 		alltags = new HashMap<String, IRevision>(logs.length);
@@ -77,9 +77,7 @@ public class BranchTree {
 			Pattern patternMergeTo = Pattern.compile(store.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO));
 
 			IRevision revision = (IRevision) parameterElement;
-			CVSTag[] tags = revision.getLogEntry().getTags();
-			for (int i = 0; i < tags.length; i++) {
-				CVSTag tag = tags[i];
+			for (CVSTag tag : revision.getLogEntry().getTags()) {
 				Matcher matcher = patternMergeTo.matcher(tag.getName());
 				while (matcher.find()) {
 					String branchFrom = matcher.group(1);
@@ -98,9 +96,8 @@ public class BranchTree {
 			}
 		}
 
-		for (Iterator<ITreeElement> iter = parameterElement.getChildren().listIterator(); iter.hasNext();) {
-			ITreeElement nextElement = iter.next();
-			walk(nextElement);
+		for (ITreeElement child : parameterElement.getChildren()) {
+			walk(child);
 		}
 	}
 
@@ -119,8 +116,7 @@ public class BranchTree {
 		branches.put(headBranch.getBranchPrefix(), headBranch);
 
 		// create revisions hashmap and branches + remember selected
-		for (int i = 0; i < logs.length; i++) {
-			ILogEntry logEntry = logs[i];
+		for (ILogEntry logEntry : logs) {
 			IRevision currentRevision = new RevisionData(logEntry);
 			addRevision(currentRevision.getRevision(), currentRevision);
 			ifIsRootSetRoot(logEntry, currentRevision);
@@ -133,8 +129,7 @@ public class BranchTree {
 
 		// connect revisions to branches
 		headBranch.addChild(rootRevision);
-		for (Iterator<IRevision> iter = revisions.values().iterator(); iter.hasNext();) {
-			IRevision currentRevision = iter.next();
+		for (IRevision currentRevision : revisions.values()) {
 			String branchPrefix = currentRevision.getBranchPrefix();
 			BranchData branch = (BranchData) branches.get(branchPrefix);
 			if (branch == null && !branchPrefix.contains(".")) {
@@ -180,26 +175,19 @@ public class BranchTree {
 	}
 
 	private void buildCompleteTreeStructure() {
-		for (Iterator<IBranch> iter = branches.values().iterator(); iter.hasNext();) {
-			IBranch outerBranch = iter.next();
-
+		for (IBranch outerBranch : branches.values()) {
 			// for all revisions of a branch in order
 			List<IRevision> revs = outerBranch.getRevisions();
 			Collections.sort(revs);
 
-			Iterator<IRevision> innerIter = revs.iterator();
 			IRevision prev = null;
-			while (innerIter.hasNext()) {
-				IRevision innerRevision = innerIter.next();
+			for (IRevision innerRevision : revs) {
 				// ... the next revision is a child
-				if (prev != null)
+				if (prev != null) {
 					prev.addChild(innerRevision);
+				}
 				// ... all branches are children
-				for (Iterator<IBranch> innerBranches =
-					findBranchesForRevision(innerRevision).iterator();
-					innerBranches.hasNext();
-					) {
-					IBranch branchChild = innerBranches.next();
+				for (IBranch branchChild : findBranchesForRevision(innerRevision)) {
 					innerRevision.addChild(branchChild);
 					branchChild.setParent(innerRevision);
 				}
@@ -208,8 +196,9 @@ public class BranchTree {
 					prev == null
 						? (ITreeElement) outerBranch
 						: (ITreeElement) prev);
-				if (prev == null)
+				if (prev == null) {
 					outerBranch.addChild(innerRevision);
+				}
 				prev = innerRevision;
 			}
 		}
@@ -223,8 +212,7 @@ public class BranchTree {
 	 */
 	public List<IBranch> findBranchesForRevision(IRevision rev) {
 		List<IBranch> sortedBranches = new ArrayList<IBranch>();
-		for (Iterator<IBranch> iter = branches.values().iterator(); iter.hasNext();) {
-			IBranch branch = iter.next();
+		for (IBranch branch : branches.values()) {
 			if (branch.getBranchPrefix().startsWith(rev+".0") || branch.getBranchPrefix().equals(rev+".1")) {
 				sortedBranches.add(branch);
 			}
@@ -238,8 +226,9 @@ public class BranchTree {
 	private void ifIsActiveRevisionInIDErememberIt(
 		String selectedRevision,
 		IRevision currentRevision) {
-		if (currentRevision.getRevision().equals(selectedRevision))
+		if (currentRevision.getRevision().equals(selectedRevision)) {
 			currentRevision.setState(ITreeElement.STATE_CURRENT);
+		}
 	}
 
 	/**

@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Karstens <jan.karstens@web.de> - initial implementation
  *     André Langhorst <andre@masse.de> - extensions
@@ -21,8 +21,8 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
 /**
  * @author Jan
  * @author Andre
- * 
- * This class was a wrapper for <code>ILogEntry</code>. 
+ *
+ * This class was a wrapper for <code>ILogEntry</code>.
  * Additionally it contains several convenience functions.
  */
 public class RevisionData extends AbstractTreeElement implements IRevision{
@@ -59,10 +59,10 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	private int numTags(int tagname) {
 		CVSTag[] tags = logEntry.getTags();
 		int count = 0;
-		for (int i = 0; i < tags.length; i++) {
-			CVSTag tag = tags[i];
-			if (tag.getType() == tagname)
+		for (CVSTag tag : tags) {
+			if (tag.getType() == tagname) {
 				count++;
+			}
 		}
 		return count;
 	}
@@ -93,9 +93,10 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	public List<String> getTags(int tagname) {
 		ArrayList<String> tagList = new ArrayList<String>(logEntry.getTags().length);
 		CVSTag[] tags = logEntry.getTags();
-		for (int i = 0; i < tags.length; i++) {
-			if (tagname == tags[i].getType())
-				tagList.add(tags[i].getName());
+		for (CVSTag tag : tags) {
+			if (tagname == tag.getType()) {
+				tagList.add(tag.getName());
+			}
 		}
 		return tagList;
 	}
@@ -105,22 +106,24 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	public String getComment() {
 		return logEntry.getComment();
 	}
-	
+
 	/**
 	 * Returns the branch prefix from the revision number.
 	 * (e.g. revision number "1.2.4.1" --> returns "1.2.0.4")
 	 * We need to handle one special case for the initial revision 1.1.1.1 --> 1!
-	 * @return 
+	 * @return
 	 */
 	public String getBranchPrefix() {
 		String revision = logEntry.getRevision();
-		if (revision.length() == 0 || revision.lastIndexOf(".")==-1) throw new RuntimeException("Revision malformed: "+revision);
+		if (revision.length() == 0 || revision.lastIndexOf(".")==-1) {
+			throw new RuntimeException("Revision malformed: "+revision);
+		}
 		String branchNumber = revision.substring(0, revision.lastIndexOf("."));
 		if (branchNumber.lastIndexOf(".") == -1 || branchNumber.equals(IBranch.VENDOR_PREFIX)) {
 			return branchNumber;
 		}
 		String branchPrefix = branchNumber.substring(0,branchNumber.lastIndexOf("."))+".0"+branchNumber.substring(branchNumber.lastIndexOf("."));
-		return branchPrefix; //$NON-NLS-1$
+		return branchPrefix;
 	}
 
 	/**
@@ -129,9 +132,7 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	 */
 	public String getRevisionSuffix() {
 		String revision = logEntry.getRevision();
-		return revision.substring(
-			revision.lastIndexOf(".") + 1,
-			revision.length());
+		return revision.substring(revision.lastIndexOf(".") + 1, revision.length());
 	}
 
 	/**
@@ -141,8 +142,12 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	public int compareTo(IRevision other) {
 		if (other instanceof RevisionData) {
 			RevisionData rev = (RevisionData) other;
-			if (this.getRevision().equals(IRevision.INITIAL_REVISION)) return -1;
-			if (rev.getRevision().equals(IRevision.INITIAL_REVISION)) return 1;
+			if (this.getRevision().equals(IRevision.INITIAL_REVISION)) {
+				return -1;
+			}
+			if (rev.getRevision().equals(IRevision.INITIAL_REVISION)) {
+				return 1;
+			}
 			return logEntry.getDate().compareTo(rev.logEntry.getDate());
 		}
 		return -1;
@@ -175,8 +180,8 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	public List<String> getTags() {
 		ArrayList<String> tagList = new ArrayList<String>(logEntry.getTags().length);
 		CVSTag[] tags = logEntry.getTags();
-		for (int i = 0; i < tags.length; i++) {
-			tagList.add(tags[i].getName());
+		for (CVSTag tag : tags) {
+			tagList.add(tag.getName());
 		}
 		return tagList;
 	}
@@ -184,6 +189,7 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	/**
 	 * @see net.sf.versiontree.data.ITreeElement#isRevision()
 	 */
+	@Override
 	public boolean isRevision() {
 		return true;
 	}
@@ -210,14 +216,16 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	 * Compares RevisionData objects based on the revsion
 	 * String.
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof RevisionData) {
-			RevisionData rev = (RevisionData) obj;
-			return this.getRevision().equals(rev.getRevision());
-		} else
-			return false;
+			return this.getRevision().equals(((RevisionData) obj).getRevision());
+		}
+
+		return false;
 	}
-	
+
+	@Override
 	public String toString() {
 		return logEntry.getRevision();
 	}
