@@ -1,8 +1,14 @@
 #!/bin/sh
 HOST=agvozdev@web.sourceforge.net
 
-DEST_UPDATE_SITE=$HOST:/home/project-web/versiontree/htdocs/updates
-DEST_ARCHIVE="$HOST:/home/frs/project/versiontree/versiontree\ (Eclipse\ 3.7)/net.sf.versiontree.update-site_latest-build.zip"
+if [ "$1" = "release" ];then
+  ## Blessed update site for releases is $HOST:/home/project-web/versiontree/htdocs/updates
+  DEST_UPDATE_SITE=$HOST:/home/project-web/versiontree/htdocs/updates
+  DEST_ARCHIVE="$HOST:/home/frs/project/versiontree/versiontree\ (Eclipse\ 3.7)/net.sf.versiontree.update-site_1.7.X.zip"
+else
+  DEST_UPDATE_SITE=$HOST:/home/project-web/versiontree/htdocs/update-site-unstable
+  DEST_ARCHIVE="$HOST:/home/frs/project/versiontree/versiontree\ (Eclipse\ 3.7)/net.sf.versiontree.update-site-unstable.zip"
+fi
 
 ARTEFACT=net.sf.versiontree.archive/net.sf.versiontree.update-site.*.zip
 UPDATE_SITE=net.sf.versiontree.archive/update-site

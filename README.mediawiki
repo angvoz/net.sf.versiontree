@@ -2,9 +2,11 @@
 == Download ==
 === Update Sites ===
 {|
-|Eclipse 3.7/3.8/4.2 (Indigo/Juno): || Version Tree 1.7.0: || <nowiki>http://versiontree.sourceforge.net/updates</nowiki><br/>
+|Eclipse 3.7/3.8/4.2 (Indigo/Juno): || Version Tree latest build: || <nowiki>http://versiontree.sourceforge.net/update-site-unstable</nowiki><br/>
 |-
-|Eclipse 3.6 (Helios):              || Version Tree 1.6.1: || <nowiki>http://versiontree.sourceforge.net/update-site.1.6.1</nowiki><br/>
+|Eclipse 3.7/3.8/4.2 (Indigo/Juno): || Version Tree 1.7.0:        || <nowiki>http://versiontree.sourceforge.net/updates</nowiki><br/>
+|-
+|Eclipse 3.6 (Helios):              || Version Tree 1.6.1:        || <nowiki>http://versiontree.sourceforge.net/update-site.1.6.1</nowiki><br/>
 |}
 
 To install a plugin in Eclipse using update site follow Help->Install New Software wizard.
@@ -65,8 +67,9 @@ CVS Version Tree will connect with arrows merged versions provided they are tagg
 <br/><br/>
 
 == What's new ==
-=== New features in development build toward next release ===
+=== New features in development version ("unstable" build) ===
 * Display revisions with major digit bumped (2.1 etc.)
+* Handle multiple vendor branches
 
 === New features in release 1.7.0 ===
 * Merge arrows between revisions based on information extracted from tags
