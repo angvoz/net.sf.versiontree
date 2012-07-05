@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import net.sf.versiontree.VersionTreePlugin;
+
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
@@ -110,19 +113,24 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	/**
 	 * Returns the branch prefix from the revision number.
 	 * (e.g. revision number "1.2.4.1" --> returns "1.2.0.4")
-	 * We need to handle one special case for the initial revision 1.1.1.1 --> 1!
+	 *
+	 * This logic does not include vendor branches as it is not possible to determine
+	 * if the revision is on a vendor branch. CVS provides for multiple vendor branches so
+	 * vendor branches could include any 3 numbers (except 0), not only 1.1.1
+	 *
 	 * @return
 	 */
 	public String getBranchPrefix() {
-		String revision = logEntry.getRevision();
-		if (revision.length() == 0 || revision.lastIndexOf(".")==-1) {
-			throw new RuntimeException("Revision malformed: "+revision);
+		String revisionNumber = logEntry.getRevision();
+		int lastDotPosition = revisionNumber.lastIndexOf(".");
+		if (revisionNumber.length() == 0 || lastDotPosition < 0) {
+			VersionTreePlugin.log(IStatus.ERROR, "Malformed revision: "+revisionNumber);
+			return null;
 		}
-		String branchNumber = revision.substring(0, revision.lastIndexOf("."));
-		if (branchNumber.lastIndexOf(".") == -1 || branchNumber.equals(IBranch.VENDOR_PREFIX)) {
-			return branchNumber;
-		}
-		String branchPrefix = branchNumber.substring(0,branchNumber.lastIndexOf("."))+".0"+branchNumber.substring(branchNumber.lastIndexOf("."));
+
+		String branchNumber = revisionNumber.substring(0, lastDotPosition);
+		String branchPrefix = branchNumber.substring(0, branchNumber.lastIndexOf(".")) +
+				".0" + branchNumber.substring(branchNumber.lastIndexOf("."));
 		return branchPrefix;
 	}
 

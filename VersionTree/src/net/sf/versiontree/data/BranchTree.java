@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import net.sf.versiontree.VersionTreePlugin;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -111,6 +112,35 @@ public class BranchTree {
 			}
 		}
 	}
+
+	private BranchData getBranch(IRevision revision) {
+		String revisionNumber = revision.getRevision();
+		if (revisionNumber.length() == 0 || revisionNumber.lastIndexOf(".") < 0) {
+			VersionTreePlugin.log(IStatus.ERROR, "Malformed revision: " + revisionNumber);
+			return null;
+		}
+
+		String branchNumber = revisionNumber.substring(0, revisionNumber.lastIndexOf("."));
+
+		// Check for vendor branch 1.1.1 (vendor branch can have other numbers)
+		BranchData branch = (BranchData) branches.get(branchNumber);
+
+		// Check for regular branch like 1.1.2.1
+		if (branch == null && branchNumber.contains(".")) {
+			branchNumber = branchNumber.substring(0, branchNumber.lastIndexOf("."))
+					+ ".0" + branchNumber.substring(branchNumber.lastIndexOf("."));
+			branch = (BranchData) branches.get(branchNumber);
+		}
+
+		// Check for advanced major number (i.e. revision 2.1) will continue HEAD
+		if (branch == null && revisionNumber.matches("^\\d+\\.\\d+$")) {
+			branch = (BranchData) headBranch;
+		}
+
+		return branch;
+	}
+
+
 	private void setUpHashMaps(ILogEntry[] logs, String selectedRevision) {
 		headBranch = new BranchData(IBranch.HEAD_NAME, IBranch.HEAD_PREFIX);
 		branches.put(headBranch.getBranchPrefix(), headBranch);
@@ -121,34 +151,31 @@ public class BranchTree {
 			addRevision(currentRevision.getRevision(), currentRevision);
 			ifIsRootSetRoot(logEntry, currentRevision);
 			// check if this is the selected revision
-			ifIsActiveRevisionInIDErememberIt(
-				selectedRevision,
-				currentRevision);
+			ifIsActiveRevisionInIDErememberIt(selectedRevision, currentRevision);
 			createBranches(logEntry);
 		}
 
 		// connect revisions to branches
 		headBranch.addChild(rootRevision);
-		for (IRevision currentRevision : revisions.values()) {
-			String branchPrefix = currentRevision.getBranchPrefix();
-			BranchData branch = (BranchData) branches.get(branchPrefix);
-			if (branch == null && !branchPrefix.contains(".")) {
-				// advanced major number (i.e. revision 2.1) will continue HEAD
-				branch = (BranchData) headBranch;
-			}
+		for (IRevision revision : revisions.values()) {
+			BranchData branch = getBranch(revision);
 			if (branch == null) {
-				if (currentRevision.getRevision() == IRevision.INITIAL_REVISION) {
-					branch = (BranchData) branches.get(IBranch.HEAD_PREFIX);
-				} else {
-					// no branch tag! create adhoc branch
-					branch = createBranch(branchPrefix, IBranch.N_A_BRANCH);
-					String parentPrefix = branchPrefix.substring(0,branchPrefix.lastIndexOf(".",branchPrefix.lastIndexOf(".")-1));
-					IRevision branchParent = revisions.get(parentPrefix);
-					branchParent.addChild(branch);
+				// no branch tag! create adhoc branch
+				String branchPrefix = revision.getBranchPrefix();
+				if (branchPrefix == null) {
+					continue;
 				}
+				branch = createBranch(branchPrefix, IBranch.N_A_BRANCH);
+				String parentPrefix = branchPrefix.substring(0, branchPrefix.lastIndexOf(".", branchPrefix.lastIndexOf(".") - 1));
+				IRevision branchParent = revisions.get(parentPrefix);
+				if (branchParent == null) {
+					VersionTreePlugin.log(IStatus.ERROR, "Cannot determine parent branch for revision " + revision.getRevision());
+					continue;
+				}
+				branchParent.addChild(branch);
 			}
 			// get/create the branch and add revision
-			branch.addRevisionData(currentRevision);
+			branch.addRevisionData(revision);
 		}
 	}
 
@@ -205,7 +232,7 @@ public class BranchTree {
 	}
 
 	/**
-	 * TODO: wrong algorithm because branch can be removed.
+	 * Returns the list of branches branched off particular revision.
 	 *
 	 * @param rev
 	 * @return
@@ -213,7 +240,9 @@ public class BranchTree {
 	public List<IBranch> findBranchesForRevision(IRevision rev) {
 		List<IBranch> sortedBranches = new ArrayList<IBranch>();
 		for (IBranch branch : branches.values()) {
-			if (branch.getBranchPrefix().startsWith(rev+".0") || branch.getBranchPrefix().equals(rev+".1")) {
+			String branchPrefix = branch.getBranchPrefix();
+			// Regular [rev 1.1] -> [br 1.1.0.2] or Vendor branch [rev 1.1] -> [br 1.1.1]
+			if (branchPrefix.startsWith(rev+".0") || (branchPrefix.startsWith(rev+".") && branchPrefix.split("\\.").length == 3)) {
 				sortedBranches.add(branch);
 			}
 		}
@@ -223,9 +252,7 @@ public class BranchTree {
 	/**
 	 * the active revision currently has a "*" currently displayed
 	 */
-	private void ifIsActiveRevisionInIDErememberIt(
-		String selectedRevision,
-		IRevision currentRevision) {
+	private void ifIsActiveRevisionInIDErememberIt(String selectedRevision, IRevision currentRevision) {
 		if (currentRevision.getRevision().equals(selectedRevision)) {
 			currentRevision.setState(ITreeElement.STATE_CURRENT);
 		}
@@ -234,12 +261,11 @@ public class BranchTree {
 	/**
 	 * the root revision is recognized by its revision number
 	 */
-	private void ifIsRootSetRoot(
-		ILogEntry logEntry, IRevision currentRevision) {
+	private void ifIsRootSetRoot(ILogEntry logEntry, IRevision currentRevision) {
 		// check if this is the root revision. The repository can have 1.1 only or 1.1 and 1.1.1.1!
 		// 1.1.1.1 rulez!
-		if (logEntry.getRevision().equals(IRevision.FIRST_REVISION)
-				|| logEntry.getRevision().equals(IRevision.INITIAL_REVISION)) {
+		// AG: FIXME: this logic is highly suspicious, if there is no 1.1 rootRevision is set randomly
+		if (logEntry.getRevision().equals(IRevision.FIRST_REVISION) || logEntry.getRevision().equals(IRevision.INITIAL_REVISION)) {
 			if (rootRevision == null) {
 				rootRevision = currentRevision;
 			} else if (!rootRevision.getRevision().equals(IRevision.FIRST_REVISION)){
