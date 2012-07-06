@@ -101,9 +101,9 @@ public class VersionTreePreferencePage extends FieldEditorPreferencePage impleme
 
 		IWorkbenchPage pages = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IViewReference[] views = pages.getViewReferences();
-		for (int i = 0; i < views.length; i++) {
-			if (views[i].getId().equals("net.sf.versiontree.views.VersionTreeView")){
-				VersionTreeView view = (VersionTreeView)views[i].getPart(true);
+		for (IViewReference viewRef : views) {
+			if (viewRef.getId().equals("net.sf.versiontree.views.VersionTreeView")){
+				VersionTreeView view = (VersionTreeView)viewRef.getPart(true);
 				view.renderCurrentVersionTree();
 			}
 		}

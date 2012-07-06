@@ -43,9 +43,9 @@ public class ShowNABranchesAction extends Action {
 	public void setChecked(boolean checked) {
 		super.setChecked(checked);
 		if (checked) {
-			setToolTipText("Hide unnamed branches");
+			setToolTipText("Hide Unnamed Branches");
 		} else {
-			setToolTipText("Display unnamed Branches");
+			setToolTipText("Display Unnamed Branches");
 		}
 	}
 

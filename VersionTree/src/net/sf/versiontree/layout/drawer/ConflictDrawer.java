@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     André Langhorst <andre@masse.de> - initial implementation
  *******************************************************************************/
@@ -27,13 +27,13 @@ public class ConflictDrawer implements IDrawMethod {
 	/** remember blocked x+y values, output conflicting elements */
 	public void draw(ITreeElement elem, int x, int y) {
 		HashMap<Integer, Boolean> tmp;
-		if ( (tmp = (HashMap<Integer, Boolean>) conflicts.get( new Integer(x) )) == null) {
+		if ( (tmp = conflicts.get( new Integer(x) )) == null) {
 			conflicts.put(new Integer(x), tmp = new HashMap<Integer, Boolean>());
 			tmp.put(new Integer (y), new Boolean(true));
 		} else {
-			if (tmp.get(new Integer (y)) == null)
+			if (tmp.get(new Integer (y)) == null) {
 				tmp.put(new Integer (y), new Boolean(true));
-			else {
+			} else {
 				printConflictAt(elem, x, y);
 			}
 		}
@@ -43,7 +43,7 @@ public class ConflictDrawer implements IDrawMethod {
 		if (first == false) {
 			first = true;
 			System.out.println("Conflicts:");
-			System.out.println("__________");	
+			System.out.println("__________");
 		}
 		System.out.print("Conflict at: X "+x+" - Y "+y+" ");
 		if (elem instanceof IRevision) {

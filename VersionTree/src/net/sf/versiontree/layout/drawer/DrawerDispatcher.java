@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     André Langhorst <andre@masse.de> - initial implementation
  *******************************************************************************/
@@ -74,11 +74,11 @@ public class DrawerDispatcher {
 		int b = y_right ? (switched ? x : y) : (switched ? -x : -y);
 		element.setX(a);
 		element.setY(b);
-		if (method != null)
+		if (method != null) {
 			method.draw(element, a, b);
-		else {
-			for (int i = 0; i < m_delegates.length; i++) {
-				m_delegates[i].draw(element, a, b);
+		} else {
+			for (IDrawMethod m_delegate : m_delegates) {
+				m_delegate.draw(element, a, b);
 			}
 		}
 	}

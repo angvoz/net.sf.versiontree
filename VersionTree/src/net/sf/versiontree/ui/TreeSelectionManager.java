@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Karstens <jan.karstens@web.de> - initial implementation
  *******************************************************************************/
@@ -72,9 +72,8 @@ public class TreeSelectionManager implements ISelectionProvider {
 		if (!(stateMask == SWT.CTRL)) {
 			selection.clear();
 		}
-		for (Iterator<IRevision> iter = revisions.iterator(); iter.hasNext();) {
-			IRevision selected = (IRevision) iter.next();
-			addRevision(selected);
+		for (IRevision revision : revisions) {
+			addRevision(revision);
 		}
 
 		setSelected();
@@ -118,7 +117,7 @@ public class TreeSelectionManager implements ISelectionProvider {
 	}
 
 	/**
-	 * Sets all revisions in the range (inculind source and target) to 
+	 * Sets all revisions in the range (including source and target) to
 	 * selected.
 	 * @param source
 	 * @param target
@@ -126,8 +125,9 @@ public class TreeSelectionManager implements ISelectionProvider {
 	private void selectRange(IRevision source, IRevision target) {
 		ITreeElement current = source;
 		do {
-			if (current instanceof IRevision)
+			if (current instanceof IRevision) {
 				selection.addSelectedElement((IRevision) current);
+			}
 			current = current.getParent();
 		} while (current != target);
 		selection.addSelectedElement(target);
@@ -150,7 +150,7 @@ public class TreeSelectionManager implements ISelectionProvider {
 	 * Checks if there is a path from the newer revision to the older
 	 * revision. Returns the newer revision if a path is found, null
 	 * otherwise. If there is a path, one can get to the older revision
-	 * by following the links to the predecessor. 
+	 * by following the links to the predecessor.
 	 * @param prevRevision
 	 * @param revision
 	 * @return newer revision or null if not on one path.
@@ -164,12 +164,14 @@ public class TreeSelectionManager implements ISelectionProvider {
 		} else if (r1.compareTo(r2) < 0) {
 			newest = r2;
 			target = r1;
-		} else
+		} else {
 			return null;
+		}
 		ITreeElement current = newest;
 		do {
-			if (current.equals(target))
+			if (current.equals(target)) {
 				return newest;
+			}
 			current = current.getParent();
 		} while (current != null);
 		return null;
@@ -191,13 +193,11 @@ public class TreeSelectionManager implements ISelectionProvider {
 	public IStructuredSelection getStructuredSelection() {
 		ArrayList<ILogEntry> logs = new ArrayList<ILogEntry>();
 		Iterator<IRevision> iter = selection.iterator();
-		int idx = 0;
 		while (iter.hasNext()) {
-			IRevision element = (IRevision) iter.next();
+			IRevision element = iter.next();
 			ILogEntry log = element.getLogEntry();
 			if (!log.isDeletion()) {
 				logs.add(log);
-				idx++;
 			}
 		}
 		return new StructuredSelection(logs.toArray());
@@ -209,7 +209,7 @@ public class TreeSelectionManager implements ISelectionProvider {
 	private void setSelected() {
 		Iterator<IRevision> iter = selection.iterator();
 		while (iter.hasNext()) {
-			IRevision element = (IRevision) iter.next();
+			IRevision element = iter.next();
 			element.setSelected(true);
 		}
 	}
@@ -220,36 +220,23 @@ public class TreeSelectionManager implements ISelectionProvider {
 	private void resetSelected() {
 		Iterator<IRevision> iter = selection.iterator();
 		while (iter.hasNext()) {
-			IRevision element = (IRevision) iter.next();
+			IRevision element = iter.next();
 			element.setSelected(false);
 		}
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		throw new RuntimeException("Not supported!");
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		throw new RuntimeException("Not supported!");
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-	 */
 	public void setSelection(ISelection selection) {
 		throw new RuntimeException("Not supported!");
 	}
 
-	/**
-	 * Returns the current selection.
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-	 */
 	public ISelection getSelection() {
 		return getStructuredSelection();
 	}

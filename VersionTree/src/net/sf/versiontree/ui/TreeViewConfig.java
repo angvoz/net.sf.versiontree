@@ -1,14 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Karstens <jan.karstens@web.de> - initial implementation
  *******************************************************************************/
 package net.sf.versiontree.ui;
+
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.algo.DeepLayout;
@@ -52,18 +54,11 @@ public class TreeViewConfig {
 	 * Loads the default configuration from the preference store.
 	 */
 	public void loadDefaults() {
-		selectedLayout =
-			VersionTreePlugin.getDefault().getPreferenceStore().getInt(
-				VersionTreePlugin.PREF_ALGORITHM);
-		drawEmptyBranches =
-			VersionTreePlugin.getDefault().getPreferenceStore().getBoolean(
-				VersionTreePlugin.PREF_EMPTY_BRANCHES);
-		drawNABranches =
-			VersionTreePlugin.getDefault().getPreferenceStore().getBoolean(
-				VersionTreePlugin.PREF_NA_BRANCHES);
-		direction =
-			VersionTreePlugin.getDefault().getPreferenceStore().getInt(
-				VersionTreePlugin.PREF_DIRECTION);
+		IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
+		selectedLayout = prefs.getInt(VersionTreePlugin.PREF_ALGORITHM);
+		drawEmptyBranches = prefs.getBoolean(VersionTreePlugin.PREF_EMPTY_BRANCHES);
+		drawNABranches = prefs.getBoolean(VersionTreePlugin.PREF_NA_BRANCHES);
+		direction = prefs.getInt(VersionTreePlugin.PREF_DIRECTION);
 	}
 
 	/**
@@ -135,7 +130,7 @@ public class TreeViewConfig {
 	public void setDirection(int newDirection) {
 		direction = newDirection;
 	}
-	
+
 	/**
 	 * Returns the major layout direction. Either top-down
 	 * or left-right.

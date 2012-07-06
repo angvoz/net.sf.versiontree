@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Karstens <jan.karstens@web.de> - initial implementation
  *******************************************************************************/
@@ -61,7 +61,9 @@ public class DetailTableProvider {
 		public String getColumnText(Object element, int columnIndex) {
 			String[] entry = (String[]) element;
 			if (entry == null)
+			 {
 				return ""; //$NON-NLS-1$
+			}
 			return entry[columnIndex];
 		}
 	}
@@ -89,6 +91,7 @@ public class DetailTableProvider {
 		 * Compares two log entries, sorting first by the main column of this sorter,
 		 * then by subsequent columns, depending on the column sort order.
 		 */
+		@Override
 		public int compare(Viewer viewer, Object o1, Object o2) {
 			String[] e1 = (String[]) o1;
 			String[] e2 = (String[]) o2;
@@ -97,14 +100,16 @@ public class DetailTableProvider {
 				result = super.compare(viewer, o1, o2);
 			} else {
 				int[] columnSortOrder = SORT_ORDERS_BY_COLUMN[columnNumber];
-				for (int i = 0; i < columnSortOrder.length; ++i) {
+				for (int element : columnSortOrder) {
 					result = e1[columnNumber].compareTo(e2[columnNumber]);
-					if (result != 0)
+					if (result != 0) {
 						break;
+					}
 				}
 			}
-			if (reversed)
+			if (reversed) {
 				result = -result;
+			}
 			return result;
 		}
 
@@ -144,7 +149,7 @@ public class DetailTableProvider {
 	/**
 	 * Create a TableViewer that can be used to display the details of an ILogEntry instance.
 	 * This method provides the labels and sorter but does not provide a content provider
-	 * 
+	 *
 	 * @param parent
 	 * @return TableViewer
 	 */
@@ -219,6 +224,7 @@ public class DetailTableProvider {
 			 * presses on the same column header will
 			 * toggle sorting order (ascending/descending).
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// column selected - need to sort
 				int column =

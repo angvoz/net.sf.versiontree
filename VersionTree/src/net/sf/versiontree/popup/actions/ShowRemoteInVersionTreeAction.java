@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     SangJin, Park <neia@users.sourceforge.net> - initial implementation
  *******************************************************************************/
@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
@@ -32,6 +31,7 @@ public class ShowRemoteInVersionTreeAction extends CVSAction {
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
+	@Override
 	public void execute(IAction action)
 		throws InterruptedException, InvocationTargetException {
 		run(new IRunnableWithProgress() {
@@ -78,10 +78,11 @@ public class ShowRemoteInVersionTreeAction extends CVSAction {
 		}
 		return new ICVSRemoteFile[0];
 	}
-	
+
 	/**
 	 * @see TeamAction#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() {
 		ICVSRemoteFile[] resources = getSelectedRemoteFiles();
 		return resources.length == 1;
@@ -89,6 +90,7 @@ public class ShowRemoteInVersionTreeAction extends CVSAction {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
+	@Override
 	protected String getErrorTitle() {
 		return Policy.getActionBundle().getString("ShowHistoryAction.showHistory"); //$NON-NLS-1$
 	}

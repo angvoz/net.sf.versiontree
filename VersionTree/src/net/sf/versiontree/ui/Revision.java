@@ -11,7 +11,6 @@
 package net.sf.versiontree.ui;
 
 
-import java.util.Iterator;
 import java.util.List;
 
 import net.sf.versiontree.VersionTreePlugin;
@@ -72,9 +71,9 @@ public class Revision extends Canvas {
 
 		initializeImages();
 
-		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
-		height = store.getInt(VersionTreePlugin.PREF_ELEMENT_HEIGHT);
-		width = store.getInt(VersionTreePlugin.PREF_ELEMENT_WIDTH);
+		IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
+		height = prefs.getInt(VersionTreePlugin.PREF_ELEMENT_HEIGHT);
+		width = prefs.getInt(VersionTreePlugin.PREF_ELEMENT_WIDTH);
 
 
 		// add paint listener
@@ -119,7 +118,7 @@ public class Revision extends Canvas {
 
 		// draw version tag icon if revision is tagged
 		if (revisionData.hasVersionTags()) {
-			IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
+			IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
 
 			boolean isHeadRevision = revisionData.getRevision().matches("\\d*\\.\\d*");
 			boolean isLocked = false;
@@ -129,21 +128,21 @@ public class Revision extends Canvas {
 			boolean isClosed = false;
 			List<String> tags = revisionData.getTags();
 			for (String tag : tags) {
-				if (tag.matches(store.getString(VersionTreePlugin.PREF_REGEX_LOCKED))) {
+				if (tag.matches(prefs.getString(VersionTreePlugin.PREF_REGEX_LOCKED))) {
 					isLocked = true;
 					// "locked" has preference over other icons
 					break;
 				}
-				if (tag.matches(store.getString(VersionTreePlugin.PREF_REGEX_REQUEST))) {
+				if (tag.matches(prefs.getString(VersionTreePlugin.PREF_REGEX_REQUEST))) {
 					isBeingMerged = true;
 				}
-				if (tag.matches(store.getString(VersionTreePlugin.PREF_REGEX_CLOSED))) {
+				if (tag.matches(prefs.getString(VersionTreePlugin.PREF_REGEX_CLOSED))) {
 					isClosed = true;
 				}
-				if (tag.matches(store.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO))) {
+				if (tag.matches(prefs.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO))) {
 					isMerged = true;
 				}
-				if (tag.matches(store.getString(VersionTreePlugin.PREF_REGEX_MERGE_FROM))) {
+				if (tag.matches(prefs.getString(VersionTreePlugin.PREF_REGEX_MERGE_FROM))) {
 					isPropagated = true;
 				}
 			}
@@ -205,10 +204,12 @@ public class Revision extends Canvas {
 	 */
 	private String getRevisionString() {
 		String revisionNumber = revisionData.getRevision();
-		if ((revisionData.getState() & ITreeElement.STATE_CURRENT) > 0)
+		if ((revisionData.getState() & ITreeElement.STATE_CURRENT) > 0) {
 			revisionNumber = "*" + revisionNumber; //$NON-NLS-1$
-		if (revisionData.getLogEntry().isDeletion())
+		}
+		if (revisionData.getLogEntry().isDeletion()) {
 			revisionNumber += " ("+revisionData.getLogEntry().getState()+")";
+		}
 		return revisionNumber;
 	}
 
@@ -230,38 +231,35 @@ public class Revision extends Canvas {
 		String tooltip = "";
 		List<MergePoint> mergeFromList = data.getMergeFromRevisions();
 		List<MergePoint> mergeToList = data.getMergeToRevisions();
-		for (Iterator<MergePoint> iterator = mergeFromList.iterator(); iterator.hasNext();) {
-			MergePoint mergeFromPoint = iterator.next();
+		for (MergePoint mergeFromPoint : mergeFromList) {
 			String mergeFromMessage = VersionTreePlugin.getResourceString("VersionTreeView.Merge_From_Message"); //$NON-NLS-1$
-			if ( tooltip.length() > 0 ) tooltip += "\n";
+			if (tooltip.length() > 0) {
+				tooltip += "\n";
+			}
 			tooltip += mergeFromMessage + ": " + mergeFromPoint.getBranchName();
 			tooltip += " (" + mergeFromPoint.getMergeRevision().getRevision() + ")";
 		}
-		for (Iterator<MergePoint> iterator = mergeToList.iterator(); iterator.hasNext();) {
-			MergePoint mergeToPoint = iterator.next();
+		for (MergePoint mergeToPoint : mergeToList) {
 			String mergeToMessage = VersionTreePlugin.getResourceString("VersionTreeView.Merge_To_Message"); //$NON-NLS-1$
-			if ( tooltip.length() > 0 ) tooltip += "\n";
+			if (tooltip.length() > 0) {
+				tooltip += "\n";
+			}
 			tooltip += mergeToMessage + ": " + mergeToPoint.getBranchName();
 			tooltip += " (" + mergeToPoint.getMergeRevision().getRevision() + ")";
 		}
 
 		setToolTipText(tooltip);
 		// Parse background color
-		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
-		String color = store.getString(VersionTreePlugin.PREF_REVISION_BACKGROUNDCOLOR);
+		IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
+		String color = prefs.getString(VersionTreePlugin.PREF_REVISION_BACKGROUNDCOLOR);
 		if (revisionData.getLogEntry().isDeletion()) {
-			color = store.getString(VersionTreePlugin.PREF_DEADREVISION_BACKGROUNDCOLOR);
+			color = prefs.getString(VersionTreePlugin.PREF_DEADREVISION_BACKGROUNDCOLOR);
 		}
 		int temp1 = color.indexOf(',');
 		int temp2 = color.indexOf(',', temp1 + 1);
-		background =
-			new Color(
-				null,
-				Integer.valueOf(color.substring(0, temp1)).intValue(),
+		background = new Color(null, Integer.valueOf(color.substring(0, temp1)).intValue(),
 				Integer.valueOf(color.substring(temp1 + 1, temp2)).intValue(),
-				Integer
-					.valueOf(color.substring(temp2 + 1, color.length()))
-					.intValue());
+				Integer.valueOf(color.substring(temp2 + 1, color.length())).intValue());
 
 		setBackground(background);
 		redraw();

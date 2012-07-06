@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Karstens <jan.karstens@web.de> - initial implementation
  *     André Langhorst <andre@masse.de> - extensions
@@ -17,7 +17,7 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
 /** query functions for revisions */
 public interface IRevision extends Comparable<IRevision>, ITreeElement {
-	
+
 	public static final String INITIAL_REVISION = "1.1.1.1";
 	public static final String FIRST_REVISION = "1.1";
 
@@ -27,7 +27,7 @@ public interface IRevision extends Comparable<IRevision>, ITreeElement {
 	public abstract String getRevision();
 	public abstract String getComment();
 	public abstract int getState();
-	
+
 	public abstract void setState(int state);
 
 	/** tag list from log entries */

@@ -57,24 +57,17 @@ public class Branch extends Canvas {
 	public Branch(Composite parent, int style) {
 		super(parent, style);
 		initializeImages();
-		IPreferenceStore store =
-			VersionTreePlugin.getDefault().getPreferenceStore();
-		height = store.getInt(VersionTreePlugin.PREF_ELEMENT_HEIGHT);
-		width = store.getInt(VersionTreePlugin.PREF_ELEMENT_WIDTH);
+		IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
+		height = prefs.getInt(VersionTreePlugin.PREF_ELEMENT_HEIGHT);
+		width = prefs.getInt(VersionTreePlugin.PREF_ELEMENT_WIDTH);
 
 		// Parse background color
-		String color =
-			store.getString(VersionTreePlugin.PREF_BRANCH_BACKGROUNDCOLOR);
+		String color = prefs.getString(VersionTreePlugin.PREF_BRANCH_BACKGROUNDCOLOR);
 		int temp1 = color.indexOf(',');
 		int temp2 = color.indexOf(',', temp1 + 1);
-		background =
-			new Color(
-				null,
-				Integer.valueOf(color.substring(0, temp1)).intValue(),
+		background = new Color(null, Integer.valueOf(color.substring(0, temp1)).intValue(),
 				Integer.valueOf(color.substring(temp1 + 1, temp2)).intValue(),
-				Integer
-					.valueOf(color.substring(temp2 + 1, color.length()))
-					.intValue());
+				Integer.valueOf(color.substring(temp2 + 1, color.length())).intValue());
 
 		// add paint listener
 		addPaintListener(new PaintListener() {
@@ -110,18 +103,12 @@ public class Branch extends Canvas {
 
 		int yOffset = inset;
 		Point extent = gc.stringExtent(branchData.getName());
-		gc.drawString(
-			branchData.getName(),
-			(size.width / 2) - (extent.x / 2),
-			yOffset);
+		gc.drawString(branchData.getName(), (size.width / 2) - (extent.x / 2), yOffset);
 		yOffset += offsetBetweenStrings + extent.y;
 		gc.drawImage(versionImage, INSET, yOffset);
 		extent = gc.stringExtent(branchData.getBranchPrefix());
 		stringXPosition  = versionImage.getBounds().width + 2 * INSET;
-		gc.drawString(
-			branchData.getBranchPrefix(),
-			stringXPosition,
-			yOffset);
+		gc.drawString(branchData.getBranchPrefix(), stringXPosition, yOffset);
 
 		gc.drawRoundRectangle(0, 0, size.width - 1, size.height - 1, 20, 20);
 	}

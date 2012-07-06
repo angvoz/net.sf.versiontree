@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Karstens <jan.karstens@web.de> - initial implementation
  *******************************************************************************/
@@ -22,8 +22,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * @author Jan
  * Instances of the class can manage selections of tree elements in
  * a tree view.
- * 
- * @see org.eclipse.jface.viewers.IStructuredSelection
  */
 public class TreeSelection implements IStructuredSelection {
 
@@ -41,12 +39,12 @@ public class TreeSelection implements IStructuredSelection {
 	 * Creates an empty TreeSelection.
 	 */
 	protected TreeSelection() {
-		selection = new ArrayList();
+		selection = new ArrayList<IRevision>();
 		lastSelectedElement = null;
 	}
 
 	/**
-	 * Clears the selection, adds an element to the selection 
+	 * Clears the selection, adds an element to the selection
 	 * and sets the last selected element.
 	 * @param element
 	 */
@@ -57,7 +55,7 @@ public class TreeSelection implements IStructuredSelection {
 	}
 
 	/**
-	 * Clears the selection and adds the elements to the selection. 
+	 * Clears the selection and adds the elements to the selection.
 	 * The first element in the list will be set as the last selected element.
 	 * @param element
 	 */
@@ -70,16 +68,16 @@ public class TreeSelection implements IStructuredSelection {
 			lastSelectedElement = elements.get(0);
 		}
 	}
-	
+
 	/**
-	 * Adds an element to the selection 
+	 * Adds an element to the selection
 	 * and sets the last selected element.
 	 * @param element
 	 */
 	public void addSelectedElement(IRevision element) {
-			selection.add(element);
-			lastSelectedElement = element;
-		}
+		selection.add(element);
+		lastSelectedElement = element;
+	}
 
 	/**
 	 * Adds a set of elements to the selection and sets the first element
@@ -94,7 +92,7 @@ public class TreeSelection implements IStructuredSelection {
 	}
 
 	/**
-	 * Removes an element from the selection if it is contained in it 
+	 * Removes an element from the selection if it is contained in it
 	 * and sets it as the last selected element.
 	 * @param element
 	 */
@@ -104,7 +102,7 @@ public class TreeSelection implements IStructuredSelection {
 			lastSelectedElement = element;
 		}
 	}
-	
+
 	/**
 	 * Returns true if the element is in the selection.
 	 * @param element
@@ -122,9 +120,6 @@ public class TreeSelection implements IStructuredSelection {
 		selection.clear();
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.IStructuredSelection#getFirstElement()
-	 */
 	public Object getFirstElement() {
 		if (selection.isEmpty()) {
 			return null;
@@ -133,44 +128,27 @@ public class TreeSelection implements IStructuredSelection {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.IStructuredSelection#iterator()
-	 */
 	public Iterator<IRevision> iterator() {
 		return selection.iterator();
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.IStructuredSelection#size()
-	 */
 	public int size() {
 		return selection.size();
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.IStructuredSelection#toArray()
-	 */
 	public Object[] toArray() {
 		return selection.toArray();
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.IStructuredSelection#toList()
-	 */
+	@SuppressWarnings("unchecked")
 	public List<IRevision> toList() {
 		return (List<IRevision>) selection.clone();
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ISelection#isEmpty()
-	 */
 	public boolean isEmpty() {
 		return selection.isEmpty();
 	}
 
-	/**
-	 * @return
-	 */
 	public Object getLastSelectedElement() {
 		return lastSelectedElement;
 	}

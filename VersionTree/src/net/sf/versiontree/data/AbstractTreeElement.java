@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     André Langhorst <andre@masse.de> - initial implementation
  *******************************************************************************/
@@ -15,11 +15,6 @@ import java.util.List;
 
 /** provides tree functionality, parent, children, siblings... */
 public abstract class AbstractTreeElement implements ITreeElement {
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.data.ITreeElement#isRevision()
-	 */
-	public abstract boolean isRevision();
-	
 	private int state;
 	private int x;
 	private int y;
@@ -30,49 +25,36 @@ public abstract class AbstractTreeElement implements ITreeElement {
 	public AbstractTreeElement() {
 		children = new ArrayList<ITreeElement>();
 	}
+
 	public AbstractTreeElement(ITreeElement parent) {
 		this.parent = parent;
 		children = new ArrayList<ITreeElement>();
 	}
-	
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.data.ITreeElement#setChild()
-	 */
+
+	public abstract boolean isRevision();
+
 	public void addChild(ITreeElement e) {
-		if (!children.contains(e)) children.add(e);
+		if (!children.contains(e)) {
+			children.add(e);
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.data.ITreeElement#getSiblings()
-	 */
 	public List<ITreeElement> getSiblings() {
 		return parent.getChildren();
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.data.ITreeElement#getChildren()
-	 */
 	public List<ITreeElement> getChildren() {
 		return children;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.data.ITreeElement#getParent()
-	 */
 	public ITreeElement getParent() {
 		return parent;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.data.ITreeElement#setParent(net.sf.versiontree.data.ITreeElement)
-	 */
 	public void setParent(ITreeElement e) {
 		this.parent = e;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.data.ITreeElement#setSelected(boolean)
-	 */
 	public void setSelected(boolean selected) {
 		if (selected) {
 			state |= STATE_SELECTED;
@@ -81,9 +63,6 @@ public abstract class AbstractTreeElement implements ITreeElement {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.data.ITreeElement#isSelected()
-	 */
 	public boolean isSelected() {
 		return (state & ITreeElement.STATE_SELECTED) > 0;
 	}

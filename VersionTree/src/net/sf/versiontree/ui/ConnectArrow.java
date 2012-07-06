@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2009 Olexiy Buyanskyy, Andrew Gvozdev.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Olexiy Buyanskyy <olexiyb@gmail.com> - initial implementation
  *******************************************************************************/
@@ -17,12 +17,12 @@ import org.eclipse.swt.graphics.Point;
 public final class ConnectArrow {
 	Point begin = null;
 	Point end = null;
-	
+
 	public ConnectArrow (Point begin, Point end) {
 		this.begin = begin;
 		this.end = end;
 	}
-	
+
 	public void draw(GC gc) {
 		gc.drawLine(begin.x, begin.y, end.x, end.y);
 		drawArrowhead(gc);
@@ -30,7 +30,7 @@ public final class ConnectArrow {
 
 	private void drawArrowhead(GC gc) {
 		gc.setBackground(new Color(null,0,0,0));
-		
+
 		Point[] arrowPoints = makeArrowhead(1, 7, 7, 2);
 		int[] pointArray = new int[arrowPoints.length*2];
 		int i = 0;

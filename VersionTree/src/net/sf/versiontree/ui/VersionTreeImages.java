@@ -86,8 +86,9 @@ public class VersionTreeImages {
 	 */
 	private static URL getUrl(String key) {
 		// Note that the map can keep null URL in order not to search again
-		if (urlMap.containsKey(key))
+		if (urlMap.containsKey(key)) {
 			return urlMap.get(key);
+		}
 
 		IPath projectRelativePath = new Path(key);
 		URL url = FileLocator.find(VersionTreePlugin.getDefault().getBundle(), projectRelativePath, null);
@@ -190,8 +191,9 @@ public class VersionTreeImages {
 		String compositeKey=baseKey+suffix;
 
 		Image result = imageRegistry.get(compositeKey);
-		if (result!=null)
+		if (result != null) {
 			return result;
+		}
 
 		Image baseImage = getImage(baseKey);
 		ImageDescriptor[] overlayDescriptors = new ImageDescriptor[5];

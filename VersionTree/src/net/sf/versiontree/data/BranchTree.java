@@ -74,8 +74,8 @@ public class BranchTree {
 	 */
 	public void walk(ITreeElement parameterElement) {
 		if (parameterElement instanceof IRevision) {
-			IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
-			Pattern patternMergeTo = Pattern.compile(store.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO));
+			IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
+			Pattern patternMergeTo = Pattern.compile(prefs.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO));
 
 			IRevision revision = (IRevision) parameterElement;
 			for (CVSTag tag : revision.getLogEntry().getTags()) {

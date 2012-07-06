@@ -186,7 +186,7 @@ public class VersionTreeView
 
 	private FetchLogEntriesJob fetchLogEntriesJob;
 
-	private IPreferenceStore settings;
+	private IPreferenceStore prefs;
 
 
 	/**
@@ -204,16 +204,19 @@ public class VersionTreeView
 
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
-			if (part instanceof IEditorPart)
+			if (part instanceof IEditorPart) {
 				editorActivated((IEditorPart) part);
+			}
 		}
 		public void partBroughtToTop(IWorkbenchPart part) {
-			if(part == VersionTreeView.this)
+			if(part == VersionTreeView.this) {
 				editorActivated(getViewSite().getPage().getActiveEditor());
+			}
 		}
 		public void partOpened(IWorkbenchPart part) {
-			if(part == VersionTreeView.this)
+			if(part == VersionTreeView.this) {
 				editorActivated(getViewSite().getPage().getActiveEditor());
+			}
 		}
 		public void partClosed(IWorkbenchPart part) {
 		}
@@ -235,8 +238,9 @@ public class VersionTreeView
 		public void partHidden(IWorkbenchPartReference ref) {
 		}
 		public void partVisible(IWorkbenchPartReference ref) {
-			if(ref.getPart(true) == VersionTreeView.this)
+			if(ref.getPart(true) == VersionTreeView.this) {
 				editorActivated(getViewSite().getPage().getActiveEditor());
+			}
 		}
 		public void partInputChanged(IWorkbenchPartReference ref) {
 		}
@@ -249,11 +253,14 @@ public class VersionTreeView
 	 * @see org.eclipse.team.internal.ui.history.GenericHistoryView
 	 */
 	private ISelectionListener selectionListener = new ISelectionListener() {
-/*		@Override*/
 		public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
 
-			if (!isLinkingEnabled() || !checkIfPageIsVisible())  return;
-			if (selection instanceof IStructuredSelection == false) return;
+			if (!isLinkingEnabled() || !checkIfPageIsVisible()) {
+				return;
+			}
+			if (selection instanceof IStructuredSelection == false) {
+				return;
+			}
 			IStructuredSelection structSelection = (IStructuredSelection) selection;
 
 			// always take the first element - this is not intended to work with multiple selection
@@ -300,8 +307,7 @@ public class VersionTreeView
 								// Create and show tree
 								branchTree = new BranchTree(entries, revisionId);
 								// set current revision
-								for (int i = 0; i < entries.length; i++) {
-									ILogEntry entry = entries[i];
+								for (ILogEntry entry : entries) {
 									if (entry.getRevision().equals(revisionId)) {
 										setCurrentEntry(entry);
 									}
@@ -330,18 +336,14 @@ public class VersionTreeView
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		settings = VersionTreePlugin.getDefault().getPreferenceStore();
-		linkingEnabled = settings.getBoolean(VersionTreePlugin.PREF_HISTORY_VIEW_EDITOR_LINKING);
+		prefs = VersionTreePlugin.getDefault().getPreferenceStore();
+		linkingEnabled = prefs.getBoolean(VersionTreePlugin.PREF_HISTORY_VIEW_EDITOR_LINKING);
 
 		initializeImages();
 
-		sashForm = new SashForm(parent, settings.getInt(VersionTreePlugin.PREF_DETAILS_POS));
+		sashForm = new SashForm(parent, prefs.getInt(VersionTreePlugin.PREF_DETAILS_POS));
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-		treeView =
-			new TreeView(
-				sashForm,
-				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER,
-				this);
+		treeView = new TreeView(sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, this);
 
 		innerSashForm = new SashForm(sashForm, SWT.VERTICAL);
 		innerSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -404,7 +406,6 @@ public class VersionTreeView
 	 * Shows the version tree for the given ICVSRemoteFile in the view.
 	 */
 	public void showVersionTree(ICVSRemoteFile remoteFile) {
-
 		if (remoteFile != null) {
 			getLogEntries(remoteFile);
 		}
@@ -430,9 +431,7 @@ public class VersionTreeView
 
 		//int direction = treeView.getTreeViewConfig().getDirection();
 
-		int direction =
-			VersionTreePlugin.getDefault().getPreferenceStore().getInt(
-				VersionTreePlugin.PREF_DIRECTION);
+		int direction = VersionTreePlugin.getDefault().getPreferenceStore().getInt(VersionTreePlugin.PREF_DIRECTION);
 		ILayout il = getLayoutAlgorithm(new DrawerDispatcher(id, direction));
 		il.walk(bt);
 		treeView.show();
@@ -441,7 +440,6 @@ public class VersionTreeView
 		ITreeElement head = bt.getHeadBranch();
 		treeView.drawConnectors(head);
 	}
-
 
 	private ILayout getLayoutAlgorithm(DrawerDispatcher dp) {
 		ILayout layout = treeView.getTreeViewConfig().getLayoutAlgorithm();
@@ -553,25 +551,19 @@ public class VersionTreeView
 				} else {
 					sashForm.setOrientation(SWT.HORIZONTAL);
 				}
-				settings.setValue(VersionTreePlugin.PREF_DETAILS_POS, sashForm.getOrientation());
+				prefs.setValue(VersionTreePlugin.PREF_DETAILS_POS, sashForm.getOrientation());
 			}
 		};
 
 
-			getContentsAction = getContextMenuAction(VersionTreePlugin.getResourceString("VersionTreeView.Get_Content_Action"), new IWorkspaceRunnable() {//$NON-NLS-1$
-	public void run(IProgressMonitor monitor) throws CoreException {
+		getContentsAction = getContextMenuAction(VersionTreePlugin.getResourceString("VersionTreeView.Get_Content_Action"), new IWorkspaceRunnable() {//$NON-NLS-1$
+			public void run(IProgressMonitor monitor) throws CoreException {
 				ICVSRemoteFile remoteFile = currentSelection.getRemoteFile();
 				monitor.beginTask(null, 100);
 				try {
 					if (confirmOverwrite()) {
-						InputStream in =
-							remoteFile.getContents(
-								new SubProgressMonitor(monitor, 50));
-						getFile().setContents(
-							in,
-							false,
-							true,
-							new SubProgressMonitor(monitor, 50));
+						InputStream in = remoteFile.getContents(new SubProgressMonitor(monitor, 50));
+						getFile().setContents(in, false, true, new SubProgressMonitor(monitor, 50));
 					}
 				} catch (TeamException e) {
 					throw new CoreException(e.getStatus());
@@ -580,45 +572,28 @@ public class VersionTreeView
 				}
 			}
 		});
-		WorkbenchHelp.setHelp(
-			getContentsAction,
-			IHelpContextIds.GET_FILE_CONTENTS_ACTION);
+		WorkbenchHelp.setHelp(getContentsAction, IHelpContextIds.GET_FILE_CONTENTS_ACTION);
 
-			getRevisionAction = getContextMenuAction(VersionTreePlugin.getResourceString("VersionTreeView.Get_Sticky_Revision_Action"), //$NON-NLS-1$
-	new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				ICVSRemoteFile remoteFile = currentSelection.getRemoteFile();
-				try {
-					if (confirmOverwrite()) {
-//						CVSTeamProvider provider =
-//							(CVSTeamProvider) RepositoryProvider.getProvider(
-//								file.getProject());
-						CVSTag revisionTag =
-							new CVSTag(
-								remoteFile.getRevision(),
-								CVSTag.VERSION);
+		getRevisionAction = getContextMenuAction(VersionTreePlugin.getResourceString("VersionTreeView.Get_Sticky_Revision_Action"), //$NON-NLS-1$
+			new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					ICVSRemoteFile remoteFile = currentSelection.getRemoteFile();
+					try {
+						if (confirmOverwrite()) {
+							//	CVSTeamProvider provider = (CVSTeamProvider) RepositoryProvider.getProvider(file.getProject());
+							CVSTag revisionTag = new CVSTag(remoteFile.getRevision(), CVSTag.VERSION);
 
-						if (CVSAction
-							.checkForMixingTags(
-								getSite().getShell(),
-								new IResource[] { getFile() },
-								revisionTag)) {
-							//TODO update no longer available
-//							provider
-//								.update(
-//									new IResource[] { file },
-//									new Command.LocalOption[] {
-//										 Update.IGNORE_LOCAL_CHANGES },
-//									revisionTag,
-//									true /*create backups*/
-//							, monitor);
-							refresh();
+							if (CVSAction.checkForMixingTags(getSite().getShell(), new IResource[] { getFile() }, revisionTag)) {
+								//TODO update no longer available
+//								provider.update(new IResource[] { file }, new Command.LocalOption[] { Update.IGNORE_LOCAL_CHANGES },
+//									revisionTag, true /*create backups*/, monitor);
+								refresh();
+							}
 						}
+					} catch (TeamException e) {
+						throw new CoreException(e.getStatus());
 					}
-				} catch (TeamException e) {
-					throw new CoreException(e.getStatus());
 				}
-			}
 		});
 		WorkbenchHelp.setHelp(getRevisionAction,IHelpContextIds.GET_FILE_REVISION_ACTION);
 
@@ -634,8 +609,8 @@ public class VersionTreeView
 
 		// deep layout
 		deepLayoutAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.Deep_Layout_Name"), IAction.AS_RADIO_BUTTON) {//$NON-NLS-1$
-	@Override
-	public void run() {
+			@Override
+			public void run() {
 				if (isChecked()) {
 					treeView.getTreeViewConfig().setLayoutAlgorithm(
 						TreeViewConfig.DEEP_LAYOUT);
@@ -645,15 +620,14 @@ public class VersionTreeView
 				setChecked(true);
 			}
 		};
-		if (treeView
-			.getTreeViewConfig()
-			.isLayoutSelected(TreeViewConfig.DEEP_LAYOUT))
+		if (treeView.getTreeViewConfig().isLayoutSelected(TreeViewConfig.DEEP_LAYOUT)) {
 			deepLayoutAction.setChecked(true);
+		}
 
 		// wide layout
-			wideLayoutAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.Wide_Layout_Name"), IAction.AS_RADIO_BUTTON) {//$NON-NLS-1$
-	@Override
-	public void run() {
+		wideLayoutAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.Wide_Layout_Name"), IAction.AS_RADIO_BUTTON) {//$NON-NLS-1$
+			@Override
+			public void run() {
 				if (isChecked()) {
 					treeView.getTreeViewConfig().setLayoutAlgorithm(
 						TreeViewConfig.WIDE_LAYOUT);
@@ -663,31 +637,29 @@ public class VersionTreeView
 				setChecked(true);
 			}
 		};
-		if (treeView
-			.getTreeViewConfig()
-			.isLayoutSelected(TreeViewConfig.WIDE_LAYOUT))
+		if (treeView.getTreeViewConfig().isLayoutSelected(TreeViewConfig.WIDE_LAYOUT)) {
 			wideLayoutAction.setChecked(true);
+		}
 
 		// refresh action
 		refreshAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.Refresh_View_Action")) {//$NON-NLS-1$
-	@Override
-	public void run() {
+			@Override
+			public void run() {
 				refresh();
 			}
 		};
 		refreshAction.setToolTipText(VersionTreePlugin.getResourceString("VersionTreeView.Refresh_View_ToolTip")); //$NON-NLS-1$
-		refreshAction.setDisabledImageDescriptor(
-			plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
-		refreshAction.setHoverImageDescriptor(
-			plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
+		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
+		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 
 		// Link with Editor (toolbar)
-		linkWithEditorAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.linkWithLabel"), plugin.getImageDescriptor(ICVSUIConstants.IMG_LINK_WITH_EDITOR_ENABLED)) { //$NON-NLS-1$
-			 @Override
-			public void run() {
-				 setLinkingEnabled(isChecked());
-			 }
-		 };
+		linkWithEditorAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.linkWithLabel"),
+			plugin.getImageDescriptor(ICVSUIConstants.IMG_LINK_WITH_EDITOR_ENABLED)) {
+				@Override
+				public void run() {
+					setLinkingEnabled(isChecked());
+				}
+			};
 		linkWithEditorAction.setToolTipText(VersionTreePlugin.getResourceString("VersionTreeView.linkWithLabel")); //$NON-NLS-1$
 		linkWithEditorAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LINK_WITH_EDITOR));
 		linkWithEditorAction.setChecked(isLinkingEnabled());
@@ -729,11 +701,13 @@ public class VersionTreeView
 		tagWithExistingAction = new Action(VersionTreePlugin.getResourceString("VersionTreeView.TagWithExisting")) { //$NON-NLS-1$
 			@Override
 			public void run() {
-				if (getFile() == null)
+				if (getFile() == null) {
 					return;
+				}
 				ISelection selection = treeView.getSelection();
-				if (!(selection instanceof IStructuredSelection))
+				if (!(selection instanceof IStructuredSelection)) {
 					return;
+				}
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				Object o = ss.getFirstElement();
 				currentSelection = (ILogEntry) o;
@@ -752,11 +726,13 @@ public class VersionTreeView
 			@Override
 			public boolean isEnabled() {
 				ISelection selection = treeView.getSelection();
-				if (!(selection instanceof IStructuredSelection))
+				if (!(selection instanceof IStructuredSelection)) {
 					return false;
+				}
 				IStructuredSelection ss = (IStructuredSelection) selection;
-				if (ss.size() != 1)
+				if (ss.size() != 1) {
 					return false;
+				}
 				return true;
 			}
 		};
@@ -765,21 +741,13 @@ public class VersionTreeView
 
 		IActionBars actionBars = getViewSite().getActionBars();
 		// Create actions for the text editor
-		copyAction =
-			new TextViewerAction(commentViewer, ITextOperationTarget.COPY);
+		copyAction = new TextViewerAction(commentViewer, ITextOperationTarget.COPY);
 		copyAction.setText(VersionTreePlugin.getResourceString("VersionTreeView.Copy_Action")); //$NON-NLS-1$
-		actionBars.setGlobalActionHandler(
-			ITextEditorActionConstants.COPY,
-			copyAction);
+		actionBars.setGlobalActionHandler(ITextEditorActionConstants.COPY, copyAction);
 
-		selectAllAction =
-			new TextViewerAction(
-				commentViewer,
-				ITextOperationTarget.SELECT_ALL);
+		selectAllAction = new TextViewerAction(commentViewer, ITextOperationTarget.SELECT_ALL);
 		selectAllAction.setText(VersionTreePlugin.getResourceString("VersionTreeView.Select_All_Action")); //$NON-NLS-1$
-		actionBars.setGlobalActionHandler(
-			ITextEditorActionConstants.SELECT_ALL,
-			selectAllAction);
+		actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, selectAllAction);
 
 		actionBars.updateActionBars();
 
@@ -825,14 +793,7 @@ public class VersionTreeView
 	 * @return
 	 */
 	private TextViewer createTextViewer(SashForm parent) {
-		TextViewer result =
-			new TextViewer(
-				parent,
-				SWT.H_SCROLL
-					| SWT.V_SCROLL
-					| SWT.MULTI
-					| SWT.BORDER
-					| SWT.READ_ONLY);
+		TextViewer result = new TextViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.READ_ONLY);
 		result.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				copyAction.update();
@@ -846,10 +807,7 @@ public class VersionTreeView
 	 * @return
 	 */
 	private TableViewer createTagViewer(SashForm parent) {
-		Table table =
-			new Table(
-				parent,
-				SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		TableViewer result = new TableViewer(table);
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(100));
@@ -857,8 +815,9 @@ public class VersionTreeView
 		result.setContentProvider(new SimpleContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement) {
-				if (inputElement == null)
+				if (inputElement == null) {
 					return new Object[0];
+				}
 				CVSTag[] tags = (CVSTag[]) inputElement;
 				return tags;
 			}
@@ -866,29 +825,30 @@ public class VersionTreeView
 		result.setLabelProvider(new LabelProvider() {
 			@Override
 			public Image getImage(Object element) {
-				if (element == null)
+				if (element == null) {
 					return null;
+				}
 
-				IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
+				IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
 				CVSTag tag = (CVSTag) element;
 				switch (tag.getType()) {
 					case CVSTag.BRANCH :
 					case CVSTag.HEAD :
 						return branchImage;
 					case CVSTag.VERSION :
-						if (tag.getName().matches(store.getString(VersionTreePlugin.PREF_REGEX_LOCKED))) {
+						if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_LOCKED))) {
 							return lockedImage;
 						}
-						if (tag.getName().matches(store.getString(VersionTreePlugin.PREF_REGEX_REQUEST))) {
+						if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_REQUEST))) {
 							return requestImage;
 						}
-						if (tag.getName().matches(store.getString(VersionTreePlugin.PREF_REGEX_CLOSED))) {
+						if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_CLOSED))) {
 							return closedImage;
 						}
-						if (tag.getName().matches(store.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO))) {
+						if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO))) {
 							return mergeToImage;
 						}
-						if (tag.getName().matches(store.getString(VersionTreePlugin.PREF_REGEX_MERGE_FROM))) {
+						if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_MERGE_FROM))) {
 							return mergeFromImage;
 						}
 						return versionImage;
@@ -903,8 +863,9 @@ public class VersionTreeView
 		result.setSorter(new ViewerSorter() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				if (!(e1 instanceof CVSTag) || !(e2 instanceof CVSTag))
+				if (!(e1 instanceof CVSTag) || !(e2 instanceof CVSTag)) {
 					return super.compare(viewer, e1, e2);
+				}
 				CVSTag tag1 = (CVSTag) e1;
 				CVSTag tag2 = (CVSTag) e2;
 				int type1 = tag1.getType();
@@ -951,7 +912,7 @@ public class VersionTreeView
 	public void setLinkingEnabled(boolean enabled) {
 		linkingEnabled = enabled;
 		// remember the last setting in the dialog settings
-		settings.setValue(VersionTreePlugin.PREF_HISTORY_VIEW_EDITOR_LINKING, enabled);
+		prefs.setValue(VersionTreePlugin.PREF_HISTORY_VIEW_EDITOR_LINKING, enabled);
 		// if turning linking on, update the selection to correspond to the active editor
 		if (enabled) {
 			editorActivated(getSite().getPage().getActiveEditor());
@@ -1001,8 +962,9 @@ public class VersionTreeView
 	 */
 	public void logEntrySelected(ILogEntry log) {
 		// return if file is already selected
-		if (getCurrentEntry().getRevision().equals(log.getRevision()))
+		if (getCurrentEntry().getRevision().equals(log.getRevision())) {
 			return;
+		}
 		// update display
 		setCurrentEntry(log);
 
@@ -1025,21 +987,19 @@ public class VersionTreeView
 			@Override
 			public void run() {
 				try {
-					if (getFile() == null)
+					if (getFile() == null) {
 						return;
+					}
 					ISelection selection = treeView.getSelection();
-					if (!(selection instanceof IStructuredSelection))
+					if (!(selection instanceof IStructuredSelection)) {
 						return;
+					}
 					IStructuredSelection ss = (IStructuredSelection) selection;
 					Object o = ss.getFirstElement();
 					currentSelection = (ILogEntry) o;
-					new ProgressMonitorDialog(
-						getViewSite()
-							.getShell())
-							.run(false, true, new WorkspaceModifyOperation() {
+					new ProgressMonitorDialog(getViewSite().getShell()).run(false, true, new WorkspaceModifyOperation() {
 						@Override
-						protected void execute(IProgressMonitor monitor)
-							throws InvocationTargetException, InterruptedException {
+						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							try {
 								action.run(monitor);
 							} catch (CoreException e) {
@@ -1048,12 +1008,7 @@ public class VersionTreeView
 						}
 					});
 				} catch (InvocationTargetException e) {
-					CVSUIPlugin.openError(
-						getViewSite().getShell(),
-						null,
-						null,
-						e,
-						CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
+					CVSUIPlugin.openError(getViewSite().getShell(), null, null, e, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
 				} catch (InterruptedException e) {
 					// Do nothing
 				}
@@ -1062,11 +1017,13 @@ public class VersionTreeView
 			@Override
 			public boolean isEnabled() {
 				ISelection selection = treeView.getSelection();
-				if (!(selection instanceof IStructuredSelection))
+				if (!(selection instanceof IStructuredSelection)) {
 					return false;
+				}
 				IStructuredSelection ss = (IStructuredSelection) selection;
-				if (ss.size() != 1)
+				if (ss.size() != 1) {
 					return false;
+				}
 				return true;
 			}
 		};
@@ -1080,22 +1037,10 @@ public class VersionTreeView
 				if (cvsFile.isModified(null)) {
 					String title = VersionTreePlugin.getResourceString("VersionTreeView.CVS_Version_Tree_Name"); //$NON-NLS-1$
 					String msg = VersionTreePlugin.getResourceString("VersionTreeView.Overwrite_Changes_Question"); //$NON-NLS-1$
-					final MessageDialog dialog =
-						new MessageDialog(
-							getViewSite().getShell(),
-							title,
-							null,
-							msg,
-							MessageDialog.QUESTION,
-							new String[] {
-								IDialogConstants.YES_LABEL,
-								IDialogConstants.CANCEL_LABEL },
-							0);
+					final MessageDialog dialog = new MessageDialog(getViewSite().getShell(), title, null, msg, MessageDialog.QUESTION,
+							new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
 					final int[] result = new int[1];
-					getViewSite()
-						.getShell()
-						.getDisplay()
-						.syncExec(new Runnable() {
+					getViewSite().getShell().getDisplay().syncExec(new Runnable() {
 						public void run() {
 							result[0] = dialog.open();
 						}

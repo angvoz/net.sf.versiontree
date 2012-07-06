@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Karstens <jan.karstens@web.de> - initial implementation
  *******************************************************************************/
@@ -13,14 +13,13 @@ package net.sf.versiontree.ui;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
 /**
  * @author Jan
- * 
+ *
  * This widget is a connector line, connecting
  * revisions and/or branches.
  */
@@ -32,8 +31,6 @@ public class Connector extends Canvas {
 	public static final int RIGHT = 2;
 
 	private int drawMode;
-	private int direction;
-
 	/**
 	 * Creates a connector widget.
 	 * @param parent the parent component
@@ -57,7 +54,6 @@ public class Connector extends Canvas {
 	protected void paintControl(PaintEvent e) {
 		GC gc = e.gc;
 		Rectangle bounds = this.getBounds();
-		int arrowLen = 3;
 		if (drawMode == VERTICAL) {
 			gc.drawLine(0, 0, bounds.width , bounds.height );
 //			if (direction == RIGHT ) {
@@ -80,7 +76,6 @@ public class Connector extends Canvas {
 	}
 
 	public void setDirection(int direction) {
-		this.direction = direction;
 	}
 
 

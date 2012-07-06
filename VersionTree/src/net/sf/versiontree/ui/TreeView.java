@@ -29,7 +29,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -43,10 +42,7 @@ import org.eclipse.swt.widgets.Menu;
  * revisions. The Branches and Revisions to draw are delivered via a
  * callback function.
  */
-public class TreeView
-	extends ScrolledComposite
-	implements MouseListener, IDrawMethod {
-
+public class TreeView extends ScrolledComposite implements MouseListener, IDrawMethod {
 	/**
 	 * The display configuration for this view
 	 */
@@ -88,10 +84,7 @@ public class TreeView
 	 * @param style SWT style for this component.
 	 * @param listener listener for log entry selections.
 	 */
-	public TreeView(
-		Composite parent,
-		int style,
-		LogEntrySelectionListener listener) {
+	public TreeView(Composite parent, int style, LogEntrySelectionListener listener) {
 		super(parent, style);
 		logSelectionListener = listener;
 		treeViewConfig = new TreeViewConfig();
@@ -99,14 +92,12 @@ public class TreeView
 		initViewer();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
-	 */
 	@Override
 	public void setMenu(Menu menu) {
 		connectors.setMenu(menu);
 		super.setMenu(menu);
 	}
+
 	/**
 	 * Initializes the TreeView widget.
 	 */
@@ -143,15 +134,10 @@ public class TreeView
 			revision.setLocation(BORDER + x * (width + hspacing), BORDER + y * (height + vspacing));
 			revision.setSize(revision.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 			// check if this is the current revision
-			if ((revision.getRevisionData().getState()
-				& ITreeElement.STATE_CURRENT)
-				!= 0) {
+			if ((revision.getRevisionData().getState() & ITreeElement.STATE_CURRENT) != 0) {
 				currentRevivion = revision;
-				selectionManager.revisionSelected(
-					currentRevivion.getRevisionData(),
-					1);
-				logSelectionListener.logEntrySelected(
-					currentRevivion.getRevisionData().getLogEntry());
+				selectionManager.revisionSelected(currentRevivion.getRevisionData(), 1);
+				logSelectionListener.logEntrySelected(currentRevivion.getRevisionData().getLogEntry());
 			}
 		} else {
 			Branch branch = new Branch(connectors, 0);
@@ -168,8 +154,7 @@ public class TreeView
 		if (to instanceof IRevision) {
 			IRevision revision = (IRevision) to;
 			List<MergePoint> mergeToList = revision.getMergeToRevisions();
-			for (Iterator<MergePoint> iterator = mergeToList.iterator(); iterator.hasNext();) {
-				MergePoint mergeToPoint = iterator.next();
+			for (MergePoint mergeToPoint : mergeToList) {
 				createConnector(to, mergeToPoint.getMergeRevision(), MergePoint.MERGE);
 			}
 		}
@@ -223,73 +208,6 @@ public class TreeView
 	}
 
 	/**
-	 * Calculates the size, position and mode for a Connector
-	 * given the abstract positions.
-	 * @param xPos1
-	 * @param yPos1
-	 * @param xPos2
-	 * @param yPos2
-	 * @param position
-	 * @param size
-	 * @return Connector mode (HORIZONTAL or VERTICAL)
-	 */
-	private void createConnector2(ITreeElement elementTo, ITreeElement elementFrom, int connectorType) {
-
-		int xPos1 = elementTo.getX();
-		int yPos1 = elementTo.getY();
-		int xPos2 = elementFrom.getX();
-		int yPos2 = elementFrom.getY();
-
-		Point position = new Point(0, 0);
-		Point size = new Point(0, 0);
-		int mode = Connector.HORIZONTAL;
-		int direction = Connector.LEFT;
-		int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-		// connect horizontal if x offset is equal
-		if (xPos1 == xPos2) {
-			mode = Connector.VERTICAL;
-		}
-		if (yPos2 > yPos1) {
-			y1 = yPos1;
-			y2 = yPos2;
-		} else {
-			y1 = yPos2;
-			y2 = yPos1;
-			direction = Connector.RIGHT;
-		}
-		if (xPos1 > xPos2) {
-			x1 = xPos2;
-			x2 = xPos1;
-		} else {
-			x1 = xPos1;
-			x2 = xPos2;
-		}
-		if (mode == Connector.HORIZONTAL) {
-			position.x = BORDER + x1 * (hspacing + width) + width;
-			position.y = BORDER + y1 * (vspacing + height) + height/2;
-			size.x = (x2 - x1) * hspacing + (x2 - x1) * width+1;
-			size.y = (y2 - y1) * vspacing + (y2 - y1) * height+1;
-		} else {
-			position.x = BORDER + x1 * (hspacing + width) + width/2;
-			position.y = BORDER + y1 * (vspacing + height) + height;
-			size.x = (x2 - x1) * hspacing + (x2 - x1) * width+1;
-			size.y = (y2 - y1) * vspacing + (y2 - y1) * height+1;
-		}
-		Connector connect = new Connector(connectors, 0, mode);
-		if (connectorType == MergePoint.MERGE) {
-			connect.setForeground(new Color(null,255,0,0));
-		}
-		connect.setBounds(position.x, position.y, size.x, size.y);
-//		connect.setLocation(position);
-//		connect.setSize(size);
-		connect.setDirection(direction);
-		connect.setMenu(this.getMenu());
-
-
-//		connectors.addConnectArrow(arrow);
-	}
-
-	/**
 	 * Computes the size of the view. This function needs to be called after
 	 * adding new components to the view.
 	 */
@@ -300,8 +218,9 @@ public class TreeView
 		size.y += BORDER;
 		connectors.setSize(size);
 		// scroll to current revision
-		if (currentRevivion != null)
+		if (currentRevivion != null) {
 			scrollToRevision(currentRevivion);
+		}
 	}
 
 	/**
@@ -313,10 +232,7 @@ public class TreeView
 		Rectangle clientArea = getClientArea();
 		clientArea.x = getOrigin().x;
 		clientArea.y = getOrigin().y;
-		if (!clientArea.contains(revBounds.x, revBounds.y)
-			&& !clientArea.contains(
-				revBounds.x + revBounds.width,
-				revBounds.y + revBounds.height)) {
+		if (!clientArea.contains(revBounds.x, revBounds.y) && !clientArea.contains(revBounds.x + revBounds.width, revBounds.y + revBounds.height)) {
 			setOrigin(revBounds.x, revBounds.y);
 		}
 	}
@@ -326,8 +242,7 @@ public class TreeView
 	 */
 	private void removeAllWidgets() {
 		Control[] childs = connectors.getChildren();
-		for (int i = 0; i < childs.length; i++) {
-			Control control = childs[i];
+		for (Control control : childs) {
 			control.setMenu(null);
 			control.dispose();
 		}
@@ -339,11 +254,11 @@ public class TreeView
 	 * to include any preference changes made in between.
 	 */
 	private void reloadPrefrences() {
-		IPreferenceStore store = VersionTreePlugin.getDefault().getPreferenceStore();
-		hspacing = store.getInt(VersionTreePlugin.PREF_HSPACING);
-		vspacing = store.getInt(VersionTreePlugin.PREF_VSPACING);
-		height = store.getInt(VersionTreePlugin.PREF_ELEMENT_HEIGHT);
-		width = store.getInt(VersionTreePlugin.PREF_ELEMENT_WIDTH);
+		IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
+		hspacing = prefs.getInt(VersionTreePlugin.PREF_HSPACING);
+		vspacing = prefs.getInt(VersionTreePlugin.PREF_VSPACING);
+		height = prefs.getInt(VersionTreePlugin.PREF_ELEMENT_HEIGHT);
+		width = prefs.getInt(VersionTreePlugin.PREF_ELEMENT_WIDTH);
 	}
 
 	/**
@@ -359,8 +274,7 @@ public class TreeView
 	 */
 	public void mouseDoubleClick(MouseEvent e) {
 		if (e.getSource() instanceof Revision && e.button == 1) {
-			logSelectionListener.logEntryDoubleClicked(
-				selectionManager.getStructuredSelection());
+			logSelectionListener.logEntryDoubleClicked(selectionManager.getStructuredSelection());
 		}
 	}
 
@@ -373,16 +287,14 @@ public class TreeView
 			Revision selected = (Revision) e.getSource();
 			// exit if user wants to open contex menu on
 			// a already selected revision
-			if (e.button == 3 && selected.isSelected())
+			if (e.button == 3 && selected.isSelected()) {
 				return;
-			selectionManager.revisionSelected(
-				selected.getRevisionData(),
-				e.stateMask);
+			}
+			selectionManager.revisionSelected(selected.getRevisionData(), e.stateMask);
 			redrawAll();
 			// notify listener
 			if (selected.isSelected()) {
-				logSelectionListener.logEntrySelected(
-					selected.getRevisionData().getLogEntry());
+				logSelectionListener.logEntrySelected(selected.getRevisionData().getLogEntry());
 			}
 		} else if (e.getSource() instanceof Branch) {
 			Branch selected = (Branch) e.getSource();
@@ -399,8 +311,8 @@ public class TreeView
 	 */
 	private void redrawAll() {
 		Control[] childs = connectors.getChildren();
-		for (int i = 0; i < childs.length; i++) {
-			childs[i].redraw();
+		for (Control child : childs) {
+			child.redraw();
 		}
 	}
 
@@ -423,10 +335,7 @@ public class TreeView
 	}
 
 	public void drawConnectors(ITreeElement parameterElement) {
-		// TODO Auto-generated method stub
-		for (Iterator<ITreeElement> iter = parameterElement.getChildren().listIterator();
-		iter.hasNext();
-		) {
+		for (Iterator<ITreeElement> iter = parameterElement.getChildren().listIterator(); iter.hasNext();) {
 		ITreeElement nextElement = iter.next();
 		if (nextElement instanceof IRevision
 			|| (
@@ -453,7 +362,7 @@ public class TreeView
 			    }
 				drawConnectors(nextElement);
 			}
-	}
+		}
 
 	}
 

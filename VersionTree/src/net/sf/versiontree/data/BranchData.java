@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003 Jan Karstens, André Langhorst.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Karstens <jan.karstens@web.de> - initial implementation
  *     André Langhorst <andre@masse.de> - extensions
@@ -17,29 +17,24 @@ import java.util.List;
 /**
  * @author Jan
  *
- * 
  */
 public class BranchData extends AbstractTreeElement implements IBranch {
-
+	/** The name of this branch. */
+	private String name = null;
+	/** The revision number prefix of this branch (e.g. "1.2.1") */
+	private String branchPrefix = null;
+	/** A list of revisions that belong to this branch. */
+	private List<IRevision> revisions;
 
 	public BranchData() {
 		revisions = new ArrayList<IRevision>();
 	}
-	
+
 	public BranchData(String name, String prefix) {
 		revisions = new ArrayList<IRevision>();
 		setName(name);
-		setBranchPrefix(prefix);	
+		setBranchPrefix(prefix);
 	}
-	/** The name of this branch. */
-	private String name = null;
-
-	/** The revision number prefix of this branch (e.g. "1.2.1") */
-	private String branchPrefix = null;
-
-
-	/** A list of revisions that belong to this branch. */
-	private List<IRevision> revisions;
 
 	/** Returns an iterator over the revisions contained in this branch.
 	 * @return */
@@ -60,11 +55,15 @@ public class BranchData extends AbstractTreeElement implements IBranch {
 	}
 	public String getBranchSourceRevision() {
 		// return empty String if this is the HEAD branch
-		if (getName() != null && getName().equals(IBranch.HEAD_NAME)) return ""; //$NON-NLS-1$
-		if (branchPrefix == null) return null;
+		if (getName() != null && getName().equals(IBranch.HEAD_NAME)) {
+			return ""; //$NON-NLS-1$
+		}
+		if (branchPrefix == null) {
+			return null;
+		}
 		return branchPrefix.substring(0,branchPrefix.lastIndexOf(".")); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -79,26 +78,20 @@ public class BranchData extends AbstractTreeElement implements IBranch {
 		branchPrefix = string;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.data.IBranch#getHeight()
-	 */
-	public int getHeight() {	
+	public int getHeight() {
 		return revisions.size();
 	}
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.data.ITreeElement#isRevision()
-	 */
+
+	@Override
 	public boolean isRevision() {
 		return false;
 	}
-	/* (non-Javadoc)
-	 * @see net.sf.versiontree.data.IBranch#isEmpty()
-	 */
+
 	public boolean isEmpty() {
 		return revisions.size()==0;
 	}
-	
-	// I am on bottom of class, I like honey, hmmm
+
+	@Override
 	public String toString() {
 		return name;
 	}
