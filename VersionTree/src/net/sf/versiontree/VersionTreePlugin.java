@@ -55,7 +55,7 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	public static final String PREF_REGEX_CLOSED = "RegexClosed"; //$NON-NLS-1$
 
 	private static final String TAG_DEFAULT_REGEX_LOCKED = "tag_(.*)_LOCKED_.*";
-	private static final String TAG_DEFAULT_REGEX_REQUEST = "tag_(.*)_REQUEST_.*";
+	private static final String TAG_DEFAULT_REGEX_REQUEST = "tag_.*_REQUEST_(.*)";
 	private static final String TAG_DEFAULT_REGEX_MERGE_TO = "tag_(.*)_MERGE-TO_(.*)";
 	private static final String TAG_DEFAULT_REGEX_MERGE_FROM = "tag_(.*)_MERGE-FROM_(.*)";
 	private static final String TAG_DEFAULT_REGEX_CLOSED = "tag_(.*)_CLOSED";

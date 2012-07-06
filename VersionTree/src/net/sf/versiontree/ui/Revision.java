@@ -12,6 +12,8 @@ package net.sf.versiontree.ui;
 
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.IRevision;
@@ -228,7 +230,35 @@ public class Revision extends Canvas {
 	 */
 	public void setRevisionData(IRevision data) {
 		revisionData = data;
+
 		String tooltip = "";
+		IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
+
+		List<String> tags = revisionData.getTags();
+		for (String tag : tags) {
+			final Pattern patternLocked = Pattern.compile(prefs.getString(VersionTreePlugin.PREF_REGEX_LOCKED));
+			Matcher matcherLockedBy = patternLocked.matcher(tag);
+			while (matcherLockedBy.find()) { // "tag_(.*)_LOCKED_.*"
+				String branchLocked = matcherLockedBy.group(1);
+				if (tooltip.length() > 0) {
+					tooltip += "\n";
+				}
+				tooltip += VersionTreePlugin.getResourceString("VersionTreeView.Locked_By") + ": " + branchLocked; //$NON-NLS-1$
+			}
+		}
+		for (String tag : tags) {
+			final Pattern patternRequest = Pattern.compile(prefs.getString(VersionTreePlugin.PREF_REGEX_REQUEST));
+			Matcher matcherRequest = patternRequest.matcher(tag);
+			while (matcherRequest.find()) { // "tag_.*_REQUEST_(.*)"
+				if (tooltip.length() > 0) {
+					tooltip += "\n";
+				}
+				String request = matcherRequest.groupCount() > 0 ? matcherRequest.group(1) : tag;
+				tooltip += VersionTreePlugin.getResourceString("VersionTreeView.Request") + ": " + request; //$NON-NLS-1$
+			}
+
+		}
+
 		List<MergePoint> mergeFromList = data.getMergeFromRevisions();
 		List<MergePoint> mergeToList = data.getMergeToRevisions();
 		for (MergePoint mergeFromPoint : mergeFromList) {
@@ -250,7 +280,6 @@ public class Revision extends Canvas {
 
 		setToolTipText(tooltip);
 		// Parse background color
-		IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
 		String color = prefs.getString(VersionTreePlugin.PREF_REVISION_BACKGROUNDCOLOR);
 		if (revisionData.getLogEntry().isDeletion()) {
 			color = prefs.getString(VersionTreePlugin.PREF_DEADREVISION_BACKGROUNDCOLOR);
