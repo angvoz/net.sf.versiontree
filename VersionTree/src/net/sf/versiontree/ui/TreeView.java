@@ -11,7 +11,6 @@
  *******************************************************************************/
 package net.sf.versiontree.ui;
 
-import java.util.Iterator;
 import java.util.List;
 
 import net.sf.versiontree.VersionTreePlugin;
@@ -334,33 +333,25 @@ public class TreeView extends ScrolledComposite implements MouseListener, IDrawM
 		return treeViewConfig;
 	}
 
-	public void drawConnectors(ITreeElement parameterElement) {
-		for (Iterator<ITreeElement> iter = parameterElement.getChildren().listIterator(); iter.hasNext();) {
-		ITreeElement nextElement = iter.next();
-		if (nextElement instanceof IRevision
-			|| (
-				 ( this.getTreeViewConfig().drawEmptyBranches()
-			       || (nextElement instanceof IBranch
-			          && ((!((IBranch) nextElement).isEmpty()))
-			       )
-			     )
-			     &&
-			     ( this.getTreeViewConfig().drawNABranches()
-			       || ( nextElement instanceof IBranch
-					  &&
-			    	  (!((IBranch) nextElement).getName().equals(IBranch.N_A_BRANCH))
-			       )
-			     )
-			     && ( ( nextElement instanceof IBranch &&
-			    		( this.getTreeViewConfig().getBranchFilter().equals("") ||
-				         ((IBranch) nextElement).getName().contains(this.getTreeViewConfig().getBranchFilter())
-				        )
-			   )))) {
-			    //case when parent is dead revision and next element is branch
-			    if ( ! (parameterElement instanceof IRevision && nextElement instanceof IBranch && ((IRevision)parameterElement).getLogEntry().isDeletion() ) ) {
-			       addConnector(parameterElement,nextElement);
-			    }
-				drawConnectors(nextElement);
+	public void drawConnectors(ITreeElement node) {
+		for (ITreeElement child : node.getChildren()) {
+			if (child instanceof IRevision) {
+				addConnector(node, child);
+				drawConnectors(child);
+			} else if (child instanceof IBranch) {
+				IBranch childBranch = (IBranch) child;
+				String branchFilter = this.getTreeViewConfig().getBranchFilter();
+				String childName = childBranch.getName();
+				if ((!childBranch.isEmpty() || this.getTreeViewConfig().drawEmptyBranches())
+						&& (!childName.equals(IBranch.N_A_BRANCH) || this.getTreeViewConfig().drawNABranches())
+						&& (childName.contains(branchFilter) || branchFilter.equals("")))
+				{
+					// case when parent is dead revision and child element is branch
+					if (!(node instanceof IRevision && ((IRevision) node).getLogEntry().isDeletion())) {
+						addConnector(node, child);
+					}
+					drawConnectors(child);
+				}
 			}
 		}
 
