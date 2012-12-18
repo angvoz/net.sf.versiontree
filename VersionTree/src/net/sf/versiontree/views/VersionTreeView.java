@@ -55,6 +55,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.TextViewer;
@@ -63,6 +64,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
@@ -74,6 +76,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -188,6 +191,55 @@ public class VersionTreeView
 
 	private IPreferenceStore prefs;
 
+
+	private final class TagLabelProvider extends LabelProvider implements ITableFontProvider {
+		@Override
+		public Image getImage(Object element) {
+			if (element == null) {
+				return null;
+			}
+
+			IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
+			CVSTag tag = (CVSTag) element;
+			switch (tag.getType()) {
+				case CVSTag.BRANCH :
+				case CVSTag.HEAD :
+					return branchImage;
+				case CVSTag.VERSION :
+					if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_LOCKED))) {
+						return lockedImage;
+					}
+					if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_REQUEST))) {
+						return requestImage;
+					}
+					if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_CLOSED))) {
+						return closedImage;
+					}
+					if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO))) {
+						return mergeToImage;
+					}
+					if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_MERGE_FROM))) {
+						return mergeFromImage;
+					}
+					return versionImage;
+			}
+			return null;
+		}
+
+		@Override
+		public String getText(Object element) {
+			return ((CVSTag) element).getName();
+		}
+
+		public Font getFont(Object element, int columnIndex) {
+			String branchFilter = treeView.getTreeViewConfig().getBranchFilter();
+			if (!branchFilter.isEmpty() && getText(element).contains(branchFilter)) {
+				return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
+			}
+			return null;
+		}
+
+	}
 
 	/**
 	 * Content provider for the table in the detail view
@@ -356,6 +408,7 @@ public class VersionTreeView
 			public void modifyText(ModifyEvent e) {
 				treeView.getTreeViewConfig().setBranchFilter(searchField.getText());
 				renderCurrentVersionTree();
+				tagViewer.refresh();
 			}
 		});
 
@@ -822,44 +875,7 @@ public class VersionTreeView
 				return tags;
 			}
 		});
-		result.setLabelProvider(new LabelProvider() {
-			@Override
-			public Image getImage(Object element) {
-				if (element == null) {
-					return null;
-				}
-
-				IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
-				CVSTag tag = (CVSTag) element;
-				switch (tag.getType()) {
-					case CVSTag.BRANCH :
-					case CVSTag.HEAD :
-						return branchImage;
-					case CVSTag.VERSION :
-						if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_LOCKED))) {
-							return lockedImage;
-						}
-						if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_REQUEST))) {
-							return requestImage;
-						}
-						if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_CLOSED))) {
-							return closedImage;
-						}
-						if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO))) {
-							return mergeToImage;
-						}
-						if (tag.getName().matches(prefs.getString(VersionTreePlugin.PREF_REGEX_MERGE_FROM))) {
-							return mergeFromImage;
-						}
-						return versionImage;
-				}
-				return null;
-			}
-			@Override
-			public String getText(Object element) {
-				return ((CVSTag) element).getName();
-			}
-		});
+		result.setLabelProvider(new TagLabelProvider());
 		result.setSorter(new ViewerSorter() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
