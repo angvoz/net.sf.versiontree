@@ -87,9 +87,16 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 		}
 		return parsedRevision;
 	}
-	/** Gets all branch tags */
+	/**
+	 *  Gets all branch tags
+	 */
 	public List<String> getBranchTags() {
-		return getTags(CVSTag.BRANCH);
+		CVSTag[] branches = logEntry.getBranches();
+		ArrayList<String> branchList = new ArrayList<String>(branches.length);
+		for (CVSTag br : branches) {
+			branchList.add(br.getName());
+		}
+		return branchList;
 	}
 
 	/** @see net.sf.versiontree.data.IRevision#getTags() */
@@ -112,7 +119,7 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 
 	/**
 	 * Returns the branch prefix from the revision number.
-	 * (e.g. revision number "1.2.4.1" --> returns "1.2.0.4")
+	 * (e.g. revision number "1.2.4.1" --> returns "1.2.0.4" and "1.2" --> returns "1")
 	 *
 	 * This logic does not include vendor branches as it is not possible to determine
 	 * if the revision is on a vendor branch. CVS provides for multiple vendor branches so
@@ -122,16 +129,20 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	 */
 	public String getBranchPrefix() {
 		String revisionNumber = logEntry.getRevision();
-		int lastDotPosition = revisionNumber.lastIndexOf(".");
-		if (revisionNumber.length() == 0 || lastDotPosition < 0) {
+		int lastDotRev = revisionNumber.lastIndexOf(".");
+		if (lastDotRev < 0) {
 			VersionTreePlugin.log(IStatus.ERROR, "Malformed revision: "+revisionNumber);
 			return null;
 		}
 
-		String branchNumber = revisionNumber.substring(0, lastDotPosition);
-		String branchPrefix = branchNumber.substring(0, branchNumber.lastIndexOf(".")) +
-				".0" + branchNumber.substring(branchNumber.lastIndexOf("."));
-		return branchPrefix;
+		String branchNumber = revisionNumber.substring(0, lastDotRev);
+		int lastDotBr = branchNumber.lastIndexOf(".");
+		if (lastDotBr > 0) {
+			String branchPrefix = branchNumber.substring(0, lastDotBr) +
+					".0" + branchNumber.substring(lastDotBr);
+			return branchPrefix;
+		}
+		return branchNumber;
 	}
 
 	/**

@@ -25,4 +25,9 @@ public class MergePoint {
 		return branchName;
 	}
 
+	@Override
+	public String toString() {
+		return branchName + ", " + mergeRevision.toString();
+	}
+
 }

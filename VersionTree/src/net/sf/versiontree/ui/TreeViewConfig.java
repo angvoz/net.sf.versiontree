@@ -10,12 +10,12 @@
  *******************************************************************************/
 package net.sf.versiontree.ui;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.algo.DeepLayout;
 import net.sf.versiontree.data.algo.ILayout;
 import net.sf.versiontree.data.algo.WideLayout;
+
+import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * @author Jan
@@ -101,8 +101,7 @@ public class TreeViewConfig {
 	}
 
 	/**
-	 * Returns true if empty branches should be drawn.
-	 * @return true if empty branches should be drawn.
+	 * @return filter to filter the branches.
 	 */
 	public String getBranchFilter() {
 		return branchFilter;
@@ -110,6 +109,15 @@ public class TreeViewConfig {
 
 	public void setBranchFilter(String b) {
 		branchFilter = b;
+	}
+
+	/**
+	 * @param branch - branch name
+	 * @return {@code true} if the branch satisfies branch filter or
+	 *    {@code false} if the branch is filtered out.
+	 */
+	public boolean isBranchFilterPenetrated(String branch) {
+		return branch.contains(branchFilter) || branchFilter.equals("");
 	}
 
 	public boolean drawNABranches() {

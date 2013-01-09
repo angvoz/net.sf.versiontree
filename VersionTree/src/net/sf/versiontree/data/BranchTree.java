@@ -75,22 +75,26 @@ public class BranchTree {
 	public void walk(ITreeElement parameterElement) {
 		if (parameterElement instanceof IRevision) {
 			IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
-			Pattern patternMergeTo = Pattern.compile(prefs.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO));
+
+			final String regexMergeTo = prefs.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO);
+			final String regexMergeFrom = prefs.getString(VersionTreePlugin.PREF_REGEX_MERGE_FROM);
+			Pattern patternMergeTo = Pattern.compile(regexMergeTo);
 
 			IRevision revision = (IRevision) parameterElement;
-			for (CVSTag tag : revision.getLogEntry().getTags()) {
-				Matcher matcher = patternMergeTo.matcher(tag.getName());
+			for (String tag : revision.getTags()) {
+				Matcher matcher = patternMergeTo.matcher(tag);
 				while (matcher.find()) {
 					String branchFrom = matcher.group(1);
 					String branchTo = matcher.group(2);
-					String mergeFromTag = "tag_"+branchTo+"_MERGE-FROM_"+branchFrom;
+					String mergeFromTag = regexMergeFrom.replaceFirst("\\([^)]*\\)", branchTo).replaceFirst("\\([^)]*\\)", branchFrom);
 					IRevision revisionTo = alltags.get(mergeFromTag);
 					if (revisionTo != null && revisionTo != parameterElement) {
-						if (revision.getRevision().length() > revisionTo.getRevision().length()) {
-							MergePoint mergePointTo = new MergePoint(branchTo, revisionTo);
-							MergePoint mergePointFrom = new MergePoint(branchFrom, revision);
-							revision.addMergeToRevision(mergePointTo);
-							revisionTo.addMergeFromRevision(mergePointFrom);
+						List<String> revisionToTags = revisionTo.getTags();
+						String mergeToTag = regexMergeTo.replaceFirst("\\([^)]*\\)", branchTo).replaceFirst("\\([^)]*\\)", branchFrom);
+						if (!(revision.getRevision().length() < revisionTo.getRevision().length() && revisionToTags.contains(mergeToTag))) {
+							if (!revision.getBranchPrefix().equals(revisionTo.getBranchPrefix())) { // filter out nonsense when merged from the same branch
+								revision.addMergeToRevision(new MergePoint(branchTo, revisionTo));
+							}
 						}
 					}
 				}

@@ -147,18 +147,6 @@ public class TreeView extends ScrolledComposite implements MouseListener, IDrawM
 		}
 	}
 
-	public void addConnector(ITreeElement from, ITreeElement to) {
-		createConnector(from,to,MergePoint.INITIAL);
-
-		if (to instanceof IRevision) {
-			IRevision revision = (IRevision) to;
-			List<MergePoint> mergeToList = revision.getMergeToRevisions();
-			for (MergePoint mergeToPoint : mergeToList) {
-				createConnector(to, mergeToPoint.getMergeRevision(), MergePoint.MERGE);
-			}
-		}
-	}
-
 	private void createConnector(ITreeElement from, ITreeElement to, int connectorType) {
 		int xPos1 = from.getX();
 		int yPos1 = from.getY();
@@ -336,25 +324,34 @@ public class TreeView extends ScrolledComposite implements MouseListener, IDrawM
 	public void drawConnectors(ITreeElement node) {
 		for (ITreeElement child : node.getChildren()) {
 			if (child instanceof IRevision) {
-				addConnector(node, child);
+				createConnector(node, child ,MergePoint.INITIAL);
+				for (MergePoint mergeToPoint : ((IRevision) child).getMergeToRevisions()) {
+					IRevision mergeToRevision = mergeToPoint.getMergeRevision();
+					for (String brTo : mergeToRevision.getBranchTags()) {
+						if (isBranchVisible(brTo)) {
+							createConnector(child, mergeToRevision, MergePoint.MERGE);
+							break;
+						}
+					}
+				}
 				drawConnectors(child);
 			} else if (child instanceof IBranch) {
 				IBranch childBranch = (IBranch) child;
-				String branchFilter = this.getTreeViewConfig().getBranchFilter();
-				String childName = childBranch.getName();
-				if ((!childBranch.isEmpty() || this.getTreeViewConfig().drawEmptyBranches())
-						&& (!childName.equals(IBranch.N_A_BRANCH) || this.getTreeViewConfig().drawNABranches())
-						&& (childName.contains(branchFilter) || branchFilter.equals("")))
-				{
+				if ((!childBranch.isEmpty() || this.getTreeViewConfig().drawEmptyBranches()) && isBranchVisible(childBranch.getName())) {
 					// case when parent is dead revision and child element is branch
 					if (!(node instanceof IRevision && ((IRevision) node).getLogEntry().isDeletion())) {
-						addConnector(node, child);
+						createConnector(node, child, MergePoint.INITIAL);
 					}
 					drawConnectors(child);
 				}
 			}
 		}
 
+	}
+
+	private boolean isBranchVisible(String branchName) {
+		return (!branchName.equals(IBranch.N_A_BRANCH) || this.getTreeViewConfig().drawNABranches())
+				&& (treeViewConfig.isBranchFilterPenetrated(branchName));
 	}
 
 }
