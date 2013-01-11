@@ -89,11 +89,16 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
@@ -340,29 +345,54 @@ public class VersionTreeView
 	 * Job that fetches the CVS log entries.
 	 */
 	private class FetchLogEntriesJob extends Job {
-		public ICVSRemoteFile remoteFile;
+		public ICVSFile cvsFile;
 		public FetchLogEntriesJob() {
 			super(VersionTreePlugin.getResourceString("VersionTreeView.fetchHistoryJob")); //$NON-NLS-1$
 		}
-		public void setRemoteFile(ICVSRemoteFile file) {
-			this.remoteFile = file;
+		public void setRemoteFile(ICVSFile file) {
+			this.cvsFile = file;
 		}
 		@Override
 		public IStatus run(IProgressMonitor monitor) {
 			try {
-				if(remoteFile != null && !shutdown) {
-					entries = remoteFile.getLogEntries(monitor);
-					final String revisionId = remoteFile.getRevision();
+				if(cvsFile != null && !shutdown) {
+					entries = cvsFile.getLogEntries(monitor);
+					if (entries.length == 0){
+						//Get the parent folder
+						ICVSFolder folder = cvsFile.getParent();
+						if (folder.isManaged()){
+							String remoteFolderLocation = folder.getRemoteLocation(folder);
+							if (remoteFolderLocation != null) {
+								String remoteFileName = remoteFolderLocation.concat(Session.SERVER_SEPARATOR + cvsFile.getName());
+								//Create remote file
+								CVSTeamProvider pro = (CVSTeamProvider) RepositoryProvider.getProvider(cvsFile.getIResource().getProject());
+								if (pro != null){
+									CVSWorkspaceRoot root = pro.getCVSWorkspaceRoot();
+									CVSRepositoryLocation location = CVSRepositoryLocation.fromString(root.getRemoteLocation().getLocation(false));
+									RemoteFile remFile = RemoteFile.create(remoteFileName, location);
+									entries=remFile.getLogEntries(monitor);
+								}
+							}
+						}
+					}
+
+					ICVSRemoteFile remoteFile = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsFile.getIResource());
+					final String revisionId = remoteFile != null ? remoteFile.getRevision() : null;
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
-							if(entries != null && treeView != null && ! treeView.isDisposed()) {
-								// Create and show tree
-								branchTree = new BranchTree(entries, revisionId);
-								// set current revision
-								for (ILogEntry entry : entries) {
-									if (entry.getRevision().equals(revisionId)) {
-										setCurrentEntry(entry);
+							if (treeView != null && ! treeView.isDisposed()) {
+								if (entries != null && entries.length > 0) {
+									// Create and show tree
+									branchTree = new BranchTree(entries, revisionId);
+									// set current revision
+									for (ILogEntry entry : entries) {
+										if (entry.getRevision().equals(revisionId)) {
+											setCurrentEntry(entry);
+											break;
+										}
 									}
+								} else {
+									branchTree = null;
 								}
 								renderVersionTree(branchTree);
 							}
@@ -439,13 +469,8 @@ public class VersionTreeView
 			setFile(file);
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject(), CVSProviderPlugin.getTypeId());
 			if (teamProvider != null) {
-				try {
-					// for a file this will return the base
-					ICVSRemoteFile remoteFile = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(file);
-					showVersionTree(remoteFile);
-				} catch (TeamException e) {
-					CVSUIPlugin.openError(getViewSite().getShell(), null, null,	e);
-				}
+				ICVSFile remoteFile = CVSWorkspaceRoot.getCVSFileFor(file);
+				showVersionTree(remoteFile);
 			}
 		}
 		else {
@@ -458,7 +483,7 @@ public class VersionTreeView
 	/**
 	 * Shows the version tree for the given ICVSRemoteFile in the view.
 	 */
-	public void showVersionTree(ICVSRemoteFile remoteFile) {
+	public void showVersionTree(ICVSFile remoteFile) {
 		if (remoteFile != null) {
 			getLogEntries(remoteFile);
 		}
@@ -476,6 +501,10 @@ public class VersionTreeView
 
 	private void renderVersionTree(BranchTree bt) {
 		treeView.clear();
+		if (bt == null) {
+			return;
+		}
+
 		// Choose Drawers and dispatcher that will be supplied to walk algorithm
 		IDrawMethod[] id = new IDrawMethod[1];
 		id[0] = treeView;
@@ -523,7 +552,7 @@ public class VersionTreeView
 
 	}
 
-	private void getLogEntries(final ICVSRemoteFile remoteFile) {
+	private void getLogEntries(final ICVSFile remoteFile) {
 		if(fetchLogEntriesJob == null) {
 			fetchLogEntriesJob = new FetchLogEntriesJob();
 		}
@@ -978,7 +1007,8 @@ public class VersionTreeView
 	 */
 	public void logEntrySelected(ILogEntry log) {
 		// return if file is already selected
-		if (getCurrentEntry().getRevision().equals(log.getRevision())) {
+		ILogEntry oldCurrentEntry = getCurrentEntry();
+		if (oldCurrentEntry != null && oldCurrentEntry.getRevision().equals(log.getRevision())) {
 			return;
 		}
 		// update display
@@ -1073,6 +1103,9 @@ public class VersionTreeView
 		return true;
 	}
 
+	/**
+	 * @return currently selected entry or {@code null}
+	 */
 	protected ILogEntry getCurrentEntry() {
 		return this.currentEntry;
 	}

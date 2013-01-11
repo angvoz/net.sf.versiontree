@@ -75,7 +75,12 @@ public class WideLayout extends AbstractLayout {
 	}
 
 	public void walk(BranchTree bt) {
-		walk(bt.getHeadBranch(),0,0);
+		if (bt != null) {
+			IBranch headBranch = bt.getHeadBranch();
+			if (headBranch != null) {
+				walk(headBranch,0,0);
+			}
+		}
 		reservedHeight.clear();
 	}
 }
