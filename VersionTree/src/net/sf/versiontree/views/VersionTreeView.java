@@ -376,25 +376,30 @@ public class VersionTreeView
 						}
 					}
 
-					ICVSRemoteFile remoteFile = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsFile.getIResource());
-					final String revisionId = remoteFile != null ? remoteFile.getRevision() : null;
+					ILogEntry currentEntry = null;
+					if (entries != null && entries.length > 0) {
+						ICVSRemoteFile remoteFile = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsFile.getIResource());
+						String revisionId = remoteFile != null ? remoteFile.getRevision() : null;
+						// Create tree pulling entries from CVS repository
+						branchTree = new BranchTree(entries, revisionId);
+						// Find current revision
+						if (revisionId != null) {
+							for (ILogEntry entry : entries) {
+								if (entry.getRevision().equals(revisionId)) {
+									currentEntry = entry;
+									break;
+								}
+							}
+						}
+					} else {
+						branchTree = null;
+					}
+					final ILogEntry currentEntryFinal = currentEntry;
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							if (treeView != null && ! treeView.isDisposed()) {
-								if (entries != null && entries.length > 0) {
-									// Create and show tree
-									branchTree = new BranchTree(entries, revisionId);
-									// set current revision
-									for (ILogEntry entry : entries) {
-										if (entry.getRevision().equals(revisionId)) {
-											setCurrentEntry(entry);
-											break;
-										}
-									}
-								} else {
-									branchTree = null;
-								}
 								renderVersionTree(branchTree);
+								setCurrentEntry(currentEntryFinal);
 							}
 						}
 					});
