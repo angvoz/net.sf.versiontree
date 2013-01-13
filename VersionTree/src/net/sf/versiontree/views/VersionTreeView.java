@@ -356,17 +356,18 @@ public class VersionTreeView
 		public IStatus run(IProgressMonitor monitor) {
 			try {
 				if(cvsFile != null && !shutdown) {
+					IResource rc = cvsFile.getIResource();
 					entries = cvsFile.getLogEntries(monitor);
-					if (entries.length == 0){
+					if (entries.length == 0 && rc != null){
 						//Get the parent folder
 						ICVSFolder folder = cvsFile.getParent();
-						if (folder.isManaged()){
+						if (folder.isManaged()) {
 							String remoteFolderLocation = folder.getRemoteLocation(folder);
 							if (remoteFolderLocation != null) {
 								String remoteFileName = remoteFolderLocation.concat(Session.SERVER_SEPARATOR + cvsFile.getName());
 								//Create remote file
-								CVSTeamProvider pro = (CVSTeamProvider) RepositoryProvider.getProvider(cvsFile.getIResource().getProject());
-								if (pro != null){
+								CVSTeamProvider pro = (CVSTeamProvider) RepositoryProvider.getProvider(rc.getProject());
+								if (pro != null) {
 									CVSWorkspaceRoot root = pro.getCVSWorkspaceRoot();
 									CVSRepositoryLocation location = CVSRepositoryLocation.fromString(root.getRemoteLocation().getLocation(false));
 									RemoteFile remFile = RemoteFile.create(remoteFileName, location);
@@ -378,7 +379,7 @@ public class VersionTreeView
 
 					ILogEntry currentEntry = null;
 					if (entries != null && entries.length > 0) {
-						ICVSRemoteFile remoteFile = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsFile.getIResource());
+						ICVSRemoteFile remoteFile = rc != null ? (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(rc) : null;
 						String revisionId = remoteFile != null ? remoteFile.getRevision() : null;
 						// Create tree pulling entries from CVS repository
 						branchTree = new BranchTree(entries, revisionId);
