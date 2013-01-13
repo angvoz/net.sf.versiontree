@@ -15,7 +15,7 @@
 	<name>CVS VersionTree Plugin Master</name>
 
 	<properties>
-		<tycho-version>0.13.0-SNAPSHOT</tycho-version>
+		<tycho-version>0.15.0</tycho-version>
 		<platform-version>3.8</platform-version>
 		<platform-version-name>juno</platform-version-name>
 		<platform-site>http://download.eclipse.org/releases/${platform-version-name}</platform-site>

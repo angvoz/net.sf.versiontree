@@ -41,10 +41,10 @@
 											</fileset>
 										</delete>
 										<copy
-											file="target/net.sf.versiontree.update-site.zip"
+											file="target/net.sf.versiontree.update-site-${project.version}.zip"
 											tofile="${install-dir}/net.sf.versiontree.update-site.${unqualifiedVersion}.${buildQualifier}.zip"/>
 										<unzip
-											src="target/net.sf.versiontree.update-site.zip"
+											src="target/net.sf.versiontree.update-site-${project.version}.zip"
 											dest="${install-dir}/update-site"/>
 									</tasks>
 								</configuration>

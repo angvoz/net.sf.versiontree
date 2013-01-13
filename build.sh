@@ -16,6 +16,9 @@ UPDATE_SITE=net.sf.versiontree.archive/update-site
 rm -rf net.sf.versiontree.archive
 mvn -P production clean install
 
+chmod -R 644 $ARTEFACT $UPDATE_SITE
+chmod a+x $UPDATE_SITE $UPDATE_SITE/features $UPDATE_SITE/plugins
+
 ls -l $ARTEFACT
 if [ -f $ARTEFACT ];then
   rsync -av $ARTEFACT "$DEST_ARCHIVE"
