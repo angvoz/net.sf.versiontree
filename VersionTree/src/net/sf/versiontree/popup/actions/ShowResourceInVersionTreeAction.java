@@ -51,12 +51,12 @@ public class ShowResourceInVersionTreeAction extends WorkspaceAction {
 
 	@Override
 	protected boolean isEnabledForAddedResources() {
-		return false;
+		return true;
 	}
 
 	@Override
 	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
-		return (!cvsResource.isFolder() && super.isEnabledForCVSResource(cvsResource));
+		return !cvsResource.isFolder();
 	}
 
 }
