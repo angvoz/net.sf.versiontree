@@ -74,7 +74,10 @@ CVS Version Tree will connect with arrows merged versions provided they are tagg
 === New features in development version ("unstable" build) ===
 * Display revisions with major digit bumped (2.1 etc.)
 * Handle multiple vendor branches
+* Show tree for files from Project Explorer that not on the branch but in attic
 * Draw tags matching filter in bold
+* Arrows for commits merged to non-HEAD branches
+* Performance rendering tree for files with very big number of revisions
 
 === New features in release 1.7.0 ===
 * Merge arrows between revisions based on information extracted from tags
