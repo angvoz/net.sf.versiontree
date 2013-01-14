@@ -76,6 +76,7 @@ CVS Version Tree will connect with arrows merged versions provided they are tagg
 * Handle multiple vendor branches
 * Show tree for files from Project Explorer that not on the branch but in attic
 * Draw tags matching filter in bold
+* Ability to copy tags from the list of tags
 * Arrows for commits merged to non-HEAD branches
 * Performance rendering tree for files with very big number of revisions
 

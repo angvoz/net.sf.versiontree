@@ -25,6 +25,7 @@ import net.sf.versiontree.data.ITreeElement;
 import net.sf.versiontree.data.algo.ILayout;
 import net.sf.versiontree.layout.drawer.DrawerDispatcher;
 import net.sf.versiontree.layout.drawer.IDrawMethod;
+import net.sf.versiontree.popup.actions.CopyTagAction;
 import net.sf.versiontree.popup.actions.ShowEmptyBranchesAction;
 import net.sf.versiontree.popup.actions.ShowNABranchesAction;
 import net.sf.versiontree.ui.DetailTableProvider;
@@ -67,6 +68,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -156,7 +158,8 @@ public class VersionTreeView
 	private Action toggleHorVerDisplayAction;
 	private Action linkWithEditorAction;
 	private Action tagWithExistingAction;
-	private TextViewerAction copyAction;
+	private Action copyTagAction;
+	private TextViewerAction copyCommentAction;
 	private TextViewerAction selectAllAction;
 	private OpenLogEntryAction openActionDelegate;
 
@@ -829,9 +832,9 @@ public class VersionTreeView
 
 		IActionBars actionBars = getViewSite().getActionBars();
 		// Create actions for the text editor
-		copyAction = new TextViewerAction(commentViewer, ITextOperationTarget.COPY);
-		copyAction.setText(VersionTreePlugin.getResourceString("VersionTreeView.Copy_Action")); //$NON-NLS-1$
-		actionBars.setGlobalActionHandler(ITextEditorActionConstants.COPY, copyAction);
+		copyCommentAction = new TextViewerAction(commentViewer, ITextOperationTarget.COPY);
+		copyCommentAction.setText(VersionTreePlugin.getResourceString("VersionTreeView.Copy_Action")); //$NON-NLS-1$
+		actionBars.setGlobalActionHandler(ITextEditorActionConstants.COPY, copyCommentAction);
 
 		selectAllAction = new TextViewerAction(commentViewer, ITextOperationTarget.SELECT_ALL);
 		selectAllAction.setText(VersionTreePlugin.getResourceString("VersionTreeView.Select_All_Action")); //$NON-NLS-1$
@@ -849,10 +852,36 @@ public class VersionTreeView
 		StyledText text = commentViewer.getTextWidget();
 		Menu menu = menuMgr.createContextMenu(text);
 		text.setMenu(menu);
+
+		// Create actions for the tags
+		copyTagAction = new CopyTagAction(tagViewer);
+		copyTagAction.setText(VersionTreePlugin.getResourceString("VersionTreeView.Copy_Action"));
+		copyTagAction.setEnabled(false);
+
+		menuMgr = new MenuManager();
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager menuMgr) {
+				menuMgr.add(copyTagAction);
+			}
+		});
+		menu = menuMgr.createContextMenu(tagViewer.getControl());
+		tagViewer.getControl().setMenu(menu);
+
+		tagViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				copyTagAction.setEnabled(false);
+				if (event.getSelection() instanceof StructuredSelection) {
+					if (((StructuredSelection) event.getSelection()).getFirstElement() != null) {
+						copyTagAction.setEnabled(true);
+					}
+				}
+			}
+		});
 	}
 
 	private void fillTextMenu(IMenuManager manager) {
-		manager.add(copyAction);
+		manager.add(copyCommentAction);
 		manager.add(selectAllAction);
 	}
 
@@ -884,7 +913,7 @@ public class VersionTreeView
 		TextViewer result = new TextViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.READ_ONLY);
 		result.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				copyAction.update();
+				copyCommentAction.update();
 			}
 		});
 		return result;
