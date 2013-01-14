@@ -50,7 +50,7 @@ public class TreeView extends ScrolledComposite implements MouseListener, IDrawM
 	/**
 	 * the revision we are currently working on in the workspace.
 	 */
-	private Revision currentRevivion;
+	private Revision currentRevision;
 
 	/**
 	 * Composite that is the content of this scrollable composite.
@@ -113,7 +113,7 @@ public class TreeView extends ScrolledComposite implements MouseListener, IDrawM
 	 */
 	public void clear() {
 		selectionManager.clearSelection();
-		currentRevivion = null;
+		currentRevision = null;
 		removeAllWidgets();
 		connectors.clearConnectors();
 		connectors.redraw();
@@ -134,9 +134,9 @@ public class TreeView extends ScrolledComposite implements MouseListener, IDrawM
 			revision.setSize(revision.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 			// check if this is the current revision
 			if ((revision.getRevisionData().getState() & ITreeElement.STATE_CURRENT) != 0) {
-				currentRevivion = revision;
-				selectionManager.revisionSelected(currentRevivion.getRevisionData(), 1);
-				logSelectionListener.logEntrySelected(currentRevivion.getRevisionData().getLogEntry());
+				currentRevision = revision;
+				selectionManager.revisionSelected(currentRevision.getRevisionData(), 1);
+				logSelectionListener.logEntrySelected(currentRevision.getRevisionData().getLogEntry());
 			}
 		} else {
 			Branch branch = new Branch(connectors, 0);
@@ -205,8 +205,8 @@ public class TreeView extends ScrolledComposite implements MouseListener, IDrawM
 		size.y += BORDER;
 		connectors.setSize(size);
 		// scroll to current revision
-		if (currentRevivion != null) {
-			scrollToRevision(currentRevivion);
+		if (currentRevision != null) {
+			scrollToRevision(currentRevision);
 		}
 	}
 
@@ -267,7 +267,7 @@ public class TreeView extends ScrolledComposite implements MouseListener, IDrawM
 
 	/**
 	 * Listener for all components on the view. Checks for left clicks
-	 * on Revsisons, changes the selection and notifies the LogEntrySelectionListener.
+	 * on Revisions, changes the selection and notifies the LogEntrySelectionListener.
 	 */
 	public void mouseDown(MouseEvent e) {
 		if (e.getSource() instanceof Revision) {
