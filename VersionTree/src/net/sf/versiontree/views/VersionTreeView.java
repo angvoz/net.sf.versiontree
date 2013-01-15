@@ -618,12 +618,6 @@ public class VersionTreeView
 		manager.add(getRevisionAction);
 		manager.add(tagWithExistingAction);
 		manager.add(new Separator());
-		manager.add(deepLayoutAction);
-		manager.add(wideLayoutAction);
-		manager.add(showNABranchesAction);
-		manager.add(showEmptyBranchesAction);
-		manager.add(refreshAction);
-		manager.add(new Separator());
 		// Other plug-ins can contribute there actions here
 		manager.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
