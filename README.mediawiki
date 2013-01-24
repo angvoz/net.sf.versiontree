@@ -72,6 +72,9 @@ CVS Version Tree will connect with arrows merged versions provided they are tagg
 
 == What's new ==
 === New features in development version ("unstable" build) ===
+* Currently matches 1.7.1
+
+=== New features in release 1.7.1 ===
 * Display revisions with major digit bumped (2.1 etc.)
 * Handle multiple vendor branches
 * Show tree for files from Project Explorer that not on the branch but in attic
