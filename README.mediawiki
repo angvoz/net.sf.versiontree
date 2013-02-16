@@ -42,31 +42,31 @@ CVS Version Tree will connect with arrows merged versions provided they are tagg
 
 
 === Screenshots ===
-[[Image:net.sf.versiontree/raw/master/net.sf.versiontree.doc/images/MergePoints.png]]
+[[Image:net.sf.versiontree.doc/images/MergePoints.png]]
 <br/>Arrows Connecting Merged Revisions
 <br/><br/>
 
-[[Image:net.sf.versiontree/raw/master/net.sf.versiontree.doc/images/Preferences.png]]
+[[Image:net.sf.versiontree.doc/images/Preferences.png]]
 <br/>Preferences and Custom Tag Decorators
 <br/><br/>
 
-[[Image:net.sf.versiontree/raw/master/net.sf.versiontree.doc/images/VendorBranches.png]]
+[[Image:net.sf.versiontree.doc/images/VendorBranches.png]]
 <br/>Vendor Branches
 <br/><br/>
 
-[[Image:net.sf.versiontree/raw/master/net.sf.versiontree.doc/images/DeepLayout.jpg]]
+[[Image:net.sf.versiontree.doc/images/DeepLayout.jpg]]
 <br/>Mozilla Source Checkout w Deep Layout, Detail pane right
 <br/><br/>
 
-[[Image:net.sf.versiontree/raw/master/net.sf.versiontree.doc/images/WideLayout.jpg]]
+[[Image:net.sf.versiontree.doc/images/WideLayout.jpg]]
 <br/>Mozilla Source Checkout w Wide Layout, Detail pane on bottom
 <br/><br/>
 
-[[Image:net.sf.versiontree/raw/master/net.sf.versiontree.doc/images/CompareRevisions.jpg]]
+[[Image:net.sf.versiontree.doc/images/CompareRevisions.jpg]]
 <br/>Two revisions selected for comparison, editor-link enabled
 <br/><br/>
 
-[[Image:net.sf.versiontree/raw/master/net.sf.versiontree.doc/images/LongComments.jpg]]
+[[Image:net.sf.versiontree.doc/images/LongComments.jpg]]
 <br/>Access from CVS perspective, simple tree,long comments,JSP
 <br/><br/>
 
