@@ -166,11 +166,6 @@ public class DetailTableProvider {
 		createColumns(table, layout, viewer);
 		viewer.setLabelProvider(new ValueLabelProvider());
 
-		// By default, reverse sort by revision.
-		ValueSorter sorter = new ValueSorter(COL_KEY);
-		sorter.setReversed(true);
-		viewer.setSorter(sorter);
-
 		return viewer;
 	}
 

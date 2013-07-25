@@ -205,6 +205,10 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 		return tagList;
 	}
 
+	public String getLockedBy() {
+		return null;
+	}
+
 	/**
 	 * @see net.sf.versiontree.data.ITreeElement#isRevision()
 	 */

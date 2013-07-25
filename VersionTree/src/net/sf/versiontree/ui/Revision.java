@@ -62,6 +62,7 @@ public class Revision extends Canvas {
 	private Image mergedFromImage;
 	private Image closedImage;
 	private Image completedImage;
+	private Image lockedByImage;
 
 	/**
 	 * Creates a new revision widget.
@@ -106,6 +107,7 @@ public class Revision extends Canvas {
 		mergedFromImage = VersionTreeImages.getImage(VersionTreeImages.IMG_MERGE_FROM);
 		closedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_CLOSED);
 		completedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_COMPLETED);
+		lockedByImage = VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED_BY);
 
 		stringXPosition = versionImage.getBounds().width + 2 * INSET;
 	}
@@ -183,6 +185,11 @@ public class Revision extends Canvas {
 		} else {
 			gc.drawRectangle(0, 0, size.width - 1, size.height - 1);
 		}
+
+		if (revisionData.getLockedBy() != null) {
+			gc.drawImage(lockedByImage, size.width - lockedByImage.getImageData().width - INSET, INSET);
+		}
+
 		gc.setForeground(rememberColor);
 	}
 
@@ -234,6 +241,10 @@ public class Revision extends Canvas {
 		String tooltip = "";
 		IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
 
+		String lockedBy = revisionData.getLockedBy();
+		if (lockedBy != null) {
+			tooltip += VersionTreePlugin.getResourceString("VersionTreeView.Locked_By") + ": " + lockedBy; //$NON-NLS-1$
+		}
 		List<String> tags = revisionData.getTags();
 		for (String tag : tags) {
 			final Pattern patternLocked = Pattern.compile(prefs.getString(VersionTreePlugin.PREF_REGEX_LOCKED));

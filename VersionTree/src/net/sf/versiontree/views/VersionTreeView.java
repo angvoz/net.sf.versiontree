@@ -179,6 +179,7 @@ public class VersionTreeView extends ViewPart implements LogEntrySelectionListen
 			{ VersionTreePlugin.getResourceString("VersionTreeView.Date"), "" },
 			{ VersionTreePlugin.getResourceString("VersionTreeView.Author"), "" },
 			{ VersionTreePlugin.getResourceString("VersionTreeView.State"), "" },
+			{ VersionTreePlugin.getResourceString("VersionTreeView.LockedBy"), "" },
 		};
 
 	private IFile file;
@@ -546,6 +547,7 @@ public class VersionTreeView extends ViewPart implements LogEntrySelectionListen
 			tableData[2][1] = ""; //$NON-NLS-1$
 			tableData[3][1] = ""; //$NON-NLS-1$
 			tableData[4][1] = ""; //$NON-NLS-1$
+			tableData[5][1] = ""; //$NON-NLS-1$
 
 		} else {
 			tableData[0][1] = theCurrentEntry.getRemoteFile().getName();
@@ -553,6 +555,7 @@ public class VersionTreeView extends ViewPart implements LogEntrySelectionListen
 			tableData[2][1] = dateFormat.format(theCurrentEntry.getDate());
 			tableData[3][1] = theCurrentEntry.getAuthor();
 			tableData[4][1] = theCurrentEntry.getState();
+			tableData[5][1] = "";
 		}
 		tableViewer.setInput(tableData);
 

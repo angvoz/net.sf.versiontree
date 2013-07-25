@@ -39,6 +39,8 @@ public interface IRevision extends Comparable<IRevision>, ITreeElement {
 	public abstract boolean hasBranchTags();
 	/** Returns the number of branches */
 	public abstract int numBranchTags();
+	/** Returns the owner of CVS lock */
+	public abstract String getLockedBy();
 
 	/** helper functions */
 	public abstract int[] getParsedRevision();
