@@ -132,10 +132,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
  * This ViewPart displays a version tree based on revision information
  * obtained for a CVS managed resource.
  */
-public class VersionTreeView
-	extends ViewPart
-	implements LogEntrySelectionListener {
-
+public class VersionTreeView extends ViewPart implements LogEntrySelectionListener {
 	public static final String VIEW_ID = "net.sf.versiontree.views.VersionTreeView"; //$NON-NLS-1$
 
 	private SashForm sashForm;

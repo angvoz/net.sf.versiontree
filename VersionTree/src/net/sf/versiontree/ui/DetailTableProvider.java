@@ -140,8 +140,7 @@ public class DetailTableProvider {
 		if (element instanceof ILogEntry) {
 			entry = (ILogEntry) element;
 		} else if (element instanceof IAdaptable) {
-			entry =
-				(ILogEntry) ((IAdaptable) element).getAdapter(ILogEntry.class);
+			entry = (ILogEntry) ((IAdaptable) element).getAdapter(ILogEntry.class);
 		}
 		return entry;
 	}
@@ -154,22 +153,17 @@ public class DetailTableProvider {
 	 * @return TableViewer
 	 */
 	public TableViewer createTable(Composite parent) {
-		Table table =
-			new Table(
-				parent,
-				SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
+		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+
 		GridData data = new GridData(GridData.FILL_BOTH);
 		table.setLayoutData(data);
-
 		TableLayout layout = new TableLayout();
 		table.setLayout(layout);
 
 		TableViewer viewer = new TableViewer(table);
-
 		createColumns(table, layout, viewer);
-
 		viewer.setLabelProvider(new ValueLabelProvider());
 
 		// By default, reverse sort by revision.
@@ -188,7 +182,7 @@ public class DetailTableProvider {
 		TableLayout layout,
 		TableViewer viewer) {
 		SelectionListener headerListener = getColumnListener(viewer);
-		// propertie
+		// properties
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(VersionTreePlugin.getResourceString("DetailTableProvider.Property")); //$NON-NLS-1$
