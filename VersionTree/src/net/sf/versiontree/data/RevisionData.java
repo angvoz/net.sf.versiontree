@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import net.sf.versiontree.VersionTreePlugin;
+import net.sf.versiontree.views.LogEntryWorkaround;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -206,6 +207,9 @@ public class RevisionData extends AbstractTreeElement implements IRevision{
 	}
 
 	public String getLockedBy() {
+		if (logEntry instanceof LogEntryWorkaround) {
+			return ((LogEntryWorkaround) logEntry).getLockedBy();
+		}
 		return null;
 	}
 

@@ -182,14 +182,14 @@ public class DetailTableProvider {
 		col.setResizable(true);
 		col.setText(VersionTreePlugin.getResourceString("DetailTableProvider.Property")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(45, 35, true));
+		layout.addColumnData(new ColumnWeightData(45, 80, true));
 
 		// value
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(VersionTreePlugin.getResourceString("DetailTableProvider.Value")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(120, 80, true));
+		layout.addColumnData(new ColumnWeightData(120, 100, true));
 	}
 
 	/**

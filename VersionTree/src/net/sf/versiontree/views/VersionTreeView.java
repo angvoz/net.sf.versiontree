@@ -100,6 +100,7 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -358,7 +359,13 @@ public class VersionTreeView extends ViewPart implements LogEntrySelectionListen
 			try {
 				if(cvsFile != null && !shutdown) {
 					IResource rc = cvsFile.getIResource();
-					entries = cvsFile.getLogEntries(monitor);
+					if (cvsFile instanceof EclipseFile) {
+						entries = new EclipseFileWorkaround((EclipseFile) cvsFile).getLogEntries(monitor);
+					} else if (cvsFile instanceof RemoteFile) {
+						entries = new RemoteFileWorkaround((RemoteFile) cvsFile).getLogEntries(monitor);
+					} else {
+						entries = cvsFile.getLogEntries(monitor);
+					}
 					if (entries.length == 0 && rc != null){
 						//Get the parent folder
 						ICVSFolder folder = cvsFile.getParent();
@@ -555,7 +562,11 @@ public class VersionTreeView extends ViewPart implements LogEntrySelectionListen
 			tableData[2][1] = dateFormat.format(theCurrentEntry.getDate());
 			tableData[3][1] = theCurrentEntry.getAuthor();
 			tableData[4][1] = theCurrentEntry.getState();
-			tableData[5][1] = "";
+			if (theCurrentEntry instanceof LogEntryWorkaround) {
+				tableData[5][1] = ((LogEntryWorkaround) theCurrentEntry).getLockedBy();
+			} else {
+				tableData[5][1] = "";
+			}
 		}
 		tableViewer.setInput(tableData);
 
