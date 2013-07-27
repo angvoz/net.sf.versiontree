@@ -2,9 +2,9 @@
 == Download ==
 === Update Sites ===
 {|
-|Eclipse 3.7/3.8/4.2 (Indigo/Juno): || Version Tree latest build: || <nowiki>http://versiontree.sourceforge.net/update-site-unstable</nowiki><br/>
+|Eclipse 3.7/3.8/4.X (Indigo/Juno/Kepler): || Version Tree latest build: || <nowiki>http://versiontree.sourceforge.net/update-site-unstable</nowiki><br/>
 |-
-|Eclipse 3.7/3.8/4.2 (Indigo/Juno): || Version Tree 1.7.X:        || <nowiki>http://versiontree.sourceforge.net/updates</nowiki><br/>
+|Eclipse 3.7/3.8/4.X (Indigo/Juno/Kepler): || Version Tree 1.7.X:        || <nowiki>http://versiontree.sourceforge.net/updates</nowiki><br/>
 |-
 |Eclipse 3.6 (Helios):              || Version Tree 1.6.1:        || <nowiki>http://versiontree.sourceforge.net/update-site.1.6.1</nowiki><br/>
 |}
@@ -73,6 +73,7 @@ CVS Version Tree will connect with arrows merged versions provided they are tagg
 == What's new ==
 === New features in development version ("unstable" build) ===
 * Decorators for locked revisions
+* Fixed missing "merge to HEAD" arrow when filtering branches
 
 === New features in release 1.7.1 ===
 * Display revisions with major digit bumped (2.1 etc.)

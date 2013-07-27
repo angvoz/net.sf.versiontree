@@ -350,6 +350,9 @@ public class TreeView extends ScrolledComposite implements MouseListener, IDrawM
 	}
 
 	private boolean isBranchVisible(String branchName) {
+		if (IBranch.HEAD_NAME.equals(branchName)) {
+			return true;
+		}
 		return (!branchName.equals(IBranch.N_A_BRANCH) || this.getTreeViewConfig().drawNABranches())
 				&& (treeViewConfig.isBranchFilterPenetrated(branchName));
 	}
