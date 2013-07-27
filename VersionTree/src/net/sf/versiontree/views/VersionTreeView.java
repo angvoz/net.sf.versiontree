@@ -379,7 +379,7 @@ public class VersionTreeView extends ViewPart implements LogEntrySelectionListen
 									CVSWorkspaceRoot root = pro.getCVSWorkspaceRoot();
 									CVSRepositoryLocation location = CVSRepositoryLocation.fromString(root.getRemoteLocation().getLocation(false));
 									RemoteFile remFile = RemoteFile.create(remoteFileName, location);
-									entries=remFile.getLogEntries(monitor);
+									entries=new RemoteFileWorkaround(remFile).getLogEntries(monitor);
 								}
 							}
 						}
