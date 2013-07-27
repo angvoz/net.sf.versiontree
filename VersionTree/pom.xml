@@ -6,12 +6,12 @@
 
 	<parent>
 		<groupId>net.sf.versiontree</groupId>
-		<version>1.7.1-SNAPSHOT</version>
+		<version>1.7.2-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 		<artifactId>net.sf.versiontree.parent</artifactId>
 	</parent>
 
-	<version>1.7.1-SNAPSHOT</version>
+	<version>1.7.2-SNAPSHOT</version>
 	<artifactId>net.sf.versiontree</artifactId>
 	<packaging>eclipse-plugin</packaging>
 	<url>https://github.com/angvoz/net.sf.versiontree</url>
