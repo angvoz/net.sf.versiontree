@@ -56,13 +56,14 @@ public class Revision extends Canvas {
 	private Color background;
 
 	private Image versionImage;
-	private Image lockedImage;
+	private Image lockedWithTagImage;
 	private Image requestImage;
 	private Image mergedToImage;
 	private Image mergedFromImage;
 	private Image closedImage;
 	private Image completedImage;
-	private Image lockedByImage;
+	private Image lockedBySomebodyElseImage;
+	private Image lockedByMeImage;
 
 	/**
 	 * Creates a new revision widget.
@@ -101,13 +102,14 @@ public class Revision extends Canvas {
 		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
 		versionImage = plugin.getImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION).createImage();
 
-		lockedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED);
+		lockedWithTagImage = VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED);
 		requestImage = VersionTreeImages.getImage(VersionTreeImages.IMG_REQUEST);
 		mergedToImage = VersionTreeImages.getImage(VersionTreeImages.IMG_MERGE_TO);
 		mergedFromImage = VersionTreeImages.getImage(VersionTreeImages.IMG_MERGE_FROM);
 		closedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_CLOSED);
 		completedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_COMPLETED);
-		lockedByImage = VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED_BY);
+		lockedByMeImage = VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED_BY_ME);
+		lockedBySomebodyElseImage = VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED_BY_SOMEBODY_ELSE);
 
 		stringXPosition = versionImage.getBounds().width + 2 * INSET;
 	}
@@ -125,7 +127,7 @@ public class Revision extends Canvas {
 			IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
 
 			boolean isHeadRevision = revisionData.getRevision().matches("\\d*\\.\\d*");
-			boolean isLocked = false;
+			boolean isLockedWithTag = false;
 			boolean isMerged = false;
 			boolean isBeingMerged = false;
 			boolean isPropagated = false;
@@ -133,7 +135,7 @@ public class Revision extends Canvas {
 			List<String> tags = revisionData.getTags();
 			for (String tag : tags) {
 				if (tag.matches(prefs.getString(VersionTreePlugin.PREF_REGEX_LOCKED))) {
-					isLocked = true;
+					isLockedWithTag = true;
 					// "locked" has preference over other icons
 					break;
 				}
@@ -151,8 +153,8 @@ public class Revision extends Canvas {
 				}
 			}
 			Image image = versionImage;
-			if (isLocked) {
-				image = lockedImage;
+			if (isLockedWithTag) {
+				image = lockedWithTagImage;
 			} else if (isBeingMerged) {
 				image = requestImage;
 			} else if (isClosed && isMerged && !isHeadRevision) {
@@ -186,8 +188,16 @@ public class Revision extends Canvas {
 			gc.drawRectangle(0, 0, size.width - 1, size.height - 1);
 		}
 
-		if (revisionData.getLockedBy() != null) {
-			gc.drawImage(lockedByImage, size.width - lockedByImage.getImageData().width - INSET, INSET);
+		String lockOwner = revisionData.getLockedBy();
+		if (lockOwner != null) {
+			String me = revisionData.getLogEntry().getRemoteFile().getRepository().getUsername();
+			Image lockImage;
+			if (lockOwner.equals(me)) {
+				lockImage = lockedByMeImage;
+			} else {
+				lockImage = lockedBySomebodyElseImage;
+			}
+			gc.drawImage(lockImage, size.width - lockImage.getImageData().width - INSET, INSET);
 		}
 
 		gc.setForeground(rememberColor);

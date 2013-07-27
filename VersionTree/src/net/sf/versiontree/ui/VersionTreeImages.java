@@ -57,7 +57,8 @@ public class VersionTreeImages {
 	public static final String IMG_MERGE_FROM = "icons/tag_merge_from.gif";
 	public static final String IMG_CLOSED = "icons/tag_closed.gif";
 	public static final String IMG_COMPLETED = "icons/tag_completed.gif";
-	public static final String IMG_LOCKED_BY = "icons/lock_co.gif";
+	public static final String IMG_LOCKED_BY_ME = "icons/key_obj.gif";
+	public static final String IMG_LOCKED_BY_SOMEBODY_ELSE = "icons/lock_co.gif";
 
 	// overlays
 	public static final String IMG_OVR_WARNING = "icons/ovr16/warning_co.gif";
