@@ -26,6 +26,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Point;
@@ -104,8 +106,34 @@ public class TreeView extends ScrolledComposite implements MouseListener, IDrawM
 		connectors = new ConnectArrows(this, SWT.NONE);
 		connectors.setLayout(null);
 		this.setContent(connectors);
-		this.getVerticalBar().setIncrement(width);
-		this.getHorizontalBar().setIncrement(height);
+		setIncrements();
+
+		addControlListener(new ControlListener() {
+			public void controlMoved(ControlEvent e) {
+			}
+			public void controlResized(ControlEvent e) {
+				setIncrements();
+			}
+		});
+	}
+
+	private void setIncrements() {
+		this.getVerticalBar().setIncrement(height);
+		this.getHorizontalBar().setIncrement(width);
+		Rectangle area = getClientArea();
+
+		int minPageHeightIncrement = height + hspacing;
+		int pageHeightIncrement = area.height - minPageHeightIncrement;
+		if (pageHeightIncrement < minPageHeightIncrement) {
+			pageHeightIncrement = minPageHeightIncrement;
+		}
+		int minPageWidthIncrement = width + vspacing;
+		int pageWidthIncrement = area.width - minPageWidthIncrement;
+		if (pageWidthIncrement < minPageWidthIncrement) {
+			pageWidthIncrement = minPageWidthIncrement;
+		}
+		this.getVerticalBar().setPageIncrement(pageHeightIncrement);
+		this.getHorizontalBar().setPageIncrement(pageWidthIncrement);
 	}
 
 	/**
