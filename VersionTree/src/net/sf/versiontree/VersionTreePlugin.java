@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -154,6 +155,11 @@ public class VersionTreePlugin extends AbstractUIPlugin {
 	}
 
 	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
+
+	public static void log(CoreException e) {
+		IStatus status = e.getStatus();
 		getDefault().getLog().log(status);
 	}
 }

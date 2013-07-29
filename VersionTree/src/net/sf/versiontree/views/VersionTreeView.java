@@ -198,7 +198,6 @@ public class VersionTreeView extends ViewPart implements LogEntrySelectionListen
 
 	private IPreferenceStore prefs;
 
-
 	private final class TagLabelProvider extends LabelProvider implements ITableFontProvider {
 		@Override
 		public Image getImage(Object element) {
@@ -581,7 +580,7 @@ public class VersionTreeView extends ViewPart implements LogEntrySelectionListen
 			try {
 				fetchLogEntriesJob.join();
 			} catch (InterruptedException e) {
-				CVSUIPlugin.log(CVSException.wrapException(e));
+				VersionTreePlugin.log(CVSException.wrapException(e));
 			}
 		}
 		fetchLogEntriesJob.setRemoteFile(remoteFile);
@@ -625,12 +624,22 @@ public class VersionTreeView extends ViewPart implements LogEntrySelectionListen
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		manager.add(getContentsAction);
-		manager.add(getRevisionAction);
-		manager.add(tagWithExistingAction);
-		manager.add(new Separator());
-		// Other plug-ins can contribute there actions here
-		manager.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		IStructuredSelection selection = treeView.getTreeSelection();
+		if (selection != null) {
+			if (selection.size() == 1) {
+				manager.add(getContentsAction);
+				manager.add(getRevisionAction);
+				manager.add(tagWithExistingAction);
+			}
+			if (selection.size() == 1 || selection.size() == 2) {
+				CompareRevisionsAction compareRevisionsAction = new CompareRevisionsAction(getSite(), file);
+				boolean enabled = compareRevisionsAction.updateSelection(selection);
+				compareRevisionsAction.setEnabled(enabled);
+				manager.add(compareRevisionsAction);
+			}
+			// Other plug-ins can contribute there actions here
+			manager.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		}
 	}
 
 	private void makeActions() {
@@ -1137,7 +1146,7 @@ public class VersionTreeView extends ViewPart implements LogEntrySelectionListen
 					}
 				}
 			} catch (CVSException e) {
-				CVSUIPlugin.log(e.getStatus());
+				VersionTreePlugin.log(e);
 			}
 		}
 		return true;

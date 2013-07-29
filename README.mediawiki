@@ -73,6 +73,7 @@ CVS Version Tree will connect with arrows merged versions provided they are tagg
 == What's new ==
 === New features in development version ("unstable" build) ===
 * Decorators for locked revisions
+* Compare selected revision with local file via context menu
 * Fixed missing "merge to HEAD" arrow when filtering branches
 
 === New features in release 1.7.1 ===

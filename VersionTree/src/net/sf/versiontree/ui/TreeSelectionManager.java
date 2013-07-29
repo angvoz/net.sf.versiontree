@@ -204,6 +204,14 @@ public class TreeSelectionManager implements ISelectionProvider {
 	}
 
 	/**
+	 * Returns the current selection in full, including dead revisions.
+	 * @return
+	 */
+	public IStructuredSelection getTreeSelection() {
+		return selection;
+	}
+
+	/**
 	 * Sets the state of all selected revisions to selected.
 	 */
 	private void setSelected() {

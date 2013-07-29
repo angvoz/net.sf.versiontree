@@ -285,6 +285,14 @@ public class TreeView extends ScrolledComposite implements MouseListener, IDrawM
 	}
 
 	/**
+	 * Returns the current selection in full, including dead revisions.
+	 * @return Returns the current selection in full, including dead revisions.
+	 */
+	public IStructuredSelection getTreeSelection() {
+		return selectionManager.getTreeSelection();
+	}
+
+	/**
 	 * Forwards double clicks to the log entry listener.
 	 */
 	public void mouseDoubleClick(MouseEvent e) {
