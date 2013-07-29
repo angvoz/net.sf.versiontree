@@ -16,7 +16,6 @@ import net.sf.versiontree.data.IRevision;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.ResourceNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -29,6 +28,7 @@ import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
+import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IReusableEditor;
@@ -77,7 +77,7 @@ public class CompareRevisionsAction extends BaseSelectionListenerAction {
 				return;
 			}
 
-			left = new ResourceNode(localFile);
+			left = new LocalResourceTypedElement(localFile);
 			right = new FileRevisionTypedElement(new CVSFileRevision(logEntry), getEncoding(localFile));
 
 		} else if (selArray.length == 2) {
