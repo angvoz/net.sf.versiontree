@@ -11,6 +11,8 @@
 package net.sf.versiontree.ui;
 
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,6 +66,12 @@ public class Revision extends Canvas {
 	private Image completedImage;
 	private Image lockedBySomebodyElseImage;
 	private Image lockedByMeImage;
+
+	private final class MergePointComparator implements Comparator<MergePoint> {
+		public int compare(MergePoint arg0, MergePoint arg1) {
+			return arg0.getBranchName().compareTo(arg1.getBranchName());
+		}
+	}
 
 	/**
 	 * Creates a new revision widget.
@@ -256,6 +264,8 @@ public class Revision extends Canvas {
 			tooltip += VersionTreePlugin.getResourceString("VersionTreeView.Locked_By") + ": " + lockedBy; //$NON-NLS-1$
 		}
 		List<String> tags = revisionData.getTags();
+		Collections.sort(tags);
+
 		for (String tag : tags) {
 			final Pattern patternLocked = Pattern.compile(prefs.getString(VersionTreePlugin.PREF_REGEX_LOCKED));
 			Matcher matcherLockedBy = patternLocked.matcher(tag);
@@ -267,6 +277,7 @@ public class Revision extends Canvas {
 				tooltip += VersionTreePlugin.getResourceString("VersionTreeView.Locked_By") + ": " + branchLocked; //$NON-NLS-1$
 			}
 		}
+
 		for (String tag : tags) {
 			final Pattern patternRequest = Pattern.compile(prefs.getString(VersionTreePlugin.PREF_REGEX_REQUEST));
 			Matcher matcherRequest = patternRequest.matcher(tag);
@@ -277,11 +288,10 @@ public class Revision extends Canvas {
 				String request = matcherRequest.groupCount() > 0 ? matcherRequest.group(1) : tag;
 				tooltip += VersionTreePlugin.getResourceString("VersionTreeView.Request") + ": " + request; //$NON-NLS-1$
 			}
-
 		}
 
 		List<MergePoint> mergeFromList = data.getMergeFromRevisions();
-		List<MergePoint> mergeToList = data.getMergeToRevisions();
+		Collections.sort(mergeFromList, new MergePointComparator());
 		for (MergePoint mergeFromPoint : mergeFromList) {
 			String mergeFromMessage = VersionTreePlugin.getResourceString("VersionTreeView.Merge_From_Message"); //$NON-NLS-1$
 			if (tooltip.length() > 0) {
@@ -290,6 +300,9 @@ public class Revision extends Canvas {
 			tooltip += mergeFromMessage + ": " + mergeFromPoint.getBranchName();
 			tooltip += " (" + mergeFromPoint.getMergeRevision().getRevision() + ")";
 		}
+
+		List<MergePoint> mergeToList = data.getMergeToRevisions();
+		Collections.sort(mergeToList, new MergePointComparator());
 		for (MergePoint mergeToPoint : mergeToList) {
 			String mergeToMessage = VersionTreePlugin.getResourceString("VersionTreeView.Merge_To_Message"); //$NON-NLS-1$
 			if (tooltip.length() > 0) {
