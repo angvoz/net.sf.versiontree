@@ -103,7 +103,7 @@ public class Branch extends Canvas {
 
 		int yOffset = inset;
 		Point extent = gc.stringExtent(branchData.getName());
-		gc.drawString(branchData.getName(), (size.width / 2) - (extent.x / 2), yOffset);
+		gc.drawString(branchData.getName(), INSET + versionImage.getBounds().width, yOffset);
 		yOffset += offsetBetweenStrings + extent.y;
 		gc.drawImage(versionImage, INSET, yOffset);
 		extent = gc.stringExtent(branchData.getBranchPrefix());

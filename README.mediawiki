@@ -75,6 +75,8 @@ CVS Version Tree will connect with arrows merged versions provided they are tagg
 * Decorators for locked revisions
 * Compare selected revision with local file via context menu
 * Fixed missing "merge to HEAD" arrow when filtering branches
+* Sorted tags in tooltips where a list of tags is shown
+* Improved appearance for labels of branches with long names
 
 === New features in release 1.7.1 ===
 * Display revisions with major digit bumped (2.1 etc.)
