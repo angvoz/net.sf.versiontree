@@ -5,6 +5,7 @@ if [ "$1" = "release" ];then
   ## Blessed update site for releases is $HOST:/home/project-web/versiontree/htdocs/updates
   DEST_UPDATE_SITE=$HOST:/home/project-web/versiontree/htdocs/updates
   DEST_ARCHIVE="$HOST:/home/frs/project/versiontree/versiontree\ (Eclipse\ 3.7)/net.sf.versiontree.update-site_1.7.X.zip"
+  DEST_ARCHIVE_RELEASE="$HOST:/home/frs/project/versiontree/versiontree\ (Eclipse\ 3.7)/net.sf.versiontree.update-site_1.7.2.zip"
 else
   DEST_UPDATE_SITE=$HOST:/home/project-web/versiontree/htdocs/update-site-unstable
   DEST_ARCHIVE="$HOST:/home/frs/project/versiontree/versiontree\ (Eclipse\ 3.7)/net.sf.versiontree.update-site-unstable.zip"
@@ -21,6 +22,9 @@ chmod a+x $UPDATE_SITE $UPDATE_SITE/features $UPDATE_SITE/plugins
 
 ls -l $ARTEFACT
 if [ -f $ARTEFACT ];then
+  if [ "$1" = "release" ];then
+    rsync -av $ARTEFACT "$DEST_ARCHIVE_RELEASE"
+  fi
   rsync -av $ARTEFACT "$DEST_ARCHIVE"
   rsync -avr --delete $UPDATE_SITE/* $DEST_UPDATE_SITE
 fi

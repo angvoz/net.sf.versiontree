@@ -2,26 +2,28 @@
 == Download ==
 === Update Sites ===
 {|
-|Eclipse 3.7/3.8/4.X (Indigo/Juno/Kepler): || Version Tree latest build: || <nowiki>http://versiontree.sourceforge.net/update-site-unstable</nowiki><br/>
+|Eclipse 3.7/3.8/4.X (Indigo/Juno/Kepler): || Version Tree latest development build: || <nowiki>http://versiontree.sourceforge.net/update-site-unstable</nowiki><br/>
 |-
-|Eclipse 3.7/3.8/4.X (Indigo/Juno/Kepler): || Version Tree 1.7.X:        || <nowiki>http://versiontree.sourceforge.net/updates</nowiki><br/>
+|Eclipse 3.7/3.8/4.X (Indigo/Juno/Kepler): || Version Tree 1.7.2:                    || <nowiki>http://versiontree.sourceforge.net/updates</nowiki><br/>
 |-
-|Eclipse 3.6 (Helios):              || Version Tree 1.6.1:        || <nowiki>http://versiontree.sourceforge.net/update-site.1.6.1</nowiki><br/>
+|Eclipse 3.6 (Helios):                     || Version Tree 1.6.1:                    || <nowiki>http://versiontree.sourceforge.net/update-site.1.6.1</nowiki><br/>
 |}
 
 To install a plugin in Eclipse using update site follow Help->Install New Software wizard.
 
 === Archived ===
 {|
-|Eclipse 3.7/3.8/4.2 (Indigo/Juno): || [https://sourceforge.net/projects/versiontree/files/versiontree%20%28Eclipse%203.7%29/ Version Tree 1.7.0]<br/>
+|Eclipse 3.7/3.8/4.2/4.3 (Indigo/Juno/Kepler): || [https://sourceforge.net/projects/versiontree/files/versiontree%20%28Eclipse%203.7%29/ Version Tree 1.7.1]<br/>
 |-
-|Eclipse 3.6 (Helios):              || [http://sourceforge.net/projects/versiontree/files/versiontree%20(Eclipse%203.6)/versiontree%201.6.1/ Version Tree 1.6.1]<br/>
+|Eclipse 3.7/3.8/4.2 (Indigo/Juno):            || [https://sourceforge.net/projects/versiontree/files/versiontree%20%28Eclipse%203.7%29/ Version Tree 1.7.0]<br/>
 |-
-|Eclipse 3.4 (Ganymede):            || [http://sourceforge.net/project/showfiles.php?group_id=76701&package_id=297896&release_id=638331 Version Tree 1.6.0]<br/>
+|Eclipse 3.6 (Helios):                         || [http://sourceforge.net/projects/versiontree/files/versiontree%20(Eclipse%203.6)/versiontree%201.6.1/ Version Tree 1.6.1]<br/>
 |-
-|Eclipse 3.2/3.3 (Callisto/Europa): || [http://sourceforge.net/project/showfiles.php?group_id=76701&package_id=195441&release_id=428128 Version Tree 1.5.0]<br/>
+|Eclipse 3.4 (Ganymede):                       || [http://sourceforge.net/project/showfiles.php?group_id=76701&package_id=297896&release_id=638331 Version Tree 1.6.0]<br/>
 |-
-|Eclipse 3.1:                       || [http://sourceforge.net/project/showfiles.php?group_id=76701&package_id=153314&release_id=329980 Version Tree 1.4.0]<br/>
+|Eclipse 3.2/3.3 (Callisto/Europa):            || [http://sourceforge.net/project/showfiles.php?group_id=76701&package_id=195441&release_id=428128 Version Tree 1.5.0]<br/>
+|-
+|Eclipse 3.1:                                  || [http://sourceforge.net/project/showfiles.php?group_id=76701&package_id=153314&release_id=329980 Version Tree 1.4.0]<br/>
 |}
 
 For older plugin versions please see [http://sourceforge.net/project/showfiles.php?group_id=76701 All Packages]
@@ -72,6 +74,9 @@ CVS Version Tree will connect with arrows merged versions provided they are tagg
 
 == What's new ==
 === New features in development version ("unstable" build) ===
+Currently matches 1.7.2
+
+=== New features in release 1.7.2 ===
 * Decorators for locked revisions
 * Compare selected revision with local file via context menu
 * Fixed missing "merge to HEAD" arrow when filtering branches
