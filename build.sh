@@ -5,7 +5,9 @@ if [ "$1" = "release" ];then
   ## Blessed update site for releases is $HOST:/home/project-web/versiontree/htdocs/updates
   DEST_UPDATE_SITE=$HOST:/home/project-web/versiontree/htdocs/updates
   DEST_ARCHIVE="$HOST:/home/frs/project/versiontree/versiontree\ (Eclipse\ 3.7)/net.sf.versiontree.update-site_1.7.X.zip"
-  DEST_ARCHIVE_RELEASE="$HOST:/home/frs/project/versiontree/versiontree\ (Eclipse\ 3.7)/net.sf.versiontree.update-site_1.7.2.zip"
+#  DEST_ARCHIVE_RELEASE="$HOST:/home/frs/project/versiontree/versiontree\ (Eclipse\ 3.7)/net.sf.versiontree.update-site_1.7.3.zip"
+  echo Edit $0 to specify DEST_ARCHIVE_RELEASE
+  exit 1
 else
   DEST_UPDATE_SITE=$HOST:/home/project-web/versiontree/htdocs/update-site-unstable
   DEST_ARCHIVE="$HOST:/home/frs/project/versiontree/versiontree\ (Eclipse\ 3.7)/net.sf.versiontree.update-site-unstable.zip"
