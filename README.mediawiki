@@ -74,7 +74,7 @@ CVS Version Tree will connect with arrows merged versions provided they are tagg
 
 == What's new ==
 === New features in development version ("unstable" build) ===
-Currently matches 1.7.2
+* Improved reporting errors from CVS server
 
 === New features in release 1.7.2 ===
 * Decorators for locked revisions

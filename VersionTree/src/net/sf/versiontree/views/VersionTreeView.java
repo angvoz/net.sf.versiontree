@@ -365,7 +365,7 @@ public class VersionTreeView extends ViewPart implements LogEntrySelectionListen
 					} else {
 						entries = cvsFile.getLogEntries(monitor);
 					}
-					if (entries.length == 0 && rc != null){
+					if (entries != null && entries.length == 0 && rc != null){
 						//Get the parent folder
 						ICVSFolder folder = cvsFile.getParent();
 						if (folder.isManaged()) {

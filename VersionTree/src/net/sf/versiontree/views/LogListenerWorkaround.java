@@ -10,8 +10,14 @@
  *******************************************************************************/
 package net.sf.versiontree.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.versiontree.VersionTreePlugin;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ILogEntryListener;
@@ -32,6 +38,8 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 	private int state = BEGIN;
 
 	private String lockedBy = null;
+
+	private final List<IStatus> errors = new ArrayList<IStatus>();
 
 	/**
 	 * Constructor.
@@ -99,4 +107,13 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 		return super.messageLine(line, location, commandRoot, monitor);
 	}
 
+	@Override
+	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
+		errors.add(new Status(IStatus.ERROR, VersionTreePlugin.PLUGIN_ID, line, new Exception()));
+		return super.errorLine(line, location, commandRoot, monitor);
+	}
+
+	public IStatus[] getErrors() {
+		return errors.toArray(new IStatus[errors.size()]);
+	}
 }

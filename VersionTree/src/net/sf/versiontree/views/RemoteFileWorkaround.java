@@ -13,8 +13,11 @@ package net.sf.versiontree.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.versiontree.VersionTreePlugin;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSMessages;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -69,13 +72,17 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 			try {
 				CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
 				LogEntryListener listener = new LogEntryListener();
+				LogListenerWorkaround logListenerWorkaround = new LogListenerWorkaround(listener);
 				IStatus status = Command.LOG.execute(
 					session,
 					Command.NO_GLOBAL_OPTIONS, Command.NO_LOCAL_OPTIONS,
-					new ICVSResource[] { remoteFile }, new LogListenerWorkaround(listener),
+					new ICVSResource[] { remoteFile }, logListenerWorkaround,
 					Policy.subMonitorFor(monitor, 90));
 				if (status.getCode() == CVSStatus.SERVER_ERROR) {
-					throw new CVSServerException(status);
+					String errMsg = "Errors getting '" + remoteFile.getRepositoryRelativePath() + "' from CVS server";
+					IStatus errors = new MultiStatus(VersionTreePlugin.PLUGIN_ID, 0, logListenerWorkaround.getErrors(), errMsg, null);
+					VersionTreePlugin.log(errors);
+					throw new CVSServerException(errors);
 				}
 				return listener.getEntries();
 			} finally {
