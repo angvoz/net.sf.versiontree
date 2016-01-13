@@ -48,8 +48,6 @@ public class Revision extends Canvas {
 	private static final int STRING_OFFSET = 2;
 	private static final int INSET = 3;
 
-	private int stringXPosition = 0;
-
 	private IRevision revisionData;
 
 	private int width;
@@ -118,8 +116,6 @@ public class Revision extends Canvas {
 		completedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_COMPLETED);
 		lockedByMeImage = VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED_BY_ME);
 		lockedBySomebodyElseImage = VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED_BY_SOMEBODY_ELSE);
-
-		stringXPosition = versionImage.getBounds().width + 2 * INSET;
 	}
 
 	/**
@@ -177,6 +173,7 @@ public class Revision extends Canvas {
 			gc.drawImage(image, INSET, INSET);
 		}
 
+		int xOffset = versionImage.getBounds().width + 2 * INSET;
 		int yOffset = INSET;
 		Point extent = gc.stringExtent(getRevisionString());
 		// draw revision string
@@ -184,11 +181,11 @@ public class Revision extends Canvas {
 		if (revisionData.getLogEntry().isDeletion()) {
 			gc.setForeground(new Color(Display.getDefault(),128,128,128));
 		}
-		gc.drawString(getRevisionString(), stringXPosition, yOffset);
+		gc.drawString(getRevisionString(), xOffset, yOffset);
 		yOffset += STRING_OFFSET + extent.y;
 		// draw author string
 		extent = gc.stringExtent(revisionData.getAuthor());
-		gc.drawString(revisionData.getAuthor(), stringXPosition, yOffset);
+		gc.drawString(revisionData.getAuthor(), xOffset, yOffset);
 		// draw rectangle (or focus border if selected)
 		if (isSelected()) {
 			gc.drawFocus(0, 0, size.width, size.height);

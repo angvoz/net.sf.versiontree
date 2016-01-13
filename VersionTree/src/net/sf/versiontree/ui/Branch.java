@@ -13,6 +13,11 @@ package net.sf.versiontree.ui;
 
 import net.sf.versiontree.VersionTreePlugin;
 import net.sf.versiontree.data.IBranch;
+import net.sf.versiontree.data.IRevision;
+import net.sf.versiontree.data.ITreeElement;
+
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.events.DisposeEvent;
@@ -47,7 +52,10 @@ public class Branch extends Canvas {
 	private Color background;
 
 	private Image versionImage;
-	private int stringXPosition = 0;
+	private Image lockedWithTagImage;
+	private Image requestImage;
+	private Image closedImage;
+	private Image completedImage;
 
 	/**
 	 * Creates a widget representing a branch.
@@ -88,6 +96,11 @@ public class Branch extends Canvas {
 	 */
 	private void initializeImages() {
 		versionImage = VersionTreeImages.getImage(VersionTreeImages.IMG_BRANCH);
+
+		lockedWithTagImage = VersionTreeImages.getImage(VersionTreeImages.IMG_LOCKED);
+		requestImage = VersionTreeImages.getImage(VersionTreeImages.IMG_REQUEST);
+		closedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_CLOSED);
+		completedImage = VersionTreeImages.getImage(VersionTreeImages.IMG_COMPLETED);
 	}
 
 	/**
@@ -101,16 +114,76 @@ public class Branch extends Canvas {
 		gc.setBackground(background);
 		gc.fillRoundRectangle(0, 0, size.width, size.height, 20, 20);
 
+		Image tagImage = getTagImage();
+		if (tagImage != null) {
+			gc.drawImage(tagImage, INSET, INSET);
+		}
+
 		int yOffset = inset;
+		int stringXPosition  = versionImage.getBounds().width + 2 * INSET;
 		Point extent = gc.stringExtent(branchData.getName());
-		gc.drawString(branchData.getName(), INSET + versionImage.getBounds().width, yOffset);
+		gc.drawString(branchData.getName(), stringXPosition, yOffset);
 		yOffset += offsetBetweenStrings + extent.y;
 		gc.drawImage(versionImage, INSET, yOffset);
+
 		extent = gc.stringExtent(branchData.getBranchPrefix());
-		stringXPosition  = versionImage.getBounds().width + 2 * INSET;
 		gc.drawString(branchData.getBranchPrefix(), stringXPosition, yOffset);
 
 		gc.drawRoundRectangle(0, 0, size.width - 1, size.height - 1, 20, 20);
+	}
+
+	private Image getTagImage() {
+		Image tagImage = null;
+		List<IRevision> revisions = branchData.getRevisions();
+		String branchName = branchData.getName();
+		if (!branchName.equals(IBranch.HEAD_NAME)/* && !revisions.isEmpty()*/) {
+			IRevision lastRevision = null;
+			if (revisions.isEmpty()) {
+				ITreeElement par = branchData.getParent();
+				if (!(par instanceof IRevision)) {
+					return null;
+				}
+				lastRevision = (IRevision) par;
+			} else {
+				Collections.sort(revisions);
+				lastRevision = revisions.get(revisions.size()-1);
+			}
+
+			IPreferenceStore prefs = VersionTreePlugin.getDefault().getPreferenceStore();
+			boolean isLockedWithTag = false;
+			boolean isMerged = false;
+			boolean isBeingMerged = false;
+			boolean isClosed = false;
+			List<String> tags = lastRevision.getTags();
+			for (String tag : tags) {
+				if (tag.contains(branchName)) {
+					if (tag.matches(prefs.getString(VersionTreePlugin.PREF_REGEX_LOCKED))) {
+						isLockedWithTag = true;
+						// "locked" has preference over other icons
+						break;
+					}
+					if (tag.matches(prefs.getString(VersionTreePlugin.PREF_REGEX_REQUEST))) {
+						isBeingMerged = true;
+					}
+					if (tag.matches(prefs.getString(VersionTreePlugin.PREF_REGEX_CLOSED))) {
+						isClosed = true;
+					}
+					if (tag.matches(prefs.getString(VersionTreePlugin.PREF_REGEX_MERGE_TO))) {
+						isMerged = true;
+					}
+				}
+			}
+			if (isLockedWithTag) {
+				tagImage = lockedWithTagImage;
+			} else if (isBeingMerged) {
+				tagImage = requestImage;
+			} else if (isClosed && isMerged) {
+				tagImage = completedImage;
+			} else if (isClosed) {
+				tagImage = closedImage;
+			}
+		}
+		return tagImage;
 	}
 
 	@Override
