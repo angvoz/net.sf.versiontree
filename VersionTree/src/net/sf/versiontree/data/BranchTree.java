@@ -36,7 +36,7 @@ public class BranchTree {
 
 	private HashMap<String, IBranch> branches;
 	private HashMap<String, IRevision> revisions;
-	private HashMap<String,IRevision> alltags;
+	private HashMap<String, IRevision> alltags;
 
 	public HashMap<String, IRevision> getAlltags() {
 		return alltags;
@@ -289,10 +289,23 @@ public class BranchTree {
 	}
 
 	/**
-	 * gets head Branch for decension
+	 * gets head Branch for walking down
 	 */
 	public IBranch getHeadBranch() {
 		return headBranch;
+	}
+
+	public void clearCoordinates() {
+		for (IBranch branch : branches.values()) {
+			branch.setX(0);
+			branch.setY(0);
+			branch.setVisible(false);
+		}
+		for (IRevision revision : revisions.values()) {
+			revision.setX(0);
+			revision.setY(0);
+			revision.setVisible(false);
+		}
 	}
 
 }

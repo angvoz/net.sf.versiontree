@@ -76,6 +76,7 @@ CVS Version Tree will connect with arrows merged versions provided they are tagg
 === New features in development version ("unstable" build) ===
 * Decorate branch with tag decoration of its last revision
 * Improved reporting errors from CVS server
+* Fixed filtering by branch name when a branch is originated from a revision on another branch
 
 === New features in release 1.7.2 ===
 * Decorators for locked revisions

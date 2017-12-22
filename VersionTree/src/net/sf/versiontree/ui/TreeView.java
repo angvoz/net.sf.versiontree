@@ -360,37 +360,30 @@ public class TreeView extends ScrolledComposite implements MouseListener, IDrawM
 	public void drawConnectors(ITreeElement node) {
 		for (ITreeElement child : node.getChildren()) {
 			if (child instanceof IRevision) {
-				createConnector(node, child ,MergePoint.INITIAL);
-				for (MergePoint mergeToPoint : ((IRevision) child).getMergeToRevisions()) {
-					IRevision mergeToRevision = mergeToPoint.getMergeRevision();
-					for (String brTo : mergeToRevision.getBranchTags()) {
-						if (isBranchVisible(brTo)) {
+				IRevision childRevision = (IRevision)child;
+				if (childRevision.isVisible()) {
+					createConnector(node, childRevision ,MergePoint.INITIAL);
+					for (MergePoint mergeToPoint : childRevision.getMergeToRevisions()) {
+						IRevision mergeToRevision = mergeToPoint.getMergeRevision();
+						if (mergeToRevision.isVisible()) {
 							createConnector(child, mergeToRevision, MergePoint.MERGE);
 							break;
 						}
 					}
+					drawConnectors(childRevision);
 				}
-				drawConnectors(child);
 			} else if (child instanceof IBranch) {
 				IBranch childBranch = (IBranch) child;
-				if ((!childBranch.isEmpty() || this.getTreeViewConfig().drawEmptyBranches()) && isBranchVisible(childBranch.getName())) {
+				if (childBranch.isVisible()) {
 					// case when parent is dead revision and child element is branch
 					if (!(node instanceof IRevision && ((IRevision) node).getLogEntry().isDeletion())) {
-						createConnector(node, child, MergePoint.INITIAL);
+						createConnector(node, childBranch, MergePoint.INITIAL);
 					}
-					drawConnectors(child);
+					drawConnectors(childBranch);
 				}
 			}
 		}
 
-	}
-
-	private boolean isBranchVisible(String branchName) {
-		if (IBranch.HEAD_NAME.equals(branchName)) {
-			return true;
-		}
-		return (!branchName.equals(IBranch.N_A_BRANCH) || this.getTreeViewConfig().drawNABranches())
-				&& (treeViewConfig.isBranchFilterPenetrated(branchName));
 	}
 
 }

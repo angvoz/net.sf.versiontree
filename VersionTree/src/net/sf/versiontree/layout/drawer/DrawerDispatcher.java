@@ -74,6 +74,7 @@ public class DrawerDispatcher {
 		int b = y_right ? (switched ? x : y) : (switched ? -x : -y);
 		element.setX(a);
 		element.setY(b);
+		element.setVisible(true);
 		if (method != null) {
 			method.draw(element, a, b);
 		} else {

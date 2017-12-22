@@ -16,8 +16,9 @@ import java.util.List;
  *  (used for drawing)
  * @author Andre  */
 public interface ITreeElement {
-	public static final int STATE_CURRENT = 1;
-	public static final int STATE_SELECTED = 2;
+	public static final int STATE_CURRENT = 0x1;
+	public static final int STATE_SELECTED = 0x2;
+	public static final int STATE_VISIBLE = 0x4;
 
 	public abstract List<ITreeElement> getSiblings();
 	public abstract List<ITreeElement> getChildren();
@@ -30,6 +31,9 @@ public interface ITreeElement {
 	/** selection in UI */
 	public void setSelected(boolean selected);
 	public boolean isSelected();
+	/** visibility in UI */
+	public void setVisible(boolean visible);
+	public boolean isVisible();
 
 	public int getX();
 	public void setX(int x);

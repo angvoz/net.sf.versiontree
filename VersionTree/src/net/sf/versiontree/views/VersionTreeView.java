@@ -239,7 +239,7 @@ public class VersionTreeView extends ViewPart implements LogEntrySelectionListen
 
 		public Font getFont(Object element, int columnIndex) {
 			String branchFilter = treeView.getTreeViewConfig().getBranchFilter();
-			if (!branchFilter.isEmpty() && getText(element).contains(branchFilter)) {
+			if (!branchFilter.equals("") && getText(element).contains(branchFilter)) {
 				return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 			}
 			return null;
@@ -517,6 +517,7 @@ public class VersionTreeView extends ViewPart implements LogEntrySelectionListen
 		if (bt == null) {
 			return;
 		}
+		bt.clearCoordinates();
 
 		// Choose Drawers and dispatcher that will be supplied to walk algorithm
 		IDrawMethod[] id = new IDrawMethod[1];

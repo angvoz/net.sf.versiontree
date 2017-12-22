@@ -64,9 +64,21 @@ public abstract class AbstractTreeElement implements ITreeElement {
 	}
 
 	public boolean isSelected() {
-		return (state & ITreeElement.STATE_SELECTED) > 0;
+		return (state & ITreeElement.STATE_SELECTED) != 0;
 	}
 
+	public void setVisible(boolean visible) {
+		if (visible) {
+			state |= STATE_VISIBLE;
+		} else {
+			state &= ~STATE_VISIBLE;
+		}
+	}
+	
+	public boolean isVisible() {
+		return (state & ITreeElement.STATE_VISIBLE) != 0;
+	}
+	
 	public int getX() {
 		return x;
 	}
